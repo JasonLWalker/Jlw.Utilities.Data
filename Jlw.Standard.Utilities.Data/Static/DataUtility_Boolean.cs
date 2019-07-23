@@ -57,14 +57,6 @@ namespace Jlw.Standard.Utilities.Data
                     return false;
             }
 
-            /*
-            if (data.IsNumeric())
-            {
-                if ((decimal) data >= 1)
-                    return true;
-            }
-            */
-
             return false;
         }
     }

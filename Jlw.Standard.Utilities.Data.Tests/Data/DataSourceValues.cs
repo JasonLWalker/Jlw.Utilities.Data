@@ -5,16 +5,12 @@
         static DataSourceValues()
         {
             InitBoolean();
-            /*
             InitSByte();
             InitByte();
-
             InitInt16();
             InitInt32();
             InitInt64();
-
             InitSingle();
-            */
             InitDouble();
         }
 

@@ -11,12 +11,12 @@ namespace Jlw.Standard.Utilities.Data
     {
         /// <summary>
         /// Parses a <c>nullable</c> DateTime object from an input object of any type.
-        /// Returns a DateTime object parsed from the input data, or Null is the input data is null, empty, DBNull, or cannot be parsed.
+        /// Returns a DateTimeOffset object parsed from the input data, or Null is the input data is null, empty, DBNull, or cannot be parsed.
         /// </summary>
         /// <param name="obj">The object containing the data to parse.</param>
         /// <param name="key">The key to parse.</param>
-        /// <returns>Returns a DateTime object, or Null is the data cannot be parsed.</returns>
-        public static DateTime? ParseNullableDateTime(object obj, string key = null)
+        /// <returns>Returns a DateTimeOffset object, or Null is the data cannot be parsed.</returns>
+        public static DateTimeOffset? ParseNullableDateTimeOffset(object obj, string key=null)
         {
             var data = GetObjectValue(obj, key);
 
@@ -25,16 +25,15 @@ namespace Jlw.Standard.Utilities.Data
             if (string.IsNullOrWhiteSpace(s) || data is DBNull)
                 return null;
 
-            DateTime dt = ParseDateTime(data);
+            DateTimeOffset dt = ParseDateTimeOffset(data);
 
-            if (dt == DateTime.MinValue)
+            if (dt == DateTimeOffset.MinValue)
                 return null;
 
             return dt;
         }
 
 
-        public static DateTime ParseDateTime(object obj, string key = null) => ParseNullableDateTime(obj, key) ?? DateTime.MinValue;
-
+        public static DateTimeOffset ParseDateTimeOffset(object data, string key=null) => ParseNullableDateTimeOffset(data, key) ?? DateTimeOffset.MinValue;
     }
 }

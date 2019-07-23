@@ -1,90 +1,83 @@
-﻿
-// ReSharper disable once CheckNamespace
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace Jlw.Standard.Utilities.Data
 {
     public partial class DataUtility
     {
-        /// <summary>
-        /// Parses a double value from an input object of any type.
-        /// </summary>
-        /// <param name="obj">The object containing the data to parse.</param>
-        /// <param name="key">The key of the data to parse.</param>
-        /// <returns>Returns the value, or <c>0.0D</c> if the data cannot be parsed.</returns>
-        public static double ParseDouble(object obj, string key = null) => ParseNullableDouble(obj, key) ?? default;
-
+        public static Int64 ParseInt64(object o, string key = null) => ParseNullableLong(o, key) ?? default;
+        public static Int64? ParseNullableInt64(object o, string key = null) => ParseNullableLong(o, key);
 
         /// <summary>
-        /// Parses a double value from an input object of any type.
+        /// Parses a 64-bit integer value from an input object of any type.
         /// </summary>
         /// <param name="obj">The object containing the data to parse.</param>
-        /// <param name="key">The key of the data to parse.</param>
-        /// <returns>Returns the value, or <c>null</c> if the data cannot be parsed.</returns>
-        public static double? ParseNullableDouble(object obj, string key=null)
+        /// <param name="key">The key to parse.</param>
+        /// <returns>Returns the value, or <c>0</c> if the data cannot be parsed.</returns>
+        public static long ParseLong(object obj, string key = null) => ParseNullableLong(obj, key) ?? default;
+
+        /// <summary>
+        /// Parses a 64-bit integer value from an input object of any type.
+        /// </summary>
+        /// <param name="obj">The object containing the data to parse.</param>
+        /// <param name="key">The key to parse.</param>
+        /// <returns>Returns an int containing the value, or <c>null</c> if the data cannot be parsed.</returns>
+        public static long? ParseNullableLong(object obj, string key=null)
         {
             var data = GetObjectValue(obj, key);
 
-            if(data == null || data is DBNull || data == DBNull.Value || data is DateTimeOffset || data is DateTime)
+            if(data == null || data is DBNull || data == DBNull.Value || data is DateTimeOffset)
                 return null;
 
             string s = ExtractNumericString(data?.ToString());
             try
             {
-                if (data is double.NaN || data is float.NaN)
-                    return double.NaN;
-
-                TypeCode tc = Type.GetTypeCode(data.GetType());
-
-                switch (tc)
+                switch (Type.GetTypeCode(data.GetType()))
                 {
-                    case TypeCode.Double:
-                        return (double)(data);
-                    case TypeCode.Single:
-                        return (double)((float) data);
                     case TypeCode.Char:
-                        char asc = (data.ToString()[0]);
-                        return (double)asc;
+                        long asc = (long)(data.ToString()[0]);
+                        return asc;
+                    case TypeCode.DateTime:
+                        return ((DateTime) data).ToBinary();
                 }
 
-                var d = double.Parse(s);
-                return (double) d;
+                var d = long.Parse(s);
+                return (long) d;
             }
             catch (OverflowException)
             {
                 if (IsNumeric(data))
                 {
-                    var dc = (double) Convert.ChangeType(data, typeof(double));
+                    var dc = (decimal) Convert.ChangeType(data, typeof(decimal));
                     
                     if (dc < 0)
                     {
-                        return double.MinValue;
+                        return long.MinValue;
                     }
 
-                    return double.MaxValue;
+                    return long.MaxValue;
                 }
 
                 try
                 {
-                    double d = double.Parse(s.Trim());
-                    if (d < 0)
-                        return double.MinValue;
+                    long l = long.Parse(s.Trim());
+                    if (l < 0)
+                        return long.MinValue;
 
-                    return double.MaxValue;
+                    return long.MaxValue;
                 }
                 catch(OverflowException)
                 {
                     double.TryParse(s.Trim(), out var d);
 
                     if (d < 0)
-                        return double.MinValue;
+                        return long.MinValue;
 
-                    return double.MaxValue;
+                    return long.MaxValue;
                 }
             }
             catch (System.FormatException)
@@ -98,8 +91,14 @@ namespace Jlw.Standard.Utilities.Data
                             return 1;
                         return 0;
                     case TypeCode.Char:
-                        d = (double)Convert.ChangeType(data, typeof(double));
-                        return d;
+                        d = (ulong)Convert.ChangeType(data, typeof(ulong));
+
+                        if (d > long.MaxValue)
+                            return long.MaxValue;
+
+                        if (d < long.MinValue)
+                            return long.MinValue;
+                        return (long)d;
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:
@@ -107,7 +106,12 @@ namespace Jlw.Standard.Utilities.Data
                         if (double.IsNaN(d))
                             return null;
 
-                        return (Double)d;
+                        if (d > long.MaxValue)
+                            return long.MaxValue;
+
+                        if (d < long.MinValue)
+                            return long.MinValue;
+                        return (long)d;
                     case TypeCode.String:
                         if (IsNullOrWhitespace(s))
                             return null;
@@ -119,13 +123,13 @@ namespace Jlw.Standard.Utilities.Data
                         if (c0 >= '0' && c0 <= '9')
                         {
                             double.TryParse(s, out d);
-                            return ParseNullableDouble(d);
+                            return ParseNullableLong(d);
                         }
 
                         if (c0 == '.' && c1 >= '0' && c1 <= '9')
                         {
                             double.TryParse(s, out d);
-                            return ParseNullableDouble(d);
+                            return ParseNullableLong(d);
                         }
 
                         if (c0 == '-')
@@ -137,7 +141,7 @@ namespace Jlw.Standard.Utilities.Data
                                 )
                             {
                                 double.TryParse(s, out d);
-                                return ParseNullableDouble(d);
+                                return ParseNullableLong(d);
                             }
                         }
 
@@ -147,8 +151,6 @@ namespace Jlw.Standard.Utilities.Data
 
             return null;
         }
-
-
 
     }
 }

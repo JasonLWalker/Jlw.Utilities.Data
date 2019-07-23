@@ -11,22 +11,26 @@ namespace Jlw.Standard.Utilities.Data
 {
     public partial class DataUtility
     {
+        public static float ParseFloat(object data, string key = null) => ParseNullableSingle(data, key) ?? default;
+        public static float? ParseNullableFloat(object data, string key = null) => ParseNullableSingle(data, key);
+
         /// <summary>
-        /// Parses a double value from an input object of any type.
+        /// Parses a float value from an object that implements the <c>IDataRecord</c> interface.
+        /// This includes SqlDataReader and other inherited SQL Data records.
         /// </summary>
-        /// <param name="obj">The object containing the data to parse.</param>
+        /// <param name="o">The IDataRecord object containing the key to parse.</param>
         /// <param name="key">The key of the data to parse.</param>
-        /// <returns>Returns the value, or <c>0.0D</c> if the data cannot be parsed.</returns>
-        public static double ParseDouble(object obj, string key = null) => ParseNullableDouble(obj, key) ?? default;
+        /// <returns>Returns the value, or <c>0.0f</c> if the data cannot be parsed.</returns>
+        public static Single ParseSingle(object o, string key = null) => ParseNullableSingle(o, key) ?? default;
 
 
         /// <summary>
-        /// Parses a double value from an input object of any type.
+        /// Parses a float value from an input object of any type.
         /// </summary>
         /// <param name="obj">The object containing the data to parse.</param>
         /// <param name="key">The key of the data to parse.</param>
         /// <returns>Returns the value, or <c>null</c> if the data cannot be parsed.</returns>
-        public static double? ParseNullableDouble(object obj, string key=null)
+        public static Single? ParseNullableSingle(object obj, string key = null)
         {
             var data = GetObjectValue(obj, key);
 
@@ -37,23 +41,23 @@ namespace Jlw.Standard.Utilities.Data
             try
             {
                 if (data is double.NaN || data is float.NaN)
-                    return double.NaN;
+                    return Single.NaN;
 
                 TypeCode tc = Type.GetTypeCode(data.GetType());
 
                 switch (tc)
                 {
                     case TypeCode.Double:
-                        return (double)(data);
+                        return (Single)(Double)(data);
                     case TypeCode.Single:
-                        return (double)((float) data);
+                        return (Single)data;
                     case TypeCode.Char:
                         char asc = (data.ToString()[0]);
-                        return (double)asc;
+                        return (Single)asc;
                 }
 
-                var d = double.Parse(s);
-                return (double) d;
+                var d = Single.Parse(s);
+                return (Single) d;
             }
             catch (OverflowException)
             {
@@ -63,28 +67,28 @@ namespace Jlw.Standard.Utilities.Data
                     
                     if (dc < 0)
                     {
-                        return double.MinValue;
+                        return Single.MinValue;
                     }
 
-                    return double.MaxValue;
+                    return Single.MaxValue;
                 }
 
                 try
                 {
-                    double d = double.Parse(s.Trim());
+                    Single d = Single.Parse(s.Trim());
                     if (d < 0)
-                        return double.MinValue;
+                        return Single.MinValue;
 
-                    return double.MaxValue;
+                    return Single.MaxValue;
                 }
                 catch(OverflowException)
                 {
                     double.TryParse(s.Trim(), out var d);
 
                     if (d < 0)
-                        return double.MinValue;
+                        return Single.MinValue;
 
-                    return double.MaxValue;
+                    return Single.MaxValue;
                 }
             }
             catch (System.FormatException)
@@ -98,8 +102,15 @@ namespace Jlw.Standard.Utilities.Data
                             return 1;
                         return 0;
                     case TypeCode.Char:
-                        d = (double)Convert.ChangeType(data, typeof(double));
-                        return d;
+                        d = (Single)Convert.ChangeType(data, typeof(Single));
+
+                        if (d > Single.MaxValue)
+                            return Single.MaxValue;
+
+                        if (d < Single.MinValue)
+                            return Single.MinValue;
+
+                        return (Single)d;
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:
@@ -107,7 +118,13 @@ namespace Jlw.Standard.Utilities.Data
                         if (double.IsNaN(d))
                             return null;
 
-                        return (Double)d;
+                        if (d > Single.MaxValue)
+                            return Single.MaxValue;
+
+                        if (d < Single.MinValue)
+                            return Single.MinValue;
+
+                        return (Single)d;
                     case TypeCode.String:
                         if (IsNullOrWhitespace(s))
                             return null;
@@ -119,13 +136,13 @@ namespace Jlw.Standard.Utilities.Data
                         if (c0 >= '0' && c0 <= '9')
                         {
                             double.TryParse(s, out d);
-                            return ParseNullableDouble(d);
+                            return ParseNullableSingle(d);
                         }
 
                         if (c0 == '.' && c1 >= '0' && c1 <= '9')
                         {
                             double.TryParse(s, out d);
-                            return ParseNullableDouble(d);
+                            return ParseNullableSingle(d);
                         }
 
                         if (c0 == '-')
@@ -137,7 +154,7 @@ namespace Jlw.Standard.Utilities.Data
                                 )
                             {
                                 double.TryParse(s, out d);
-                                return ParseNullableDouble(d);
+                                return ParseNullableSingle(d);
                             }
                         }
 
@@ -147,8 +164,6 @@ namespace Jlw.Standard.Utilities.Data
 
             return null;
         }
-
-
 
     }
 }
