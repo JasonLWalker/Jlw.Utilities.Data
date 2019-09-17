@@ -15,85 +15,12 @@ namespace Jlw.Standard.Utilities.Data
 {
     public partial class DataUtility
     {
-/*
-        public static T Parse<T>(object data)
+
+        public static T Parse<T>(object obj, string key = null)
         {
-            /*
-            object value = data;
-            Type t = typeof(T);
+            var data = GetObjectValue(obj, key);
 
-            TypeCode tc = Type.GetTypeCode(t);
-            try
-            {
-                switch (tc)
-                {
-                    case TypeCode.Boolean:
-                        return (T) (object) ParseBool(value);
-                    case TypeCode.Decimal:
-                        return (T) (object) ParseDecimal(value);
-                    case TypeCode.Double:
-                        return (T) (object) ParseDouble(value);
-                    case TypeCode.Int16:
-                    case TypeCode.Int32:
-                        return (T) (object) ParseInt(value);
-                    case TypeCode.String:
-                        return (T) (object) ParseString(value);
-                    case TypeCode.DateTime:
-                        return (T) (object) ParseDateTime(value);
-//                    default:
-//                        return (T) value;
-                }
-
-                if (typeof(IDictionary).IsAssignableFrom(t))
-                {
-                    return (T)(object) ParseDictionary(value);
-                }
-
-                return (T) value;
-
-            }
-            catch
-            {
-                return default(T);
-            }
-            * /
             return (T) ParseAs(typeof(T), data);
-        }
-
-        public static T Parse<T>(IDictionary<string, object> data, string key)
-        {
-            if (data == null || !data.ContainsKey(key))
-                return default(T);
-
-            object value;
-            try
-            {
-                value = data[key];
-            }
-            catch
-            {
-                value = default(T);
-            }
-            
-            return (T) ParseAs(typeof(T), value);
-        }
-
-        public static T Parse<T>(IDataRecord data, string key)
-        {
-            if (data == null || !Enumerable.Range(0, data.FieldCount).Any(i => string.Equals(data.GetName(i), key, StringComparison.OrdinalIgnoreCase)))
-                return default(T);
-
-            object value;
-            try
-            {
-                value = data[key];
-            }
-            catch
-            {
-                value = default(T);
-            }
-            
-            return (T) ParseAs(typeof(T), value);
         }
 
         public static object ParseAs(Type type, object data)
@@ -127,8 +54,7 @@ namespace Jlw.Standard.Utilities.Data
                         //return ParseNullableChar(data);
                         break;
                     case TypeCode.Int16:
-                        //return ParseNullableShort(data);
-                        break;
+                        return ParseNullableShort(data);
                     case TypeCode.UInt16:
                         //return ParseNullableUShort(data);
                         break;
@@ -147,8 +73,7 @@ namespace Jlw.Standard.Utilities.Data
                     case TypeCode.Double:
                         return ParseNullableDouble(data);
                     case TypeCode.Single:
-                        //return ParseNullableFloat(data);
-                        break;
+                        return ParseNullableFloat(data);
                     case TypeCode.DateTime:
                         return ParseNullableDateTime(data);
                     case TypeCode.String:
@@ -175,8 +100,7 @@ namespace Jlw.Standard.Utilities.Data
                         //return ParseChar(data);
                         break;
                     case TypeCode.Int16:
-                        //return ParseShort(data);
-                        break;
+                        return ParseShort(data);
                     case TypeCode.UInt16:
                         //return ParseUShort(data);
                         break;
@@ -195,8 +119,7 @@ namespace Jlw.Standard.Utilities.Data
                     case TypeCode.Double:
                         return ParseDouble(data);
                     case TypeCode.Single:
-                        //return ParseFloat(data);
-                        break;
+                        return ParseFloat(data);
                     case TypeCode.DateTime:
                         return ParseDateTime(data);
                     case TypeCode.String:
@@ -211,7 +134,7 @@ namespace Jlw.Standard.Utilities.Data
         }
 
 
-*/
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetObjectValue(object obj, string key=null)
         {
