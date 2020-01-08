@@ -1,24 +1,24 @@
-﻿using MySql.Data.MySqlClient;
-using System.Data;
-using System.Data.SqlClient;
-
-namespace Jlw.Standard.Utilities.Data.DbUtility
+﻿namespace Jlw.Standard.Utilities.Data.DbUtility
 {
     public class ModularMySqlClient : IModularDbClient
     {
-        public IDbConnection GetConnection(string connString)
+        public System.Data.IDbConnection GetConnection(string connString)
         {
-            return new MySqlConnection(connString);
+            return new MySql.Data.MySqlClient.MySqlConnection(connString);
         }
-        public IDbCommand GetCommand(string cmd, IDbConnection conn)
+        public System.Data.IDbCommand GetCommand(string cmd, System.Data.IDbConnection conn)
         {
-            return new MySqlCommand(cmd, (MySqlConnection)conn);
-        }
-
-        public IDbDataParameter AddParameterWithValue(string paramName, object value, IDbCommand cmd)
-        {
-            return ((MySqlCommand) cmd).Parameters.AddWithValue(paramName, value);
+            return new MySql.Data.MySqlClient.MySqlCommand(cmd, (MySql.Data.MySqlClient.MySqlConnection)conn);
         }
 
+        public System.Data.IDbDataParameter AddParameterWithValue(string paramName, object value, System.Data.IDbCommand cmd)
+        {
+            return ((MySql.Data.MySqlClient.MySqlCommand) cmd).Parameters.AddWithValue(paramName, value);
+        }
+
+        public System.Data.IDbDataParameter GetNewParameter()
+        {
+            return new MySql.Data.MySqlClient.MySqlParameter();
+        }
     }
 }

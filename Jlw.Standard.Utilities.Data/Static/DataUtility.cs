@@ -145,6 +145,8 @@ namespace Jlw.Standard.Utilities.Data
                 {
                     if (obj is IEnumerable<KeyValuePair<string, object>> enumerable)
                         o = enumerable.FirstOrDefault(kvp => kvp.Key == key).Value;
+                    if (obj is IDictionary dict)
+                        o = dict.Contains(key) ? dict[key] : null;
                     else if (obj is IDataRecord record)
                         o = record?[key];
                 }

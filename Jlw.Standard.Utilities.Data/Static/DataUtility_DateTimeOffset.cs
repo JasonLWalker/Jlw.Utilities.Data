@@ -25,14 +25,24 @@ namespace Jlw.Standard.Utilities.Data
             if (string.IsNullOrWhiteSpace(s) || data is DBNull)
                 return null;
 
-            DateTimeOffset dt = ParseDateTimeOffset(data);
+            if (data?.GetType() == typeof(DateTimeOffset))
+                return (DateTimeOffset)data;
 
-            if (dt == DateTimeOffset.MinValue)
+            DateTimeOffset dt;
+            try
+            {
+                DateTimeOffset.TryParse(s, out dt);
+                if (dt == DateTimeOffset.MinValue)
+                    return null;
+
+                return dt;
+            }
+            catch (IndexOutOfRangeException)
+            {
                 return null;
+            }
 
-            return dt;
         }
-
 
         public static DateTimeOffset ParseDateTimeOffset(object data, string key=null) => ParseNullableDateTimeOffset(data, key) ?? DateTimeOffset.MinValue;
     }

@@ -25,12 +25,20 @@ namespace Jlw.Standard.Utilities.Data
             if (string.IsNullOrWhiteSpace(s) || data is DBNull)
                 return null;
 
-            DateTime dt = ParseDateTime(data);
+            //DateTime dt = ParseDateTime(data);
+            if (data?.GetType() == typeof(DateTime))
+                return (DateTime)data;
 
-            if (dt == DateTime.MinValue)
+            try
+            {
+                DateTime dt;
+                DateTime.TryParse(s, out dt);
+                return dt;
+            }
+            catch (IndexOutOfRangeException)
+            {
                 return null;
-
-            return dt;
+            }
         }
 
 
