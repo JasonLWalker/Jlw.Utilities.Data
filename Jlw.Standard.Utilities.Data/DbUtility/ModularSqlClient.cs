@@ -1,5 +1,13 @@
-﻿namespace Jlw.Standard.Utilities.Data.DbUtility
+﻿using System.Data.SqlClient;
+
+namespace Jlw.Standard.Utilities.Data.DbUtility
 {
+    public class ModularSqlClient : ModularDbClient<SqlConnection, SqlCommand, SqlParameter>, IModularDbClient
+    {
+
+    }
+    
+    /*
     public class ModularSqlClient : IModularDbClient
     {
         public System.Data.IDbConnection GetConnection(string connString)
@@ -20,6 +28,6 @@
         {
             return new Microsoft.Data.SqlClient.SqlParameter();
         }
-        
     }
+    */
 }
