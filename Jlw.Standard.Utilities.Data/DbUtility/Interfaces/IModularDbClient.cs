@@ -1,4 +1,6 @@
-﻿namespace Jlw.Standard.Utilities.Data.DbUtility
+﻿using System.Data;
+
+namespace Jlw.Standard.Utilities.Data.DbUtility
 {
     public interface IModularDbClient
     {
