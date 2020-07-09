@@ -15,8 +15,10 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         }
 
         #region Internal Members
-        protected virtual IDbConnection GetConnection(string connString)
+        protected virtual IDbConnection GetConnection(string connString = null)
         {
+            connString = connString ?? _connString;
+
             if (string.IsNullOrWhiteSpace(connString))
             {
                 throw new ArgumentException("Invalid Connection String. Connection string may not be empty or null.");
@@ -46,6 +48,11 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             }
 
             return dbCmd;
+        }
+
+        protected virtual IDbDataParameter AddParameterWithValue(string paramName, object value, IDbCommand dbCmd)
+        {
+            return _dbClient.AddParameterWithValue(paramName, value, dbCmd);
         }
         #endregion
         
