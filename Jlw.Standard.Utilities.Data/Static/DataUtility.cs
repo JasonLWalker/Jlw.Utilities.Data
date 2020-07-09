@@ -15,6 +15,7 @@ namespace Jlw.Standard.Utilities.Data
 {
     public partial class DataUtility
     {
+        private static readonly Random Rand = new Random();
 
         public static T Parse<T>(object obj, string key = null)
         {
@@ -175,5 +176,43 @@ namespace Jlw.Standard.Utilities.Data
             return true;
         }
 
+        public static T GenerateRandom<T>(int? minLength = null, int? maxLength = null, string validChars = null)
+        {
+            T val = default;
+            var t = typeof(T);
+
+            switch (val)
+            {
+                case int n:
+                case long l:
+                    return Parse<T>(Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)));
+                case bool b:
+                    return Parse<T>( Rand.Next(0, 1));
+                case double d:
+                case float f:
+                case decimal dc:
+                    return Parse<T>( (Rand.NextDouble() * Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) + Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue));
+            }
+
+            if (t == typeof(string))
+                return Parse<T>(GetRandomString(minLength ?? 10, maxLength, validChars));
+
+            return val;
+        }
+
+        protected static string GetRandomString(int minLength = 10, int? maxLength = null, string validChars = null)
+        {
+            int min = Math.Min(minLength, maxLength ?? minLength);
+            int max = Math.Max(minLength, maxLength ?? minLength);
+            int len = Rand.Next(min, max);
+            var s = new StringBuilder("", max);
+            string chars = validChars ?? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopsrstuvwxyz1234567890";
+            while (s.Length < len)
+            {
+                s.Append(chars[Rand.Next(0, chars.Length)]);
+            }
+
+            return s.ToString();
+        }
     }
 }
