@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Jlw.Standard.Utilities.Data.DbUtility;
 
 /****************************************************************************\
  *
@@ -23,6 +23,7 @@ namespace Jlw.Standard.Utilities.Data.DataTables
     {
         protected IDataTablesInput Input;
         protected IDataTablesOutput Output;
+        protected IModularDbClient _dbClient;
 
         public IEnumerable<object> Data => Output?.data;
 
@@ -47,8 +48,9 @@ namespace Jlw.Standard.Utilities.Data.DataTables
         internal string SqlQueryDebug;
 
         internal bool bDebug = false;
-        protected void Initialize(IDataTablesInput input = null)
+        protected void Initialize(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
+            _dbClient = dbClient ?? new ModularSqlClient();
             Input = input ?? new DataTablesInput();
             Output = new DataTablesOutput(Input);
 
@@ -61,10 +63,11 @@ namespace Jlw.Standard.Utilities.Data.DataTables
             //Output
         }
 
-        public DataTablesBase(IDataTablesInput input = null)
+        public DataTablesBase(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
             Initialize(input);
         }
+
 
         public void SetDebug(bool b)
         {
@@ -178,7 +181,7 @@ namespace Jlw.Standard.Utilities.Data.DataTables
             if (string.IsNullOrWhiteSpace(sqlColumns)) return Output;
 
             // Uses standard TSQL Queries instead of LINQ due to having to build query on the fly.
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (IDbConnection conn = _dbClient.GetConnection(connString))
             {
                 conn.Open();
                 var sql = "SELECT COUNT(*) as nCount FROM " + tables;
@@ -187,7 +190,7 @@ namespace Jlw.Standard.Utilities.Data.DataTables
                 SqlQueryDebug = sql;
 
                 // Retrieve total record count with just the global filter.
-                using (var cmd = new SqlCommand(sql, conn)) // Wrap in Using statement so that the system automatically frees result
+                using (var cmd = _dbClient.GetCommand(sql, conn)) // Wrap in Using statement so that the system automatically frees result
                 {
                     AddParamsToSqlCommand(cmd);
                     var result = cmd.ExecuteScalar().ToString();
@@ -208,15 +211,18 @@ namespace Jlw.Standard.Utilities.Data.DataTables
 
 
                 // Retrieve filtered and paginated data
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = _dbClient.GetCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@sSearch", sSearch);
-                    cmd.Parameters.AddWithValue("@nRowStart", Input?.start + 1); // Correct for SQL rows beginning with 1 and not 0
-                    cmd.Parameters.AddWithValue("@nRowEnd", Input?.start + Input?.length); // Correct for SQL rows beginning with 1 and not 0
+                    _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
+                    _dbClient.AddParameterWithValue("@nRowStart", Input?.start + 1, cmd);// Correct for SQL rows beginning with 1 and not 0
+                    _dbClient.AddParameterWithValue("@nRowEnd", Input?.start + Input?.length, cmd);// Correct for SQL rows beginning with 1 and not 0
+                    //cmd.Parameters.AddWithValue("@sSearch", sSearch);
+                    //cmd.Parameters.AddWithValue("@nRowStart", Input?.start + 1); // Correct for SQL rows beginning with 1 and not 0
+                    //cmd.Parameters.AddWithValue("@nRowEnd", Input?.start + Input?.length); // Correct for SQL rows beginning with 1 and not 0
 
                     AddParamsToSqlCommand(cmd);
 
-                    using (SqlDataReader result = cmd.ExecuteReader())
+                    using (IDataReader result = cmd.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -228,9 +234,11 @@ namespace Jlw.Standard.Utilities.Data.DataTables
 
                 sql = "SELECT COUNT(*) as nCount FROM " + tables + ((string.IsNullOrWhiteSpace(sqlCriteria)) ? "" : " WHERE " + sqlCriteria);
                 // Retrieve record count of filtered data
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = _dbClient.GetCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@sSearch", sSearch);
+                    
+                    _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
+                    //cmd.Parameters.AddWithValue("@sSearch", sSearch);
 
                     AddParamsToSqlCommand(cmd);
 
@@ -248,14 +256,15 @@ namespace Jlw.Standard.Utilities.Data.DataTables
             }
         }
 
-        internal void AddParamsToSqlCommand(SqlCommand cmd)
+        internal void AddParamsToSqlCommand(IDbCommand cmd)
         {
             foreach (KeyValuePair<string, string> o in ExtraParams)
             {
-                cmd.Parameters.AddWithValue(o.Key, o.Value); // Initialize any additional parameters
+                _dbClient.AddParameterWithValue(o.Key, o.Value, cmd); // Initialize any additional parameters
+                //cmd.Parameters.AddWithValue(o.Key, o.Value); // Initialize any additional parameters
             }
 
-            foreach (SqlParameter parameter in cmd.Parameters)
+            foreach (IDbDataParameter parameter in cmd.Parameters)
             {
                 if (parameter.Value == null)
                 {
