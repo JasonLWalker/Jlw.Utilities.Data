@@ -2,7 +2,7 @@
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    class NullDbParameter : IDbDataParameter
+    public class NullDbParameter : IDbDataParameter
     {
         public DbType DbType { get; set; }
         public ParameterDirection Direction { get; set; }

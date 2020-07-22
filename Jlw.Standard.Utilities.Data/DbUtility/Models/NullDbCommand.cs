@@ -3,12 +3,12 @@ using System.Data;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    class NullDbCommand : NullDbCommand<NullDbParameter>
+    public class NullDbCommand : NullDbCommand<NullDbParameter>
     {
 
     }
 
-    class NullDbCommand<TParam> : IDbCommand 
+    public class NullDbCommand<TParam> : IDbCommand 
         where TParam : IDbDataParameter, new()
     {
         public void Dispose()
