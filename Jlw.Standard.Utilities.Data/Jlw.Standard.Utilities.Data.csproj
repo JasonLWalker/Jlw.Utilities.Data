@@ -5,7 +5,7 @@
     <Deterministic>False</Deterministic>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-    <PackageOutputPath>..\..\Jlw.Package.Releases\nupkg</PackageOutputPath>
+    <RepositoryUrl>https://github.com/JasonLWalker/Jlw.Package.Releases.git</RepositoryUrl>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,9 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="MySql.Data" Version="8.0.17">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.Data.Odbc" Version="4.7.0">
@@ -38,6 +41,15 @@
     </PropertyGroup>
   </Target>
 
+<!--
+  <Target Name="CopyPackage" AfterTargets="Pack">
+    <Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="..\..\Jlw.Package.Releases\nupkg" />
+  </Target>
 
+<Target Name="NugetAdd" AfterTargets="Pack">
+    <exec command="..\..\bin\nuget add $(OutputPath)..\$(PackageId).$(PackageVersion).nupkg -source ..\..\Jlw.Package.Releases\nuget" />    
+    <exec command="..\..\bin\nuget push $(OutputPath)..\$(PackageId).$(PackageVersion).nupkg -Source github -ConfigFile nuget.config -SkipDuplicate" />    
+</Target>
+-->
 
 </Project>
