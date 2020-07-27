@@ -19,7 +19,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
     */
 
     public class ModularDataRepositoryBase<TInterface, TModel> : IModularDataRepositoryBase<TInterface, TModel>
-        where TModel : class, TInterface
+        where TModel : TInterface
     {
         protected string _connString = "";
         protected IModularDbClient _dbClient;
@@ -109,7 +109,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             if (string.IsNullOrWhiteSpace(_spGetRecord))
                 throw new NotImplementedException("Stored Procedure is not defined for GetRecord");
 
-            TModel oReturn = null; 
+            TModel oReturn = default; 
  
             using (var sqlConnection = GetConnection()) 
             { 
@@ -131,8 +131,6 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             }
             return oReturn;
         }
-
-
 
         public virtual IEnumerable<TInterface> GetAllRecords()
         {
@@ -170,7 +168,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 throw new NotImplementedException("Stored Procedure is not defined for InsertRecord");
             }
             
-            TModel oReturn = null; 
+            TModel oReturn = default; 
  
             using (var sqlConnection = GetConnection(_connString)) 
             { 
@@ -200,7 +198,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 throw new NotImplementedException("Stored Procedure is not defined for SaveRecord");
             }
             
-            TModel oReturn = null; 
+            TModel oReturn = default; 
  
             using (var sqlConnection = GetConnection(_connString)) 
             { 
@@ -230,7 +228,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 throw new NotImplementedException("Stored Procedure is not defined for UpdateRecord");
             }
             
-            TModel oReturn = null; 
+            TModel oReturn = default; 
  
             using (var sqlConnection = GetConnection(_connString)) 
             { 
@@ -261,7 +259,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 throw new NotImplementedException("Stored Procedure is not defined for DeleteRecord");
             }
             
-            TModel oReturn = null; 
+            TModel oReturn = default; 
  
             { 
                 using (var sqlConnection = GetConnection(_connString)) 
