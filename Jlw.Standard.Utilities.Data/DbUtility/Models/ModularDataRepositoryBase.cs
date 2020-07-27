@@ -252,7 +252,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         } 
 
 
-        public virtual bool DeleteRecord(TInterface o) 
+        public virtual TInterface DeleteRecord(TInterface o) 
         { 
             if (string.IsNullOrWhiteSpace(_spDeleteRecord))
             {
@@ -282,10 +282,10 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             } 
  
              
-            if (oReturn != null)
-                return true; 
+            //if (oReturn != null)
+            //    return true; 
  
-            return false; 
+            return oReturn; 
         } 
  
 
