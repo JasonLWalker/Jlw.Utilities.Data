@@ -24,10 +24,10 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         protected string _connString = "";
         protected IModularDbClient _dbClient;
 
-        protected readonly string _sListKeyColumn = "";
-        protected readonly string _sListDescriptionColumn = "";
+        protected string _sListKeyColumn = "";
+        protected string _sListDescriptionColumn = "";
 
-        protected readonly string _spGetRecord = "";
+        protected string _spGetRecord = "";
         protected string _spGetAllRecords = "";
         protected string _spSaveRecord = "";
         protected string _spInsertRecord = "";
