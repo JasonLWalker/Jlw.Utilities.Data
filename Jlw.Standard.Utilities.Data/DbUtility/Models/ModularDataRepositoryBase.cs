@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
+    /*
     public class ModularDataRepositoryBase : ModularDataRepositoryBase<object, object>
     {
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
@@ -15,6 +16,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
     {
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
     }
+    */
 
     public class ModularDataRepositoryBase<TInterface, TModel> : IModularDataRepositoryBase<TInterface, TModel>
         where TModel : class, TInterface
