@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Jlw.Standard.Utilities.Data.DbUtility.Models
+namespace Jlw.Standard.Utilities.Data.DbUtility
 {
     public class ModularSelectList<TSelectListItem, TInterface, TModel> : IModularSelectList<TSelectListItem, TInterface, TModel>
         where TModel : class, TInterface
