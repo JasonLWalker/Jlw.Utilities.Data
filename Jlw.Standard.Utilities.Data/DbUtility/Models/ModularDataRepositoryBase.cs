@@ -300,7 +300,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             List<KeyValuePair<string, string>> oReturn = new List<KeyValuePair<string, string>>();
             foreach(TInterface o in aList)
             {
-                oReturn.Add(new KeyValuePair<string, string>(DataUtility.ParseString(o, _sListKeyColumn), DataUtility.ParseString(o, _sListDescriptionColumn)));
+                oReturn.Add(new KeyValuePair<string, string>(typeof(TModel).GetProperty(_sListKeyColumn)?.GetValue(o)?.ToString(), typeof(TModel).GetProperty(_sListDescriptionColumn)?.GetValue(o)?.ToString()));
             }
 
             return oReturn;
