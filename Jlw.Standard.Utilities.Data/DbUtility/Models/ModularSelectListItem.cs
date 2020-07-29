@@ -32,7 +32,11 @@ namespace Jlw.Standard.Utilities.Data.DbUtility.Models
             IEnumerable<KeyValuePair<string, string>> aList = _repo.GetKvpList();
             foreach (var o in aList)
             {
-                _items.Add((TSelectListItem) Activator.CreateInstance(typeof(TSelectListItem), new object[] {o.Key, o.Value}));
+                TSelectListItem item = (TSelectListItem) Activator.CreateInstance(typeof(TSelectListItem));
+                typeof(TSelectListItem).GetProperty("Text")?.SetMethod?.Invoke(item, new object[] {o.Key});
+                typeof(TSelectListItem).GetProperty("Value")?.SetMethod?.Invoke(item, new object[] {o.Value});
+                    //, new object[] {o.Key, o.Value}
+                _items.Add(item);
             }
         }
 
