@@ -24,8 +24,8 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         protected string _connString = "";
         protected IModularDbClient _dbClient;
 
-        protected string _sListKeyColumn = "";
-        protected string _sListDescriptionColumn = "";
+        protected string _sListKeyMemberName = "";
+        protected string _sListDescriptionMemberName = "";
 
         protected string _spGetRecord = "";
         protected string _spGetAllRecords = "";
@@ -291,7 +291,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetKvpList() 
         { 
-            if (string.IsNullOrWhiteSpace(_sListKeyColumn) || string.IsNullOrWhiteSpace(_sListDescriptionColumn))
+            if (string.IsNullOrWhiteSpace(_sListKeyMemberName) || string.IsNullOrWhiteSpace(_sListDescriptionMemberName))
             {
                 throw new NotImplementedException("List Columns are not configured for GetKvpList");
             }
@@ -300,7 +300,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             List<KeyValuePair<string, string>> oReturn = new List<KeyValuePair<string, string>>();
             foreach(TInterface o in aList)
             {
-                oReturn.Add(new KeyValuePair<string, string>(typeof(TModel).GetProperty(_sListKeyColumn)?.GetValue(o)?.ToString(), typeof(TModel).GetProperty(_sListDescriptionColumn)?.GetValue(o)?.ToString()));
+                oReturn.Add(new KeyValuePair<string, string>(typeof(TModel).GetProperty(_sListKeyMemberName)?.GetValue(o)?.ToString(), typeof(TModel).GetProperty(_sListDescriptionMemberName)?.GetValue(o)?.ToString()));
             }
 
             return oReturn;
