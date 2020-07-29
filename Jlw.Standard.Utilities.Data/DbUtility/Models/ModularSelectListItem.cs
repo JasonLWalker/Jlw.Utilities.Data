@@ -12,7 +12,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility.Models
         void Refresh();
     }
 
-    class ModularSelectListItem<TSelectListItem, TInterface, TModel> : IModularSelectListItem<TSelectListItem, TInterface, TModel>
+    public class ModularSelectListItem<TSelectListItem, TInterface, TModel> : IModularSelectListItem<TSelectListItem, TInterface, TModel>
         where TModel : class, TInterface
     {
         protected readonly List<TSelectListItem> _items = new List<TSelectListItem>();
