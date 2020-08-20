@@ -6,6 +6,8 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
 {
     public class ModularMySqlClient : ModularDbClient<MySql.Data.MySqlClient.MySqlConnection, MySql.Data.MySqlClient.MySqlCommand, MySql.Data.MySqlClient.MySqlParameter>, IModularDbClient
     {
+        public bool SupportOlderConnections = true;
+
         public override TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
         {
             if (string.IsNullOrWhiteSpace(sSql))
@@ -21,7 +23,11 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             using (var dbConn = GetConnection(connString)) 
             { 
-                dbConn.Open(); 
+                if (SupportOlderConnections)
+                    try { dbConn.Open(); } catch (MySql.Data.MySqlClient.MySqlException ex) { if (!(ex.Message.Contains("Unknown system variable") && dbConn.State == ConnectionState.Open)) throw; }
+                else
+                    dbConn.Open(); 
+
                 using (var dbCmd = GetCommand(sSql, dbConn)) 
                 {
                     foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
@@ -60,7 +66,11 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             using (var dbConn = GetConnection(connString)) 
             { 
-                dbConn.Open(); 
+                if (SupportOlderConnections)
+                    try { dbConn.Open(); } catch (MySql.Data.MySqlClient.MySqlException ex) { if (!(ex.Message.Contains("Unknown system variable") && dbConn.State == ConnectionState.Open)) throw; }
+                else
+                    dbConn.Open(); 
+
                 using (var dbCmd = GetCommand(sSql, dbConn)) 
                 {
                     foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
