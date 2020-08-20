@@ -6,7 +6,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
     {
         public DbType DbType { get; set; }
         public ParameterDirection Direction { get; set; }
-        public bool IsNullable { get; }
+        public bool IsNullable { get; protected set; }
         public string ParameterName { get; set; }
         public string SourceColumn { get; set; }
         public DataRowVersion SourceVersion { get; set; }

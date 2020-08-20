@@ -1,7 +1,89 @@
-﻿namespace Jlw.Standard.Utilities.Data.DbUtility
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+
+namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    public class ModularMySqlClient : IModularDbClient
+    public class ModularMySqlClient : ModularDbClient<MySql.Data.MySqlClient.MySqlConnection, MySql.Data.MySqlClient.MySqlCommand, MySql.Data.MySqlClient.MySqlParameter>, IModularDbClient
     {
+        public override TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        {
+            if (string.IsNullOrWhiteSpace(sSql))
+            {
+                if (isStoredProc)
+                    throw new NotImplementedException("Stored Procedure not provided for GetRecord");
+
+                throw new NotImplementedException("Sql Query not provided for GetRecord");
+
+            }
+
+            TInterface oReturn = default; 
+ 
+            using (var dbConn = GetConnection(connString)) 
+            { 
+                dbConn.Open(); 
+                using (var dbCmd = GetCommand(sSql, dbConn)) 
+                {
+                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    {
+                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                    }
+                    
+                    if (isStoredProc)
+                        dbCmd.CommandType = CommandType.StoredProcedure; 
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
+                    { 
+                        while (sqlResult.Read()) 
+                        { 
+                            oReturn = (TInterface)Activator.CreateInstance(typeof(TModel), new object[]{sqlResult}); 
+                        } 
+                    } 
+                } 
+            }
+            return oReturn;
+
+        }
+
+        public override IEnumerable<TInterface> GetRecordList<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        {
+            if (string.IsNullOrWhiteSpace(sSql))
+            {
+                if (isStoredProc)
+                    throw new NotImplementedException("Stored Procedure not provided for GetRecord");
+
+                throw new NotImplementedException("Sql Query not provided for GetRecord");
+
+            }
+
+            List<TInterface> oReturn = new List<TInterface>(); 
+ 
+            using (var dbConn = GetConnection(connString)) 
+            { 
+                dbConn.Open(); 
+                using (var dbCmd = GetCommand(sSql, dbConn)) 
+                {
+                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    {
+                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                    }
+                    
+                    if (isStoredProc)
+                        dbCmd.CommandType = CommandType.StoredProcedure; 
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
+                    { 
+                        while (sqlResult.Read()) 
+                        { 
+                            oReturn.Add((TInterface)Activator.CreateInstance(typeof(TModel), new object[]{sqlResult})); 
+                        } 
+                    } 
+                } 
+            }
+            return oReturn;
+        }
+
+        /*
         public System.Data.IDbConnection GetConnection(string connString)
         {
             return new MySql.Data.MySqlClient.MySqlConnection(connString);
@@ -20,5 +102,6 @@
         {
             return new MySql.Data.MySqlClient.MySqlParameter();
         }
+        */
     }
 }

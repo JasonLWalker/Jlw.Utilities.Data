@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
@@ -9,6 +11,10 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
 
         System.Data.IDbDataParameter AddParameterWithValue(string paramName, object value, System.Data.IDbCommand cmd);
         System.Data.IDbDataParameter GetNewParameter();
+
+        TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false);
+        
+        IEnumerable<TInterface> GetRecordList<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false);
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using MySql.Data.MySqlClient;
@@ -6,7 +7,15 @@ using MySql.Data.MySqlClient;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    public class MockDbConnection : IDbConnection
+
+    public class MockDbConnection : MockDbConnection<NullDbCommand>
+    {
+
+    }
+
+
+    public class MockDbConnection<TCommand> : IDbConnection
+        where TCommand : IDbCommand, new()
     {
         protected readonly Dictionary<string, List<Dictionary<string, object>>> _dbData = new Dictionary<string, List<Dictionary<string, object>>>();
         public string ConnectionString { get; set; } = "";
@@ -41,9 +50,9 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                         Database = databaseName;
                         return;
                     }
-                    break;
+                    throw new ArgumentException("The database name is not valid.");
             }
-            throw new System.NotImplementedException();
+            throw new InvalidOperationException("The connection is not open.");
         }
 
         public void Close()
@@ -53,14 +62,13 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 case ConnectionState.Open:
                     State = ConnectionState.Closed;
                     break;
-                default:
-                    throw new System.NotImplementedException();
             }
+            throw new System.NotImplementedException();
         }
 
         public IDbCommand CreateCommand()
         {
-            throw new System.NotImplementedException();
+            return new TCommand();
         }
 
         public void Open()
@@ -70,9 +78,8 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 case ConnectionState.Closed:
                     State = ConnectionState.Open;
                     break;
-                default:
-                    throw new System.NotImplementedException();
             }
+            throw new System.NotImplementedException();
         }
 
     }

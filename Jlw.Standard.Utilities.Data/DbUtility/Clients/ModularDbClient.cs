@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
@@ -8,6 +10,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         where TParam : IDbDataParameter, new()
 
     {
+
         public virtual IDbConnection GetConnection(string connString)
         {
             return new TConnection() {ConnectionString = connString};
@@ -30,6 +33,82 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         public virtual IDbDataParameter GetNewParameter()
         {
             return new TParam();
+        }
+
+        public virtual TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        {
+            if (string.IsNullOrWhiteSpace(sSql))
+            {
+                if (isStoredProc)
+                    throw new NotImplementedException("Stored Procedure not provided for GetRecord");
+
+                throw new NotImplementedException("Sql Query not provided for GetRecord");
+
+            }
+
+            TInterface oReturn = default; 
+ 
+            using (var dbConn = GetConnection(connString)) 
+            { 
+                dbConn.Open(); 
+                using (var dbCmd = GetCommand(sSql, dbConn)) 
+                {
+                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    {
+                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                    }
+                    
+                    if (isStoredProc)
+                        dbCmd.CommandType = CommandType.StoredProcedure; 
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
+                    { 
+                        while (sqlResult.Read()) 
+                        { 
+                            oReturn = (TInterface)Activator.CreateInstance(typeof(TModel), new object[]{sqlResult}); 
+                        } 
+                    } 
+                } 
+            }
+            return oReturn;
+        }
+
+        public virtual IEnumerable<TInterface> GetRecordList<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        {
+            if (string.IsNullOrWhiteSpace(sSql))
+            {
+                if (isStoredProc)
+                    throw new NotImplementedException("Stored Procedure not provided for GetRecord");
+
+                throw new NotImplementedException("Sql Query not provided for GetRecord");
+
+            }
+
+            List<TInterface> oReturn = new List<TInterface>(); 
+ 
+            using (var dbConn = GetConnection(connString)) 
+            { 
+                dbConn.Open(); 
+                using (var dbCmd = GetCommand(sSql, dbConn)) 
+                {
+                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    {
+                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                    }
+                    
+                    if (isStoredProc)
+                        dbCmd.CommandType = CommandType.StoredProcedure; 
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
+                    { 
+                        while (sqlResult.Read()) 
+                        { 
+                            oReturn.Add((TInterface)Activator.CreateInstance(typeof(TModel), new object[]{sqlResult})); 
+                        } 
+                    } 
+                } 
+            }
+            return oReturn;
         }
     }
 }

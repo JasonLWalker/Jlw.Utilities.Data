@@ -7,13 +7,19 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
     {
         public override string DbType => "TSQL";
         protected override IModularDbClient DbClient { get; } = new ModularDbClient<SqlConnection, SqlCommand, SqlParameter>();
-        
 
+        public ModularSqlDbUtility()
+        {
+            _sGetDatabaseList = "SELECT [name] as [Name], [create_date] as [CreationDate], [collation_name] as [CollationName] FROM [sys].[databases] WHERE [owner_sid] <> 0x01 AND [state_desc] = 'ONLINE' ORDER BY [name]";
+        }
+        
+        /*
         public override IEnumerable<IDatabaseSchema> GetDatabaseList(string connString)
         {
             const string sSql = "SELECT [name] as [Name], [create_date] as [CreationDate], [collation_name] as [CollationName] FROM [sys].[databases] WHERE [owner_sid] <> 0x01 AND [state_desc] = 'ONLINE' ORDER BY [name]";
-            return GetDatabaseList(DbClient, connString, sSql);
+            return GetDatabaseList(connString, sSql);
         }
+        */
 
         public override IDatabaseSchema GetDatabaseSchema(string connString, string dbName)
         {
