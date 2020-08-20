@@ -1,34 +1,47 @@
 ﻿using System.Data;
+using System.Data.Common;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    public class DbConnectionWrapper<TModel> : IDbConnection
-        where TModel : class, IDbConnection, new()
+    public class DbConnectionWrapper<TModel, TCommand> : DbConnection
+        where TModel : DbConnection, new()
+        where TCommand : class, IDbCommand
     {
-        protected TModel _dbConn = new TModel();
+        protected TModel DbConn = new TModel();
 
-        public virtual void Dispose() => _dbConn.Dispose();
+        public new void Dispose() => DbConn.Dispose();
 
-        public virtual IDbTransaction BeginTransaction() => _dbConn.BeginTransaction();
-
-        public virtual IDbTransaction BeginTransaction(IsolationLevel il) => _dbConn.BeginTransaction(il);
-
-        public virtual void ChangeDatabase(string databaseName) => _dbConn.ChangeDatabase(databaseName);
-
-        public virtual void Close() => _dbConn.Close();
-
-        public virtual IDbCommand CreateCommand() => _dbConn.CreateCommand();
-
-        public virtual void Open() => _dbConn.Open();
-
-        public string ConnectionString
+        protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
-            get => _dbConn.ConnectionString;
-            set => _dbConn.ConnectionString = value;
+            return DbConn.BeginTransaction(isolationLevel);
         }
 
-        public int ConnectionTimeout => _dbConn.ConnectionTimeout;
-        public string Database => _dbConn.Database;
-        public ConnectionState State => _dbConn.State;
+        public new IDbTransaction BeginTransaction() => DbConn.BeginTransaction();
+
+        public new IDbTransaction BeginTransaction(IsolationLevel il) => DbConn.BeginTransaction(il);
+
+        public override void ChangeDatabase(string databaseName) => DbConn.ChangeDatabase(databaseName);
+
+        public override void Close() => DbConn.Close();
+
+        public new IDbCommand CreateCommand() => DbConn.CreateCommand();
+        protected override DbCommand CreateDbCommand()
+        {
+            return DbConn.CreateCommand();
+        }
+
+        public override void Open() => DbConn.Open();
+
+        public override string ConnectionString
+        {
+            get => DbConn.ConnectionString;
+            set => DbConn.ConnectionString = value;
+        }
+
+        public override int ConnectionTimeout => DbConn.ConnectionTimeout;
+        public override string Database => DbConn.Database;
+        public override string DataSource => DbConn.DataSource;
+        public override string ServerVersion => DbConn.ServerVersion;
+        public override ConnectionState State => DbConn.State;
     }
 }
