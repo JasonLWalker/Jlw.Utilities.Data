@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Jlw.Standard.Utilities.Data.Tests.UnitTests
+namespace Jlw.Standard.Utilities.Data.Tests.UnitTests.DataUtilityStatic
 {
     [TestClass]
     public class ParseNullableInt32Fixture

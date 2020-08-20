@@ -1,39 +1,40 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Jlw.Standard.Utilities.Data.Tests.UnitTests
+namespace Jlw.Standard.Utilities.Data.Tests.UnitTests.DataUtilityStatic
 {
     [TestClass]
-    public class ParseNullableByteFixture
+    public class ParseNullableDoubleFixture
     {
         [TestMethod]
-        [NullableByteDataSource]
+        [NullableDoubleDataSource]
         public void ShouldMatchForObject(object value, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableByte(value));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(value));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "kvpList[\"KeyDoesNotExist\"] should be null")]
-        [NullableByteKvpListDataSource]
+        [NullableDoubleKvpListDataSource]
         public void ShouldMatchForKvpList(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableByte(DataSourceValues.NullableByteKvpList, key));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleKvpList, key));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "dict[\"KeyDoesNotExist\"] should be null")]
-        [NullableByteDictionaryDataSource]
+        [NullableDoubleDictionaryDataSource]
         public void ShouldMatchForDictionary(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableByte(DataSourceValues.NullableByteDictionary, key));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleDictionary, key));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "data[\"KeyDoesNotExist\"] should be null")]
-        [NullableByteIDataRecordDataSource]
+        [NullableDoubleIDataRecordDataSource]
         public void ShouldMatchForDataRecord(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableByte(DataSourceValues.NullableByteDataRecord, key));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleDataRecord, key));
         }
+
     }
 }

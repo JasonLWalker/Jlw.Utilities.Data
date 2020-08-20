@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Jlw.Standard.Utilities.Data.Tests.UnitTests
+namespace Jlw.Standard.Utilities.Data.Tests.UnitTests.DataUtilityStatic
 {
     [TestClass]
     public class IpToUInt32Fixture

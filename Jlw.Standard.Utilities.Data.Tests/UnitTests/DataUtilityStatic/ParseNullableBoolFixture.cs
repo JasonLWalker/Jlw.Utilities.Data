@@ -1,40 +1,39 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Jlw.Standard.Utilities.Data.Tests.UnitTests
+namespace Jlw.Standard.Utilities.Data.Tests.UnitTests.DataUtilityStatic
 {
     [TestClass]
-    public class ParseNullableDoubleFixture
+    public class ParseNullableBoolFixture
     {
         [TestMethod]
-        [NullableDoubleDataSource]
+        [NullableBooleanDataSource]
         public void ShouldMatchForObject(object value, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(value));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableBool(value));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "kvpList[\"KeyDoesNotExist\"] should be null")]
-        [NullableDoubleKvpListDataSource]
+        [NullableBooleanKvpListDataSource]
         public void ShouldMatchForKvpList(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleKvpList, key));
+           Assert.AreEqual(expectedValue, DataUtility.ParseNullableBool(DataSourceValues.NullableBooleanKvpList, key));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "dict[\"KeyDoesNotExist\"] should be null")]
-        [NullableDoubleDictionaryDataSource]
+        [NullableBooleanDictionaryDataSource]
         public void ShouldMatchForDictionary(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleDictionary, key));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableBool(DataSourceValues.NullableBooleanDictionary, key));
         }
 
         [TestMethod]
         [DataRow("KeyDoesNotExist", null, null, DisplayName = "data[\"KeyDoesNotExist\"] should be null")]
-        [NullableDoubleIDataRecordDataSource]
+        [NullableBooleanIDataRecordDataSource]
         public void ShouldMatchForDataRecord(string key, object expectedValue, string displayName)
         {
-            Assert.AreEqual(expectedValue, DataUtility.ParseNullableDouble(DataSourceValues.NullableDoubleDataRecord, key));
+            Assert.AreEqual(expectedValue, DataUtility.ParseNullableBool(DataSourceValues.NullableBooleanDataRecord, key));
         }
-
     }
 }

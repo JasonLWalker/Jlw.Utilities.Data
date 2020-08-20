@@ -27,12 +27,12 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         protected string _sListKeyMemberName = "";
         protected string _sListDescriptionMemberName = "";
 
-        protected string _spGetRecord = "";
-        protected string _spGetAllRecords = "";
-        protected string _spSaveRecord = "";
-        protected string _spInsertRecord = "";
-        protected string _spUpdateRecord = "";
-        protected string _spDeleteRecord = "";
+        protected string _sGetRecord = "";
+        protected string _sGetAllRecords = "";
+        protected string _sSaveRecord = "";
+        protected string _sInsertRecord = "";
+        protected string _sUpdateRecord = "";
+        protected string _sDeleteRecord = "";
 
 
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString)
@@ -76,10 +76,38 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
 
             return dbCmd;
         }
+
         protected virtual IDbDataParameter AddParameterWithValue(string paramName, object value, IDbCommand dbCmd)
         {
             return _dbClient.AddParameterWithValue(paramName, value, dbCmd);
         }
+
+        protected virtual IEnumerable<KeyValuePair<string, object>> GetParamsForSql(TInterface o, string sSql)
+        {
+            var aReturn = new List<KeyValuePair<string, object>>();
+            PropertyInfo[] properties = typeof(TInterface).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            foreach (PropertyInfo p in properties)
+            {
+                // Don't process unreadable properties
+                if (!p.CanRead) { continue; }
+
+                // Don't process properties without a public get method
+                MethodInfo mget = p.GetGetMethod(false);
+                if (mget == null) { continue; }
+
+                var val = p.GetValue(o);
+                if (val != null)
+                {
+                    // Add parameter with lowercase member name and the current property value
+                    //AddParameterWithValue(p.Name.ToLower(), p.GetValue(o, null), dbCmd);
+                    aReturn.Add(new KeyValuePair<string, object>(p.Name, val));
+                }
+            }
+
+            return aReturn;
+        }
+
         protected virtual void PopulateParams(TInterface o, IDbCommand dbCmd)
         {
             PropertyInfo[] properties = typeof(TInterface).GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -104,17 +132,18 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         #endregion
 
 
-        public virtual TInterface GetRecord(TInterface o)
+        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sGetRecord, GetParamsForSql((TModel)o, _sGetRecord), true);
+        /*
         {
-            if (string.IsNullOrWhiteSpace(_spGetRecord))
+            if (string.IsNullOrWhiteSpace(_sGetRecord))
                 throw new NotImplementedException("Stored Procedure is not defined for GetRecord");
 
             TModel oReturn = default; 
- 
+
             using (var sqlConnection = GetConnection()) 
             { 
                 sqlConnection.Open(); 
-                using (var sqlCommand = GetCommand(_spGetRecord, sqlConnection)) 
+                using (var sqlCommand = GetCommand(_sGetRecord, sqlConnection)) 
                 { 
                     PopulateParams(o, sqlCommand);
 
@@ -131,10 +160,12 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             }
             return oReturn;
         }
+        */
 
-        public virtual IEnumerable<TInterface> GetAllRecords()
+        public virtual IEnumerable<TInterface> GetAllRecords() => _dbClient.GetRecordList<TInterface, TModel>(_connString, _sGetAllRecords, null, isStoredProc: true);
+        /*
         {
-            if (string.IsNullOrWhiteSpace(_spGetAllRecords))
+            if (string.IsNullOrWhiteSpace(_sGetAllRecords))
             {
                 throw new NotImplementedException("Stored Procedure is not defined for GetAllRecords");
             }
@@ -144,7 +175,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 using (var sqlConnection = GetConnection(_connString)) 
                 { 
                     sqlConnection.Open(); 
-                    using (var sqlCommand = GetCommand(_spGetAllRecords, sqlConnection)) 
+                    using (var sqlCommand = GetCommand(_sGetAllRecords, sqlConnection)) 
                     { 
                         sqlCommand.CommandType = CommandType.StoredProcedure; 
  
@@ -160,10 +191,12 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             } 
             return oReturn; 
         }
+        */
 
-        public virtual TInterface InsertRecord(TInterface o) 
+        public virtual TInterface InsertRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sInsertRecord, GetParamsForSql((TModel)o, _sInsertRecord), true);
+        /*
         { 
-            if (string.IsNullOrWhiteSpace(_spInsertRecord))
+            if (string.IsNullOrWhiteSpace(_sInsertRecord))
             {
                 throw new NotImplementedException("Stored Procedure is not defined for InsertRecord");
             }
@@ -173,7 +206,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             using (var sqlConnection = GetConnection(_connString)) 
             { 
                 sqlConnection.Open(); 
-                using (var sqlCommand = GetCommand(_spInsertRecord, sqlConnection)) 
+                using (var sqlCommand = GetCommand(_sInsertRecord, sqlConnection)) 
                 { 
                     PopulateParams(o, sqlCommand);
                     sqlCommand.CommandType = CommandType.StoredProcedure; 
@@ -190,10 +223,12 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             return oReturn; 
         } 
- 
-        public virtual TInterface SaveRecord(TInterface o) 
+        */
+
+        public virtual TInterface SaveRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sSaveRecord, GetParamsForSql((TModel)o, _sSaveRecord), true);
+        /*
         { 
-            if (string.IsNullOrWhiteSpace(_spSaveRecord))
+            if (string.IsNullOrWhiteSpace(_sSaveRecord))
             {
                 throw new NotImplementedException("Stored Procedure is not defined for SaveRecord");
             }
@@ -203,7 +238,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             using (var sqlConnection = GetConnection(_connString)) 
             { 
                 sqlConnection.Open(); 
-                using (var sqlCommand = GetCommand(_spSaveRecord, sqlConnection)) 
+                using (var sqlCommand = GetCommand(_sSaveRecord, sqlConnection)) 
                 { 
                     PopulateParams(o, sqlCommand);
                     sqlCommand.CommandType = CommandType.StoredProcedure; 
@@ -220,10 +255,11 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             return oReturn; 
         } 
-
-        public virtual TInterface UpdateRecord(TInterface o) 
+        */
+        public virtual TInterface UpdateRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sUpdateRecord, GetParamsForSql((TModel)o, _sUpdateRecord), true);
+        /*
         { 
-            if (string.IsNullOrWhiteSpace(_spUpdateRecord))
+            if (string.IsNullOrWhiteSpace(_sUpdateRecord))
             {
                 throw new NotImplementedException("Stored Procedure is not defined for UpdateRecord");
             }
@@ -233,7 +269,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             using (var sqlConnection = GetConnection(_connString)) 
             { 
                 sqlConnection.Open(); 
-                using (var sqlCommand = GetCommand(_spUpdateRecord, sqlConnection)) 
+                using (var sqlCommand = GetCommand(_sUpdateRecord, sqlConnection)) 
                 { 
                     PopulateParams(o, sqlCommand);
                     sqlCommand.CommandType = CommandType.StoredProcedure; 
@@ -250,11 +286,12 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             return oReturn; 
         } 
+        */
 
-
-        public virtual TInterface DeleteRecord(TInterface o) 
+        public virtual TInterface DeleteRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sDeleteRecord, GetParamsForSql((TModel)o, _sDeleteRecord), true);
+        /*
         { 
-            if (string.IsNullOrWhiteSpace(_spDeleteRecord))
+            if (string.IsNullOrWhiteSpace(_sDeleteRecord))
             {
                 throw new NotImplementedException("Stored Procedure is not defined for DeleteRecord");
             }
@@ -265,7 +302,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
                 using (var sqlConnection = GetConnection(_connString)) 
                 { 
                     sqlConnection.Open(); 
-                    using (var sqlCommand = GetCommand(_spDeleteRecord, sqlConnection)) 
+                    using (var sqlCommand = GetCommand(_sDeleteRecord, sqlConnection)) 
                     {
                         PopulateParams(o, sqlCommand);
                         sqlCommand.CommandType = CommandType.StoredProcedure; 
@@ -287,7 +324,8 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
  
             return oReturn; 
         } 
- 
+        */
+
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetKvpList() 
         { 
@@ -304,9 +342,7 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             }
 
             return oReturn;
-        } 
- 
-
+        }
 
     }
 }
