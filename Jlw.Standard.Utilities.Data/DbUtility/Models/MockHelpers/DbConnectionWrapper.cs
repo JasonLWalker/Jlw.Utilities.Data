@@ -3,13 +3,14 @@ using System.Data.Common;
 
 namespace Jlw.Standard.Utilities.Data.DbUtility
 {
-    public class DbConnectionWrapper<TModel, TCommand> : DbConnection
+    public class DbConnectionWrapper<TModel> : DbConnection
         where TModel : DbConnection, new()
-        where TCommand : class, IDbCommand
     {
-        protected TModel DbConn = new TModel();
+        protected internal TModel DbConn = new TModel();
 
         public new void Dispose() => DbConn.Dispose();
+
+        public static implicit operator TModel(DbConnectionWrapper<TModel> o) => o.DbConn;
 
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
