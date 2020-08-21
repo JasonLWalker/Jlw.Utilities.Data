@@ -33,7 +33,7 @@ jobs:
     - name: Test Env
       run: echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
     - name: Create zip archive
-      run: zip "${{ env.PKGNAME }}.${{ env.PKGVERSION }}" README.md
+      run: zip "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" README.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
