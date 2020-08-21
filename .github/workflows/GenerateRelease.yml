@@ -33,7 +33,7 @@ jobs:
     - name: Test Env
       run: echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
     - name: Create zip archive
-      run: zip "${{ env.PKGNAME }}${{ env.PKGVERSION }}" README.md
+      run: zip "${{ env.PKGNAME }}.${{ env.PKGVERSION }}" README.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
@@ -51,6 +51,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.NUGET_USER }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./my-artifact.zip
-        asset_name: my-artifact.zip
+        asset_path: "./${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
+        asset_name: "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
         asset_content_type: application/zip
