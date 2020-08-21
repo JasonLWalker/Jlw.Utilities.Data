@@ -26,14 +26,22 @@ jobs:
       run: dotnet pack --version-suffix="-alpha" --configuration Release
     - name: Create zip archive
       run: zip Jlw.Utilities.Data.zip README.md
+    - name: Test env
+      env:
+        PKGNAME: $(pwd | sed 's/.*\/\([^\/]*\)$/\1/')
+        PKGVERSION: $(echo `ls /home/runner/work/Jlw.Utilities.Data/Jlw.Utilities.Data/Jlw.Utilities.Data/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')
+      run: |
+        echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PKGNAME: $(pwd | sed 's/.*\/\([^\/]*\)$/\1/')
+        PKGVERSION: $(echo `ls /home/runner/work/Jlw.Utilities.Data/Jlw.Utilities.Data/Jlw.Utilities.Data/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')
       with:
-        tag_name: $(echo `ls /home/runner/work/Jlw.Utilities.Data/Jlw.Utilities.Data/Jlw.Utilities.Data/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')
-        release_name: Release $(pwd | sed 's/.*\/\([^\/]*\)$/\1/')
+        tag_name: ${{ env.PKGVERSION }} 
+        release_name: Release 
         draft: false
         prerelease: true
     - name: Upload Release Asset
