@@ -2,7 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ staging ]
+    branches: #all branches that are NOT master.
+      - '*'
+      - '!master'
 
 jobs:
   build:
