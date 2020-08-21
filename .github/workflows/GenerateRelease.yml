@@ -47,7 +47,7 @@ jobs:
       with:
         tag_name: ${{ env.PKGVERSION }} 
         release_name: Release ${{ env.PKGNAME }}
-        draft: false
+        draft: true
         prerelease: true
     - name: Upload Release Asset
       id: upload-release-asset 
