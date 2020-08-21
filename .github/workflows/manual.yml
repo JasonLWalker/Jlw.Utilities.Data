@@ -25,14 +25,14 @@ jobs:
     - name: Pack NuGet package
       run: dotnet pack --version-suffix="-alpha" --configuration Release
     - name: Create zip archive
-      run: zip $(pwd | sed 's/.*\/\([^\/]*\)$/\1/') README.md
+      run: zip Jlw.Utilities.Data.zip README.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $(ls $(pwd | sed 's/.*\/\([^\/]*\)$/\1/')/bin/Release/*.nupkg | sed 's/[^0-9]*\([0-9.]*\)\.nupkg/v\1/')
+        tag_name: $(ls Jlw.Utilities.Data/bin/Release/*.nupkg | sed 's/[^0-9]*\([0-9.]*\)\.nupkg/v\1/')
         release_name: Release $(pwd | sed 's/.*\/\([^\/]*\)$/\1/')
         draft: false
         prerelease: true
