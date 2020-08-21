@@ -11,13 +11,17 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
         public MySqlConnectionStringBuilder ConnectionStringBuilder => _builder;
 
         //protected override IModularDbClient DbClient { get; } = new ModularMySqlClient();
-        public ModularMySqlDbUtility() : this("MySQL") {}
+        public ModularMySqlDbUtility() : this(null) {}
 
-        public ModularMySqlDbUtility(string sType) : this(sType, null) { }
+        //public ModularMySqlDbUtility(string sType) : this("MySql", null) { }
 
-        public ModularMySqlDbUtility(string sType, string connString) : base(sType, connString, new ModularMySqlClient())
+        public ModularMySqlDbUtility(string connString) : base("MySql", connString, new ModularMySqlClient())
         {
-
+            _sGetDatabaseList = "SELECT SCHEMA_NAME as `Name`, null as CreationDate, DEFAULT_COLLATION_NAME as CollationName FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME NOT IN ('information_schema')";
+            //_sGetDatabaseSchema = 
+            _sGetTableColumns = "SELECT '' as `Schema`, c.`TABLE_SCHEMA` as `Database`, c.`TABLE_NAME` as `Table`, c.`COLUMN_NAME` as `Column`, c.`ORDINAL_POSITION` as `ColumnOrder`, c.`DATA_TYPE` as `DataType`, c.`COLUMN_DEFAULT` as `DefaultValue`, c.`IS_NULLABLE` as `IsNullable`, c.`CHARACTER_MAXIMUM_LENGTH` as `MaxLength`, c.`NUMERIC_PRECISION` as `NumericPrecision`, c.`NUMERIC_SCALE` as `NumericScale`, c.`COLLATION_NAME` as `Collation`, c.EXTRA = 'auto_increment' as `IsIdentity` FROM INFORMATION_SCHEMA.COLUMNS as c WHERE TABLE_NAME = @tableName AND TABLE_SCHEMA=@dbName ORDER BY c.`ORDINAL_POSITION` ";
+            _sGetTableList = "SELECT TABLE_SCHEMA as `Database`, '' as `Schema`, TABLE_NAME as `Name`, TABLE_TYPE as `Type` FROM information_schema.tables WHERE TABLE_SCHEMA=@dbName ORDER BY TABLE_NAME;";
+            _connString = connString;
         }
 
         public ModularMySqlDbUtility(string server, string username = "", string password = "", string port = "", string connString="") : this(connString)

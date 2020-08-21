@@ -50,12 +50,13 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
 
         public virtual IEnumerable<IDatabaseSchema> GetDatabaseList(string connString)
         {
+            /*
             var aReturn = new List<DatabaseSchema>();
 
-            using (var dbConn = _dbClient.GetConnection(connString))
+            using (var dbConn = GetConnection(connString))
             {
                 dbConn.Open();
-                using (var dbCmd = _dbClient.GetCommand(_sGetDatabaseList, dbConn))
+                using (var dbCmd = GetCommand(_sGetDatabaseList, dbConn))
                 {
                     using (IDataReader sqlResult = dbCmd.ExecuteReader())
                     {
@@ -68,6 +69,8 @@ namespace Jlw.Standard.Utilities.Data.DbUtility
             }
 
             return aReturn;
+            */
+            return DbClient.GetRecordList<IDatabaseSchema, DatabaseSchema>(connString, _sGetDatabaseList);
         }
 
         public virtual IDatabaseSchema GetDatabaseSchema(string dbName) => GetDatabaseSchema(_connString, dbName);
