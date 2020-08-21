@@ -33,7 +33,12 @@ jobs:
     - name: Test Env
       run: echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
     - name: Create zip archive
-      run: zip "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" "./${{ env.PKGNAME }}/bin/Release/netstandard2.0/*"
+      run: |
+        ls ./
+        ls ./${{ env.PKGNAME }}/
+        ls ./${{ env.PKGNAME }}/bin/
+        ls ./${{ env.PKGNAME }}/bin/Release
+        zip "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" ./${{ env.PKGNAME }}/bin/Release/netstandard2.0/*
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
