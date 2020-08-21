@@ -19,4 +19,6 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Send greeting
-      run: echo ls
+      run: |
+        ls |
+        pwd
