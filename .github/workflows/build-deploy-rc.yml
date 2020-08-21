@@ -38,3 +38,39 @@ jobs:
     - name: Push package to NuGet
       run: dotnet nuget push -s github **/*.nupkg -k ${{ secrets.NUGET_KEY }}
       
+
+    - name: Get Package Info
+      run: |
+        export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
+        export PKG_VERSION="$(echo `ls /home/runner/work/Jlw.Utilities.Data/Jlw.Utilities.Data/Jlw.Utilities.Data/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')"
+        echo "::set-env name=PKGNAME::$PKG_NAME"        
+        echo "::set-env name=PKGVERSION::$PKG_VERSION"        
+    - name: Test Env
+      run: echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
+    - name: Create zip archive
+      run: |
+        ls ./
+        ls ./${{ env.PKGNAME }}/
+        ls ./${{ env.PKGNAME }}/bin/
+        ls ./${{ env.PKGNAME }}/bin/Release
+        zip --junk-paths "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" ./${{ env.PKGNAME }}/bin/Release/netstandard2.0/* README.md License.txt
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.PKGVERSION }} 
+        release_name: Release ${{ env.PKGNAME }}
+        draft: true
+        prerelease: true
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: "./${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
+        asset_name: "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
+        asset_content_type: application/zip
