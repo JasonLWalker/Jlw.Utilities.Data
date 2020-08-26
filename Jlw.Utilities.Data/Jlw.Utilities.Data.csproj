@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net452;net48</TargetFrameworks>
+		<Deterministic>False</Deterministic>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
+		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Package.Releases.git</RepositoryUrl>    
+		<VersionSuffix>$(VersionSuffix)</VersionSuffix>    
+		<AssemblyName>Jlw.Utilities.Data</AssemblyName>    
+		<RootNamespace>Jlw.Utilities.Data</RootNamespace>    
+		<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MySql.Data" Version="8.0.21">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.1">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.2">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">
+		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+			<Output TaskParameter="Assemblies" ItemName="PackAssembly" />
+		</GetAssemblyIdentity>
+		<PropertyGroup>
+			<PackageVersion>%(PackAssembly.Version)$(VersionSuffix)</PackageVersion>
+		</PropertyGroup>
+	</Target>
+
+
+</Project>
