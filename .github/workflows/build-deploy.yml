@@ -1,0 +1,113 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ primary ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get Package Info
+      run: |
+        $PKG_NAME=(Get-Item -Path ".\").Name
+        $CURRENT_DIR=(Get-Item -Path ".\").FullName
+        echo "::set-env name=PKGNAME::$PKG_NAME"        
+        echo "::set-env name=CURRENTDIR::$CURRENT_DIR"        
+    - name: Setup .NET Core 2.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1
+    - name: Setup .NET Core 2.2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2
+    - name: Setup .NET Core 3.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.x
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build with dotnet
+      run: dotnet build --configuration Release --no-restore
+    - name: Test with dotnet 3.1
+      run: dotnet test --no-restore --verbosity normal ${{ env.PKGNAME }}.Tests
+
+    - name: Switch to dotnet 2.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1
+    - name: Test with dotnet 2.1
+      run: dotnet test --no-restore --verbosity normal ${{ env.PKGNAME }}.Tests-netcoreapp2.1
+
+  deploy:
+    needs: build
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      #with:
+      #  dotnet-version: 3.1
+    - name: Setup .NET Core 2.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1
+    - name: Setup .NET Core 2.2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2
+    - name: Setup .NET Core 3.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.x
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1
+    #- name: Configure private package repo
+    #  run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.NUGET_USER }}/index.json --store-password-in-clear-text --name=github --username=${{ secrets.NUGET_USER }} --password=${{ secrets.NUGET_KEY }}
+    - name: Pack NuGet package
+      run: dotnet pack --configuration Release
+
+    - name: Push package to NuGet
+      run: dotnet nuget push -s github **/*.nupkg -k ${{ secrets.NUGET_KEY }}
+      
+
+    - name: Get Package Info
+      run: |
+        export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
+        export PKG_VERSION="$(echo `ls /home/runner/work/$PKG_NAME/$PKG_NAME/$PKG_NAME/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')"
+        echo "::set-env name=PKGNAME::$PKG_NAME"        
+        echo "::set-env name=PKGVERSION::$PKG_VERSION"        
+        echo "::set-env name=CURRENT_DIR::`pwd`"        
+    #- name: Test Env
+    #  run: echo "${{ env.PKGNAME }} ${{ env.PKGVERSION }}"
+    - name: Create zip archive
+      run: |
+        zip -r "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" ./${{ env.PKGNAME }}/bin/Release/* README.md License.txt
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.PKGVERSION }} 
+        release_name: Release ${{ env.PKGNAME }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: "./${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
+        asset_name: "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip"
+        asset_content_type: application/zip
