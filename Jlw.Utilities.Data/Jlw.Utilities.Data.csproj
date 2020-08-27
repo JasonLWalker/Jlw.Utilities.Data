@@ -4,7 +4,7 @@
 		<Deterministic>False</Deterministic>
 		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 		<GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Package.Releases.git</RepositoryUrl>    
+		<RepositoryUrl>https://github.com/jasonlwalker/Jlw.Utilities.Data.git</RepositoryUrl>    
 		<VersionSuffix>$(VersionSuffix)</VersionSuffix>    
 		<AssemblyName>Jlw.Utilities.Data</AssemblyName>    
 		<RootNamespace>Jlw.Utilities.Data</RootNamespace>    
@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">
-		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+		<GetAssemblyIdentity AssemblyFiles="$(OutputPath)\netstandard2.0\$(AssemblyName).dll">
 			<Output TaskParameter="Assemblies" ItemName="PackAssembly" />
 		</GetAssemblyIdentity>
 		<PropertyGroup>
