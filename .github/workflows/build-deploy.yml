@@ -105,7 +105,8 @@ jobs:
     - name: Push generated package to GitHub registry
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: dotnet nuget push **/*.nupkg --skip-duplicate --no-symbols true
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push **/*.nupkg --skip-duplicate --no-symbols true -k ${{ secrets.GITHUB_TOKEN }}
 
     - name: Get Package Version
       run: |
