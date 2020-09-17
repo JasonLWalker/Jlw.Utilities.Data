@@ -11,11 +11,10 @@ namespace Jlw.Utilities.Data.DbUtility
         DbConnectionStringBuilder ConnectionBuilder { get; }
 
         IModularDbClient DbClient { get; }
-        //IDictionary<string, RepositoryMethodDefinition<TInterface, TModel>> Definitions { get; }
 
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null);
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null);
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null);
+        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
+        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
+        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
     }
 
     public class ModularDataRepository<TInterface, TModel> : IModularDataRepository<TInterface, TModel>
@@ -30,7 +29,6 @@ namespace Jlw.Utilities.Data.DbUtility
         public DbConnectionStringBuilder ConnectionBuilder => _builder;
         public string ConnectionString => _builder.ConnectionString;
         public IModularDbClient DbClient => _dbClient;
-        //public IDictionary<string, RepositoryMethodDefinition<TInterface, TModel>> Definitions => _definitions;
 
         public ModularDataRepository(IModularDbClient dbClient, string connString = "")
         {
@@ -48,21 +46,21 @@ namespace Jlw.Utilities.Data.DbUtility
             return null;
         }
 
-        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null)
+        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
             _definitions.Add(name, def);
             return def;
         }
 
-        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null)
+        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
             _definitions.Add(name, def);
             return def;
         }
 
-        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryMethodDefinition<TInterface, TModel>.RecordCallback callback = null)
+        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
             _definitions.Add(name, def);

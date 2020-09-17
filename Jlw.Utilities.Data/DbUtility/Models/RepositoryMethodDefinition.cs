@@ -5,27 +5,27 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    public delegate TInterface RepositoryRecordCallback<TInterface>(IDataRecord o); // declare a delegate
+    public delegate void RepositoryParameterCallback<TInterface>(TInterface o, out IDbDataParameter param);
+
     public class RepositoryMethodDefinition<TModel> : RepositoryMethodDefinition<TModel, TModel>
     {
-        public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RecordCallback callback = null) : base(sql, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback<TModel> callback = null) : base(sql, paramList, callback) { }
 
-        public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RecordCallback callback = null) : base(sql, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback<TModel> callback = null) : base(sql, paramList, callback) { }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<IDbDataParameter> paramList = null, RecordCallback callback = null) : base(sql, cmdType, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback<TModel> callback = null) : base(sql, cmdType, paramList, callback) { }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<KeyValuePair<string, object>> paramList, RecordCallback callback = null) : base(sql, cmdType, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback<TModel> callback = null) : base(sql, cmdType, paramList, callback) { }
     }
 
 
     public class RepositoryMethodDefinition<TInterface, TModel>
     where TModel : TInterface
     {
-        public delegate object RecordCallback(IDataRecord o); // declare a delegate
-        public delegate void ParameterCallback(TInterface o, out IDbDataParameter param);
-
         // ReSharper disable InconsistentNaming
         protected IList<IDbDataParameter> _dataParameters = new List<IDbDataParameter>();
-        protected RecordCallback _callback;
+        protected RepositoryRecordCallback<TInterface> _callback;
         protected CommandType _commandType;
         protected readonly string _sqlQuery;
         // ReSharper restore InconsistentNaming
@@ -34,17 +34,17 @@ namespace Jlw.Utilities.Data.DbUtility
         public readonly System.Type ModelType = typeof(TModel);
 
         public IEnumerable<IDbDataParameter> Parameters => _dataParameters;
-        public RecordCallback Callback => _callback;
+        public RepositoryRecordCallback<TInterface> Callback => _callback;
         public CommandType CommandType => _commandType;
         public string SqlQuery => _sqlQuery;
 
-        public RepositoryMethodDefinition(string sql, IEnumerable<string> paramList, RecordCallback callback = null) : this(sql, CommandType.Text, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, IEnumerable<string> paramList, RepositoryRecordCallback<TInterface> callback = null) : this(sql, CommandType.Text, paramList, callback) { }
 
-        public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RecordCallback callback = null) : this(sql, CommandType.Text, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback<TInterface> callback = null) : this(sql, CommandType.Text, paramList, callback) { }
         
-        public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RecordCallback callback = null) : this(sql, CommandType.Text, paramList, callback) { }
+        public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback<TInterface> callback = null) : this(sql, CommandType.Text, paramList, callback) { }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<string> paramList = null, RecordCallback callback = null)
+        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<string> paramList = null, RepositoryRecordCallback<TInterface> callback = null)
         {
             _sqlQuery = sql;
             _callback = callback;
@@ -64,7 +64,7 @@ namespace Jlw.Utilities.Data.DbUtility
             }
         }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<IDbDataParameter> paramList = null, RecordCallback callback=null)
+        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback<TInterface> callback =null)
         {
             _sqlQuery = sql;
             _callback = callback;
@@ -89,7 +89,7 @@ namespace Jlw.Utilities.Data.DbUtility
             }
         }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<KeyValuePair<string, object>> paramList, RecordCallback callback = null)
+        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback<TInterface> callback = null)
         {
             _sqlQuery = sql;
             _callback = callback;
@@ -100,11 +100,9 @@ namespace Jlw.Utilities.Data.DbUtility
                 foreach (var param in paramList)
                 {
                     IDbDataParameter p = new MockDbParameter();
-                    //p.DbType = param.DbType;
                     p.Direction = ParameterDirection.Input;
                     p.ParameterName = param.Key;
                     p.SourceColumn = param.Value.ToString();
-                    //p.SourceVersion = param.SourceVersion;
                     p.Value = param.Value;
                     _dataParameters.Add(p);
                 }
