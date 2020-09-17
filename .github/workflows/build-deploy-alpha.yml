@@ -92,8 +92,6 @@ jobs:
         echo "::set-env name=DOTNET_NOLOGO::1"
         echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
         echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
-    - name: Checkout Repository
-      uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
