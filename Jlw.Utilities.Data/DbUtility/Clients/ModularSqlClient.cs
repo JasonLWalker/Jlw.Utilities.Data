@@ -2,7 +2,7 @@
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public class ModularSqlClient : ModularDbClient<SqlConnection, SqlCommand, SqlParameter>, IModularDbClient
+    public class ModularSqlClient : ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder>, IModularDbClient
     {
 
     }
