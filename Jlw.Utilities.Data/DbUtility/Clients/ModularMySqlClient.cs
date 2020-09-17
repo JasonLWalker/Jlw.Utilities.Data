@@ -35,8 +35,8 @@ namespace Jlw.Utilities.Data.DbUtility
                         AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
                     }
                     
-                    if (isStoredProc)
-                        dbCmd.CommandType = CommandType.StoredProcedure; 
+                    //if (isStoredProc)
+                    //    dbCmd.CommandType = CommandType.StoredProcedure; 
 
                     using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
                     { 
@@ -78,8 +78,8 @@ namespace Jlw.Utilities.Data.DbUtility
                         AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
                     }
                     
-                    if (isStoredProc)
-                        dbCmd.CommandType = CommandType.StoredProcedure; 
+                    //if (isStoredProc)
+                    //    dbCmd.CommandType = CommandType.StoredProcedure; 
 
                     using (IDataReader sqlResult = dbCmd.ExecuteReader()) 
                     { 
