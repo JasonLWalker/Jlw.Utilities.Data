@@ -108,7 +108,6 @@ jobs:
         do
           curl -vX PUT -u "${{ secrets.NUGET_USER }}:${{ secrets.GITHUB_TOKEN }}" -F package=@$f https://nuget.pkg.github.com/${{ secrets.NUGET_USER }}/
         done
-      working-directory: src/bin/Release
     - name: Create zip archive
       run: |
         zip -r "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" ./${{ env.PKGNAME }}/bin/Release/* README.md License.txt
