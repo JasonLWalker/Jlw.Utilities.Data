@@ -97,18 +97,18 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
-    - name: Setup .NET Core and Push generated package to GitHub registry
-      uses: actions/setup-dotnet@v1
-      with:
-        source-url: https://nuget.pkg.github.com/<organization>/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      run: dotnet nuget push **/*.nupkg --skip-duplicate --no-symbols true
 
     - name: Get Package Version
       run: |
         export PKG_VERSION="$(echo `ls ./${{ env.PKGNAME }}/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')"
-        echo "::set-env name=PKGVERSION::$PKG_VERSION"        
+        echo "::set-env name=PKGVERSION::$PKG_VERSION"
+    - name: Publish to github (using curl)
+      run: |
+        for f in ./${{ env.PKGNAME }}/bin/Release/*.nupkg
+        do
+          curl -vX PUT -u "${{ secrets.NUGET_USER }}:${{ secrets.GITHUB_TOKEN }}" -F package=@$f https://nuget.pkg.github.com/${{ secrets.NUGET_USER }}/
+        done
+      working-directory: src/bin/Release
     - name: Create zip archive
       run: |
         zip -r "${{ env.PKGNAME }}.${{ env.PKGVERSION }}.zip" ./${{ env.PKGNAME }}/bin/Release/* README.md License.txt
