@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public class ModularMySqlClient : ModularDbClient<MySql.Data.MySqlClient.MySqlConnection, MySql.Data.MySqlClient.MySqlCommand, MySql.Data.MySqlClient.MySqlParameter>, IModularDbClient
+    public class ModularMySqlClient : ModularDbClient<MySql.Data.MySqlClient.MySqlConnection, MySql.Data.MySqlClient.MySqlCommand, MySql.Data.MySqlClient.MySqlParameter, MySql.Data.MySqlClient.MySqlConnectionStringBuilder>, IModularDbClient
     {
         public bool SupportOlderConnections = true;
 

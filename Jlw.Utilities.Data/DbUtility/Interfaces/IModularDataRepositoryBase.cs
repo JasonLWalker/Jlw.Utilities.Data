@@ -2,7 +2,6 @@
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    
     public interface IModularDataRepositoryBase<TInterface, TModel>
     {
         TInterface GetRecord(TInterface o);

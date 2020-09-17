@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Jlw.Utilities.Data")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A Data utility class")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Jason L. Walker")]
 [assembly: AssemblyProduct("Jlw.Utilites.Data")]
 [assembly: AssemblyCopyright("Copyright ©2012-2020 Jason L. Walker")]
 [assembly: AssemblyTrademark("")]

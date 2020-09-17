@@ -10,6 +10,11 @@
 		<RootNamespace>Jlw.Utilities.Data</RootNamespace>    
 		<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageId>Jlw.Utilities.Data</PackageId>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+		<Authors>Jlw.Utilities.Data</Authors>
 	</PropertyGroup>
 
 	<ItemGroup>

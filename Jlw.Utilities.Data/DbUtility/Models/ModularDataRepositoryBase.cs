@@ -19,16 +19,23 @@ namespace Jlw.Utilities.Data.DbUtility
     }
     */
 
+    public class ModularDataRepositoryBase<TModel> : ModularDataRepositoryBase<TModel, TModel>
+    {
+        public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
+    }
+
     public class ModularDataRepositoryBase<TInterface, TModel> : IModularDataRepositoryBase<TInterface, TModel>
         where TModel : TInterface
     {
-        protected DbConnectionStringBuilder _builder = new DbConnectionStringBuilder();
+        protected DbConnectionStringBuilder _builder { get; } //return _dbClient.CreateConnectionBuilder(); 
+        
 
         protected string _connString => _builder.ConnectionString;
         protected IModularDbClient _dbClient;
 
         protected string _sListKeyMemberName = "";
         protected string _sListDescriptionMemberName = "";
+
 
         protected string _sGetRecord = "";
         protected string _sGetAllRecords = "";
@@ -40,8 +47,8 @@ namespace Jlw.Utilities.Data.DbUtility
 
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString)
         {
-            _builder.ConnectionString = connString;
             _dbClient = dbClient ?? new ModularDbClient<NullDbConnection, NullDbCommand, NullDbParameter>();
+            _builder = _dbClient.CreateConnectionBuilder(connString);
         }
 
         #region Internal Members
