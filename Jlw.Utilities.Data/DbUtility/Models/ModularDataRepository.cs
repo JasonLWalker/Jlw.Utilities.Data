@@ -33,7 +33,7 @@ namespace Jlw.Utilities.Data.DbUtility
         public ModularDataRepository(IModularDbClient dbClient, string connString = "")
         {
             _dbClient = dbClient ?? new ModularDbClient<NullDbConnection, NullDbCommand, NullDbParameter>();
-            _builder = _dbClient.CreateConnectionBuilder(connString);
+            _builder = _dbClient.GetConnectionBuilder(connString);
         }
 
         protected RepositoryMethodDefinition<TInterface, TModel> GetDefinition(string key)
