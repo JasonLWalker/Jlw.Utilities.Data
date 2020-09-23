@@ -6,12 +6,22 @@
     <IsPackable>false</IsPackable>
 
     <AssemblyName>Jlw.Utilities.Data.Tests</AssemblyName>
+
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Jlw.Utilities.Data.Tests\Data\**" LinkBase="Data\"  />
-    <Compile Include="..\Jlw.Utilities.Data.Tests\UnitTests\**" LinkBase="UnitTests\"  />
+    <Compile Include="..\Jlw.Utilities.Data.Tests\Data\**" LinkBase="Data\" />
+    <Compile Include="..\Jlw.Utilities.Data.Tests\UnitTests\**" LinkBase="UnitTests\" />
+    <Compile Remove="..\Jlw.Utilities.Data.Tests\Data\Sql\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Jlw.Utilities.Data.Tests\Data\Sql\**" LinkBase="Data\Sql\">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
