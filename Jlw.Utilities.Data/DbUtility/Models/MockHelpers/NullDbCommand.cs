@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
@@ -54,7 +56,7 @@ namespace Jlw.Utilities.Data.DbUtility
         public int CommandTimeout { get; set; }
         public CommandType CommandType { get; set; }
         public IDbConnection Connection { get; set; }
-        public IDataParameterCollection Parameters { get; }
+        public IDataParameterCollection Parameters { get; } = new MockDataParameterCollection();
         public IDbTransaction Transaction { get; set; }
         public UpdateRowSource UpdatedRowSource { get; set; }
     }
