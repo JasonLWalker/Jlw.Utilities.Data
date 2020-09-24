@@ -20,6 +20,8 @@ namespace Jlw.Utilities.Data.DbUtility
         System.Data.IDbDataParameter GetNewParameter();
         System.Data.IDbDataParameter GetNewParameter(System.Data.IDbDataParameter param);
 
+        object GetRecordScalar(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false);
+
         TModel GetRecordObject<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition);
         TModel GetRecordObject<TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false);
         TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface;
