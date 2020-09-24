@@ -14,6 +14,7 @@ namespace Jlw.Utilities.Data.DbUtility
         IModularDbClient DbClient { get; }
 
         TInterface GetRecordObject(TInterface objSearch, string definitionName);
+        TReturn GetRecordObject<TReturn>(TInterface objSearch, string definitionName);
 
         RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null);
         RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null);
@@ -73,7 +74,8 @@ namespace Jlw.Utilities.Data.DbUtility
             return def;
         }
 
-        public virtual TInterface GetRecordObject(TInterface objSearch, string definitionName)
+        public virtual TInterface GetRecordObject(TInterface objSearch, string definitionName) => GetRecordObject<TInterface>(objSearch, definitionName);
+        /*
         {
             RepositoryMethodDefinition<TInterface, TModel> def = GetDefinition(definitionName);
             if (def == null)
@@ -83,7 +85,21 @@ namespace Jlw.Utilities.Data.DbUtility
 
             return _dbClient.GetRecordObject(objSearch, ConnectionString, def);
         }
+        */
 
+        public TReturn GetRecordObject<TReturn>(TInterface objSearch, string definitionName)
+        {
+            var def = GetDefinition(definitionName);
+            if (def == null)
+            {
+                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
+            }
+
+
+
+            return _dbClient.GetRecordObject<TInterface, TModel, TReturn>(objSearch, ConnectionString, def);
+
+        }
 
 
         public virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, nameof(GetRecord));
