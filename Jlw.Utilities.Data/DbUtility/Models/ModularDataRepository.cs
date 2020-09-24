@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
@@ -38,12 +39,15 @@ namespace Jlw.Utilities.Data.DbUtility
 
         protected RepositoryMethodDefinition<TInterface, TModel> GetDefinition(string key)
         {
+            return _definitions.FirstOrDefault(o => o.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;            
+            /*
             if (_definitions?.ContainsKey(key) ?? false)
             {
                 return _definitions[key];
             }
 
             return null;
+            */
         }
 
         public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null)
@@ -67,11 +71,24 @@ namespace Jlw.Utilities.Data.DbUtility
             return def;
         }
 
-        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(o, ConnectionString, GetDefinition(nameof(GetRecord)));
-        public virtual TInterface InsertRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(o, ConnectionString, GetDefinition(nameof(InsertRecord)));
-        public virtual TInterface SaveRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(o, ConnectionString, GetDefinition(nameof(SaveRecord)));
-        public virtual TInterface UpdateRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(o, ConnectionString, GetDefinition(nameof(UpdateRecord)));
-        public virtual TInterface DeleteRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(o,ConnectionString, GetDefinition(nameof(DeleteRecord)));
+        public TInterface GetRecordObject(TInterface objSearch, string definitionName)
+        {
+            RepositoryMethodDefinition<TInterface, TModel> def = GetDefinition(definitionName);
+            if (def == null)
+            {
+                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
+            }
+
+            return _dbClient.GetRecordObject(objSearch, ConnectionString, def);
+        }
+
+
+
+        public virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, nameof(GetRecord));
+        public virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, nameof(InsertRecord));
+        public virtual TInterface SaveRecord(TInterface o) => GetRecordObject(o, nameof(SaveRecord));
+        public virtual TInterface UpdateRecord(TInterface o) => GetRecordObject(o, nameof(UpdateRecord));
+        public virtual TInterface DeleteRecord(TInterface o) => GetRecordObject(o, nameof(DeleteRecord));
 
     }
 }
