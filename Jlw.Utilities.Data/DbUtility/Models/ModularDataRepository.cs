@@ -13,6 +13,8 @@ namespace Jlw.Utilities.Data.DbUtility
 
         IModularDbClient DbClient { get; }
 
+        TInterface GetRecordObject(TInterface objSearch, string definitionName);
+
         RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
         RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
         RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback<TInterface> callback = null);
@@ -71,7 +73,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return def;
         }
 
-        public TInterface GetRecordObject(TInterface objSearch, string definitionName)
+        public virtual TInterface GetRecordObject(TInterface objSearch, string definitionName)
         {
             RepositoryMethodDefinition<TInterface, TModel> def = GetDefinition(definitionName);
             if (def == null)
