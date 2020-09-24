@@ -8,6 +8,15 @@ namespace Jlw.Utilities.Data.DbUtility
     {
         public bool SupportOlderConnections = true;
 
+        protected override void OpenConnection(IDbConnection dbConn)
+        {
+            if (SupportOlderConnections)
+                try { base.OpenConnection(dbConn); } catch (MySql.Data.MySqlClient.MySqlException ex) { if (!(ex.Message.Contains("Unknown system variable") && dbConn.State == ConnectionState.Open)) throw; }
+            else
+                base.OpenConnection(dbConn);
+        }
+
+        /*
         public override TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
         {
             if (string.IsNullOrWhiteSpace(sSql))
@@ -19,8 +28,8 @@ namespace Jlw.Utilities.Data.DbUtility
 
             }
 
-            TInterface oReturn = default; 
- 
+            TInterface oReturn = default;
+
             using (var dbConn = GetConnection(connString)) 
             { 
                 if (SupportOlderConnections)
@@ -92,6 +101,6 @@ namespace Jlw.Utilities.Data.DbUtility
             }
             return oReturn;
         }
-
+        */
     }
 }

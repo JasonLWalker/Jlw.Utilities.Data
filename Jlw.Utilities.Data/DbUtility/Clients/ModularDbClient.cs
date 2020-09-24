@@ -87,72 +87,19 @@ namespace Jlw.Utilities.Data.DbUtility
 
             return p;
         }
+
+        protected virtual void OpenConnection(IDbConnection dbConn)
+        {
+            // Open the connection. Add any additional manipulation needed by overriding this method
+            dbConn.Open();
+        }
+
         #region GetRecordObject
 
-        //public virtual TModel GetRecordObject<TModel>(string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordObject<TModel, TModel>(default, connString, definition);
         public virtual TModel GetRecordObject<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordObject<TModel, TModel>(o, connString, definition);
         public virtual TModel GetRecordObject<TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel>(connString, sSql, oParams, isStoredProc);
 
         public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface => this.GetRecordObject<TInterface, TModel, TModel>(o, connString, definition);
-        /*
-        {
-            if (string.IsNullOrWhiteSpace(definition?.SqlQuery))
-            {
-                if (definition?.CommandType == CommandType.StoredProcedure)
-                    throw new ArgumentException("Stored Procedure not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
-
-                throw new ArgumentException("Sql Query not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
-            }
-
-            TInterface oReturn = default;
-
-            using (var dbConn = GetConnection(connString))
-            {
-                dbConn.Open();
-                using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
-                {
-                    PropertyInfo[] properties = typeof(TInterface).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                    foreach (var param in definition.Parameters)
-                    {
-                        if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
-                        {
-                            var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
-
-                            var p = GetNewParameter(param);
-                            p.SourceColumn = default;
-                            if (o == null)
-                            {
-                                throw new ArgumentNullException(nameof(o), "Object cannot be null when values are not provided in definition");
-                            }
-
-                            p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
-                            AddParameter(p, dbCmd);
-                        }
-                        else
-                            AddParameter(param, dbCmd);
-                    }
-
-                    dbCmd.CommandType = definition.CommandType;
-
-                    using (IDataReader sqlResult = dbCmd.ExecuteReader())
-                    {
-                        while (sqlResult.Read())
-                        {
-                            if (definition.Callback != null)
-                            {
-                                oReturn = (TInterface)definition.Callback(sqlResult);
-                            }
-                            else
-                            {
-                                oReturn = (TInterface)Activator.CreateInstance(typeof(TModel), new object[] { sqlResult });
-                            }
-                        }
-                    }
-                }
-            }
-            return oReturn;
-        }
-        */
 
         public virtual TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
         {
@@ -169,7 +116,8 @@ namespace Jlw.Utilities.Data.DbUtility
 
             using (var dbConn = GetConnection(connString))
             {
-                dbConn.Open();
+                //dbConn.Open();
+                OpenConnection(dbConn);
                 using (var dbCmd = GetCommand(sSql, dbConn))
                 {
                     foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
@@ -188,6 +136,89 @@ namespace Jlw.Utilities.Data.DbUtility
                         }
                     }
                 }
+                dbConn.Close();
+            }
+            return oReturn;
+        }
+
+        public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
+        {
+            if (string.IsNullOrWhiteSpace(definition?.SqlQuery))
+            {
+                if (definition?.CommandType == CommandType.StoredProcedure)
+                    throw new ArgumentException("Stored Procedure not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
+
+                throw new ArgumentException("Sql Query not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
+            }
+
+            TReturn oReturn = default;
+
+            using (var dbConn = GetConnection(connString))
+            {
+                //dbConn.Open();
+                OpenConnection(dbConn);
+                using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
+                {
+                    foreach (var param in definition.Parameters)
+                    {
+                        AddParameter(ResolveParameter<TInterface>(o, param), dbCmd);
+                    }
+
+                    dbCmd.CommandType = definition.CommandType;
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader())
+                    {
+                        while (sqlResult.Read())
+                        {
+                            if (definition.Callback != null)
+                            {
+                                oReturn = (TReturn)definition.Callback(sqlResult);
+                            }
+                            else
+                            {
+                                oReturn = (TReturn)Activator.CreateInstance(typeof(TReturn), new object[] { sqlResult });
+                            }
+                        }
+                    }
+                }
+                dbConn.Close();
+            }
+            return oReturn;
+        }
+
+
+        #endregion
+        public virtual object GetRecordScalar(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        {
+            if (string.IsNullOrWhiteSpace(sSql))
+            {
+                if (isStoredProc)
+                    throw new ArgumentException("Stored Procedure not provided for GetRecordScalar", "sSql");
+
+                throw new ArgumentException("Sql Query not provided for GetRecordScalar", "sSql");
+
+            }
+
+            object oReturn = default;
+
+            using (var dbConn = GetConnection(connString))
+            {
+                //dbConn.Open();
+                OpenConnection(dbConn);
+
+                using (var dbCmd = GetCommand(sSql, dbConn))
+                {
+                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    {
+                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                    }
+
+                    if (isStoredProc)
+                        dbCmd.CommandType = CommandType.StoredProcedure;
+
+                    oReturn = dbCmd.ExecuteScalar();
+                }
+                dbConn.Close();
             }
             return oReturn;
         }
@@ -223,70 +254,6 @@ namespace Jlw.Utilities.Data.DbUtility
 
         }
 
-        public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
-        {
-            if (string.IsNullOrWhiteSpace(definition?.SqlQuery))
-            {
-                if (definition?.CommandType == CommandType.StoredProcedure)
-                    throw new ArgumentException("Stored Procedure not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
-
-                throw new ArgumentException("Sql Query not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
-            }
-
-            TReturn oReturn = default;
-
-            using (var dbConn = GetConnection(connString))
-            {
-                dbConn.Open();
-                using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
-                {
-                    foreach (var param in definition.Parameters)
-                    {
-                        AddParameter(ResolveParameter<TInterface>(o, param), dbCmd);
-                        /*
-                        if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
-                        {
-                            var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
-
-
-                            var p = GetNewParameter(param);
-                            p.SourceColumn = default;
-                            if (o == null)
-                            {
-                                throw new ArgumentNullException(nameof(o), "Object cannot be null when values are not provided in definition");
-                            }
-                            
-                            p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
-                            AddParameter(p, dbCmd);
-                        }
-                        else
-                            AddParameter(param, dbCmd);
-                        */
-                    }
-
-                    dbCmd.CommandType = definition.CommandType;
-
-                    using (IDataReader sqlResult = dbCmd.ExecuteReader())
-                    {
-                        while (sqlResult.Read())
-                        {
-                            if (definition.Callback != null)
-                            {
-                                oReturn = (TReturn)definition.Callback(sqlResult);
-                            }
-                            else
-                            {
-                                oReturn = (TReturn)Activator.CreateInstance(typeof(TReturn), new object[] { sqlResult });
-                            }
-                        }
-                    }
-                }
-            }
-            return oReturn;
-        }
-
-
-        #endregion
 
         #region GetRecordList
 
@@ -320,7 +287,9 @@ namespace Jlw.Utilities.Data.DbUtility
 
             using (var dbConn = GetConnection(connString))
             {
-                dbConn.Open();
+                //dbConn.Open();
+                OpenConnection(dbConn);
+
                 using (var dbCmd = GetCommand(sSql, dbConn))
                 {
                     foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
