@@ -6,7 +6,12 @@ using System.Data;
 namespace Jlw.Utilities.Data.DbUtility
 {
     public delegate object RepositoryRecordCallback(IDataRecord o); // declare a delegate
-    public delegate void RepositoryParameterCallback<TInterface>(TInterface o, out IDbDataParameter param);
+    public delegate object RepositoryParameterCallback (IDbDataParameter param);
+
+    public class DbCallbackParameter : MockDbParameter
+    {
+        public RepositoryParameterCallback Callback = null;
+    }
 
     public class RepositoryMethodDefinition<TModel> : RepositoryMethodDefinition<TModel, TModel>
     {
@@ -44,6 +49,13 @@ namespace Jlw.Utilities.Data.DbUtility
         
         public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default) : this(sql, CommandType.Text, paramList, callback, returnType) { }
 
+        /*
+        protected RepositoryParameterCallback DefaultParameterCallback(IDbDataParameter param)
+        {
+            return param.Value;
+        }
+        */
+
         public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<string> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default)
         {
             _sqlQuery = sql;
@@ -55,17 +67,19 @@ namespace Jlw.Utilities.Data.DbUtility
             {
                 foreach (string param in paramList)
                 {
-                    IDbDataParameter p = new MockDbParameter();
-                    p.Direction = ParameterDirection.Input;
-                    p.ParameterName = param;
-                    p.SourceColumn = param;
+                    DbCallbackParameter p = new DbCallbackParameter
+                    {
+                        Direction = ParameterDirection.Input, 
+                        ParameterName = param, 
+                        SourceColumn = param
+                    };
                     p.Value = param;
                     _dataParameters.Add(p);
                 }
             }
         }
 
-        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback =null, Type returnType = default)
+        public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback=null, Type returnType = default)
         {
             _sqlQuery = sql;
             _callback = callback;
@@ -76,7 +90,11 @@ namespace Jlw.Utilities.Data.DbUtility
             {
                 foreach (IDbDataParameter param in paramList)
                 {
-                    IDbDataParameter p = new MockDbParameter();
+                    DbCallbackParameter p = new DbCallbackParameter();
+                    if (param.GetType() == typeof(DbCallbackParameter))
+                    {
+                        ((DbCallbackParameter) p).Callback = ((DbCallbackParameter) param).Callback;
+                    }
                     p.Precision = param.Precision;
                     p.Scale = param.Scale;
                     p.Size = param.Size;
@@ -102,11 +120,18 @@ namespace Jlw.Utilities.Data.DbUtility
             {
                 foreach (var param in paramList)
                 {
-                    IDbDataParameter p = new MockDbParameter();
+                    DbCallbackParameter p = new DbCallbackParameter();
+                    if (param.Value.GetType() == typeof(DbCallbackParameter))
+                    {
+                        p.Callback = (RepositoryParameterCallback)param.Value;
+                    }
+                    else
+                    {
+                        p.Value = param.Value;
+                        p.SourceColumn = param.Value.ToString();
+                    }
                     p.Direction = ParameterDirection.Input;
                     p.ParameterName = param.Key;
-                    p.SourceColumn = param.Value.ToString();
-                    p.Value = param.Value;
                     _dataParameters.Add(p);
                 }
             }
