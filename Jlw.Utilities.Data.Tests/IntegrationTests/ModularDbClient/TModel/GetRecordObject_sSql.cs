@@ -19,7 +19,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TModel
 
 
         protected string SqlInitFilename = $"{AppDomain.CurrentDomain.BaseDirectory}Data\\Sql\\TSql\\InitializeDb.sql";
-        protected RepositoryRecordCallback<ITestDataModel> RecordCallback = (o) => new TestDataModel()
+        protected RepositoryRecordCallback RecordCallback = (o) => new TestDataModel()
         {
             Description = DataUtility.ParseString(o, "Description"),
             Id = DataUtility.ParseLong(o, "Id"),
