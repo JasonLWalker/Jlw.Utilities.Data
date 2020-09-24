@@ -192,6 +192,37 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
+        protected virtual IDbDataParameter ResolveParameter<TType>(object o, IDbDataParameter param)
+        {
+            PropertyInfo[] properties = typeof(TType).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
+            {
+                var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
+
+
+                var p = GetNewParameter(param);
+                
+                p.SourceColumn = default;
+                if (o == null)
+                {
+                    throw new ArgumentNullException(nameof(o),
+                        "Object cannot be null when values are not provided in definition");
+                }
+
+                if (param.GetType() == typeof(DbCallbackParameter) && ((DbCallbackParameter)param).Callback != null)
+                    p.Value = ((DbCallbackParameter) param).Callback(o, param);
+                else
+                    p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
+
+                //AddParameter(p, dbCmd);
+                return p;
+            }
+
+            //AddParameter(param, dbCmd);
+            return param;
+
+        }
+
         public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
         {
             if (string.IsNullOrWhiteSpace(definition?.SqlQuery))
@@ -209,12 +240,14 @@ namespace Jlw.Utilities.Data.DbUtility
                 dbConn.Open();
                 using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
                 {
-                    PropertyInfo[] properties = typeof(TInterface).GetProperties(BindingFlags.Instance | BindingFlags.Public);
                     foreach (var param in definition.Parameters)
                     {
+                        AddParameter(ResolveParameter<TInterface>(o, param), dbCmd);
+                        /*
                         if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
                         {
                             var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
+
 
                             var p = GetNewParameter(param);
                             p.SourceColumn = default;
@@ -222,12 +255,13 @@ namespace Jlw.Utilities.Data.DbUtility
                             {
                                 throw new ArgumentNullException(nameof(o), "Object cannot be null when values are not provided in definition");
                             }
-
+                            
                             p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
                             AddParameter(p, dbCmd);
                         }
                         else
                             AddParameter(param, dbCmd);
+                        */
                     }
 
                     dbCmd.CommandType = definition.CommandType;

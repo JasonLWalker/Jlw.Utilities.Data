@@ -6,7 +6,7 @@ using System.Data;
 namespace Jlw.Utilities.Data.DbUtility
 {
     public delegate object RepositoryRecordCallback(IDataRecord o); // declare a delegate
-    public delegate object RepositoryParameterCallback (IDbDataParameter param);
+    public delegate object RepositoryParameterCallback (object o, IDbDataParameter param);
 
     public class DbCallbackParameter : MockDbParameter
     {
