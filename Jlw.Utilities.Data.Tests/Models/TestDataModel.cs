@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace Jlw.Utilities.Data.Tests.Models
+namespace Jlw.Utilities.Data.Tests
 {
     public class TestDataModel : ITestDataModel
     {

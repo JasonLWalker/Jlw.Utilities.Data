@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jlw.Utilities.Data.Tests.Models
+namespace Jlw.Utilities.Data.Tests
 {
     public interface ITestDataModel
     {
