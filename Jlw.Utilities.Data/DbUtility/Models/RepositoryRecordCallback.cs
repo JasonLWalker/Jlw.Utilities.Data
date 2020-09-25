@@ -2,5 +2,5 @@
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public delegate object RepositoryRecordCallback(IDataRecord o);
+    public delegate object RepositoryRecordCallback(object o);
 }

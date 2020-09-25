@@ -11,22 +11,13 @@ namespace Jlw.Utilities.Data.DbUtility
     public class ModularDbClient<TConnection> : IModularDbClient
         where TConnection : IDbConnection, new()
     {
-        public virtual DbConnectionStringBuilder GetConnectionBuilder() => new DbConnectionStringBuilder();
-        public virtual DbConnectionStringBuilder GetConnectionBuilder(string connString) => new DbConnectionStringBuilder(){ConnectionString = connString};
+        public virtual DbConnectionStringBuilder GetConnectionBuilder(string connString = default) => new DbConnectionStringBuilder(){ConnectionString = connString ?? ""};
 
-        public virtual IDbConnection GetConnection() => new TConnection();
+        public virtual IDbConnection GetConnection(string connString = default) => new TConnection() { ConnectionString = connString ?? ""};
 
-        public virtual IDbConnection GetConnection(string connString) => new TConnection() { ConnectionString = connString };
-
-        public IDbCommand GetCommand(string cmd)
+        public IDbCommand GetCommand(string cmd, IDbConnection conn = default)
         {
-            var conn = new TConnection();
-            return GetCommand(cmd, conn);
-        }
-        
-        public IDbCommand GetCommand(string cmd, IDbConnection conn)
-        {
-            var oCmd = conn.CreateCommand();
+            var oCmd = conn?.CreateCommand() ?? new TConnection().CreateCommand();
             oCmd.CommandText = cmd;
             return oCmd;
         }
@@ -49,7 +40,7 @@ namespace Jlw.Utilities.Data.DbUtility
 
             cmd.Parameters.Add(p);
 
-            return param;
+            return p;
         }
 
         public virtual IDbDataParameter AddParameterWithValue(string paramName, object value, System.Data.IDbCommand cmd)
@@ -61,107 +52,107 @@ namespace Jlw.Utilities.Data.DbUtility
             return param;
         }
 
-        public virtual IDbDataParameter GetNewParameter()
+        public virtual IDbDataParameter GetNewParameter(IDbDataParameter param = null, IDbCommand cmd = null)
         {
-            using var conn = new TConnection();
-            using var cmd = conn.CreateCommand();
-            return cmd.CreateParameter();
-        }
-
-        public virtual IDbDataParameter GetNewParameter(IDbDataParameter param)
-        {
-
-            var p = GetNewParameter();
-            if (param != null)
+            IDbDataParameter p;
+            if (cmd != null)
             {
-                p.DbType = param.DbType;
-                try { p.Direction = param.Direction; } catch {}
-                p.ParameterName = param.ParameterName;
-                p.Precision = param.Precision;
-                p.Scale = param.Scale;
-                p.Size = param.Size;
-                p.SourceVersion = param.SourceVersion;
-                p.SourceColumn = param.SourceColumn;
-                p.Value = param.Value;
+                p = cmd.CreateParameter();
+                if (param == null)
+                    return p;
             }
+            else
+            {
+                using var conn = new TConnection();
+                using var newCmd = conn.CreateCommand();
+                p = newCmd.CreateParameter();
+            }
+
+            if (param == null)
+                return p;
+
+            p.DbType = param.DbType;
+            try { p.Direction = param.Direction; } catch { /* Not all clients support Direction, so catch exceptions */ }
+            p.ParameterName = param.ParameterName;
+            p.Precision = param.Precision;
+            p.Scale = param.Scale;
+            p.Size = param.Size;
+            try { p.SourceVersion = param.SourceVersion; } catch { /* Catch invalid source versions */ }
+            p.SourceColumn = param.SourceColumn;
+            p.Value = param.Value;
 
             return p;
         }
-
+        
         protected virtual void OpenConnection(IDbConnection dbConn)
         {
             // Open the connection. Add any additional manipulation needed by overriding this method
             dbConn.Open();
         }
 
-        #region GetRecordObject
-
-        public virtual TModel GetRecordObject<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordObject<TModel, TModel>(o, connString, definition);
-        public virtual TModel GetRecordObject<TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel>(connString, sSql, oParams, isStoredProc);
-
-        public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface => this.GetRecordObject<TInterface, TModel, TModel>(o, connString, definition);
-
-        public virtual TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+        protected virtual IDbDataParameter GetNewParameterWithResolvedValue<TModel>(TModel o, IDbDataParameter param) 
         {
-            if (string.IsNullOrWhiteSpace(sSql))
+            PropertyInfo[] properties = typeof(TModel).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
             {
-                if (isStoredProc)
-                    throw new ArgumentException("Stored Procedure not provided for GetRecordObject", "sSql");
+                var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
 
-                throw new ArgumentException("Sql Query not provided for GetRecordObject", "sSql");
 
-            }
-
-            TInterface oReturn = default;
-
-            using (var dbConn = GetConnection(connString))
-            {
-                //dbConn.Open();
-                OpenConnection(dbConn);
-                using (var dbCmd = GetCommand(sSql, dbConn))
+                var p = GetNewParameter(param);
+                
+                p.SourceColumn = default;
+                if (o == null)
                 {
-                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
-                    {
-                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
-                    }
-
-                    if (isStoredProc)
-                        dbCmd.CommandType = CommandType.StoredProcedure;
-
-                    using (IDataReader sqlResult = dbCmd.ExecuteReader())
-                    {
-                        while (sqlResult.Read())
-                        {
-                            oReturn = (TInterface)Activator.CreateInstance(typeof(TModel), new object[] { sqlResult });
-                        }
-                    }
+                    throw new ArgumentNullException(nameof(o),
+                        "Object cannot be null when values are not provided in definition");
                 }
-                dbConn.Close();
+
+                if (param.GetType() == typeof(DbCallbackParameter) && ((DbCallbackParameter)param).Callback != null)
+                    p.Value = ((DbCallbackParameter) param).Callback(o, param);
+                else
+                    p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
+
+                return p;
             }
-            return oReturn;
+
+            return GetNewParameter(param);
         }
 
+        public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<KeyValuePair<string, object>> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
+
+        public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<string> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
+
+        #region GetRecordObject
+        public virtual object GetRecordObject(object o, string connString, RepositoryMethodDefinition<object, object> definition) => GetRecordObject<object, object, object>(o, connString, definition);
+        public virtual TModel GetRecordObject<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordObject<TModel, TModel, TModel>(o, connString, definition);
+        public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, definition);
         public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
         {
-            if (string.IsNullOrWhiteSpace(definition?.SqlQuery))
+            // Does definition exist?
+            if (definition == null)
+                throw new ArgumentNullException(nameof(definition), "No definition provided for repository method");
+            
+            // Does Query exist?
+            if (string.IsNullOrWhiteSpace(definition.SqlQuery))
             {
-                if (definition?.CommandType == CommandType.StoredProcedure)
+                if (definition.CommandType == CommandType.StoredProcedure)
                     throw new ArgumentException("Stored Procedure not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
 
                 throw new ArgumentException("Sql Query not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
             }
 
+            // Set return value
             TReturn oReturn = default;
+
 
             using (var dbConn = GetConnection(connString))
             {
-                //dbConn.Open();
                 OpenConnection(dbConn);
                 using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
                 {
                     foreach (var param in definition.Parameters)
                     {
-                        AddParameter(ResolveParameter<TInterface>(o, param), dbCmd);
+                        AddParameter(GetNewParameterWithResolvedValue(o, param), dbCmd);
                     }
 
                     dbCmd.CommandType = definition.CommandType;
@@ -187,71 +178,73 @@ namespace Jlw.Utilities.Data.DbUtility
         }
 
 
+        public virtual object GetRecordObject(object o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) => GetRecordObject<object, object, object>(o, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
+        public virtual TModel GetRecordObject<TModel>(TModel o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TModel, TModel>(sSql, oParams, isStoredProc));
+        public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+        public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TReturn>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+
+
+        public virtual object GetRecordObject(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<object, object, object>(default, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
+        public virtual TModel GetRecordObject<TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel, TModel>(default, connString, BuildRepositoryMethodDefinition<TModel, TModel>(sSql, oParams, isStoredProc));
+        public virtual TInterface GetRecordObject<TInterface, TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(default, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+        public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TReturn>(default, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+
+
+        public virtual object GetRecordObject(object o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<object, object, object>(o, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
+        public virtual TModel GetRecordObject<TModel>(TModel o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TModel, TModel>(sSql, oParams, isStoredProc));
+        public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+        public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TReturn>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
         #endregion
-        public virtual object GetRecordScalar(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
+
+        public virtual object GetRecordScalar(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordScalar<object, object, object>(default, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
+
+
+
+        public virtual TReturn GetRecordScalar<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
         {
-            if (string.IsNullOrWhiteSpace(sSql))
+            // Does definition exist?
+            if (definition == null)
             {
-                if (isStoredProc)
-                    throw new ArgumentException("Stored Procedure not provided for GetRecordScalar", "sSql");
-
-                throw new ArgumentException("Sql Query not provided for GetRecordScalar", "sSql");
-
+                throw new ArgumentNullException(nameof(definition), "No definition provided for repository method");
             }
 
-            object oReturn = default;
+            // Does Query exist?
+            if (string.IsNullOrWhiteSpace(definition.SqlQuery))
+            {
+                if (definition.CommandType == CommandType.StoredProcedure)
+                    throw new ArgumentException("Stored Procedure not provided in definition for GetRecordScalar", nameof(definition.SqlQuery));
+
+                throw new ArgumentException("Sql Query not provided in definition for GetRecordScalar", nameof(definition.SqlQuery));
+            }
+
+            // Set return value
+            TReturn oReturn = default;
 
             using (var dbConn = GetConnection(connString))
             {
-                //dbConn.Open();
                 OpenConnection(dbConn);
-
-                using (var dbCmd = GetCommand(sSql, dbConn))
+                using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
                 {
-                    foreach (var kvp in oParams ?? new KeyValuePair<string, object>[] { })
+                    foreach (var param in definition.Parameters)
                     {
-                        AddParameterWithValue(kvp.Key, kvp.Value, dbCmd);
+                        AddParameter(GetNewParameterWithResolvedValue(o, param), dbCmd);
                     }
 
-                    if (isStoredProc)
-                        dbCmd.CommandType = CommandType.StoredProcedure;
+                    dbCmd.CommandType = definition.CommandType;
 
-                    oReturn = dbCmd.ExecuteScalar();
+                    object result = dbCmd.ExecuteScalar();
+                    if (definition.Callback != null)
+                    {
+                        oReturn = (TReturn)definition.Callback(result);
+                    }
+                    else
+                    {
+                        oReturn = DataUtility.Parse<TReturn>(result);
+                    }
                 }
                 dbConn.Close();
             }
             return oReturn;
-        }
-
-        protected virtual IDbDataParameter ResolveParameter<TType>(object o, IDbDataParameter param)
-        {
-            PropertyInfo[] properties = typeof(TType).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
-            {
-                var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
-
-
-                var p = GetNewParameter(param);
-                
-                p.SourceColumn = default;
-                if (o == null)
-                {
-                    throw new ArgumentNullException(nameof(o),
-                        "Object cannot be null when values are not provided in definition");
-                }
-
-                if (param.GetType() == typeof(DbCallbackParameter) && ((DbCallbackParameter)param).Callback != null)
-                    p.Value = ((DbCallbackParameter) param).Callback(o, param);
-                else
-                    p.Value = prop?.GetGetMethod(false) != null ? prop.GetValue(o) : DBNull.Value;
-
-                //AddParameter(p, dbCmd);
-                return p;
-            }
-
-            //AddParameter(param, dbCmd);
-            return param;
-
         }
 
 
@@ -331,8 +324,8 @@ namespace Jlw.Utilities.Data.DbUtility
         where TConnBuilder : DbConnectionStringBuilder, new()
     {
         // Retrieve weakly typed connection builder
-        public override DbConnectionStringBuilder GetConnectionBuilder() => CreateConnectionBuilder();
-        public override DbConnectionStringBuilder GetConnectionBuilder(string connString) => CreateConnectionBuilder(connString);
+        //public override DbConnectionStringBuilder GetConnectionBuilder() => CreateConnectionBuilder();
+        public override DbConnectionStringBuilder GetConnectionBuilder(string connString = default) => CreateConnectionBuilder(connString);
 
 
         // Retrieve strongly typed connection builder
@@ -346,48 +339,12 @@ namespace Jlw.Utilities.Data.DbUtility
 
         public virtual TCommand CreateCommand(string cmd, TConnection conn) => new TCommand {CommandText = cmd, Connection = conn};
 
-        public virtual TParam AddParameter(TParam param, TCommand cmd)
-        {
-            var p = cmd.CreateParameter();
-            if (param != null)
-            {
-                p.DbType = param.DbType;
-                p.Direction = param.Direction;
-                p.ParameterName = param.ParameterName;
-                p.Precision = param.Precision;
-                p.Scale = param.Scale;
-                p.Size = param.Size;
-                p.SourceColumn = param.SourceColumn;
-                //p.SourceVersion = param.SourceVersion;
-                p.Value = param.Value;
-            }
+        public virtual TParam AddParameter(TParam param, TCommand cmd) => (TParam)base.AddParameter(param, cmd);
 
-            cmd.Parameters.Add(p);
+        public virtual TParam CreateNewParameter(TParam param = default, TCommand cmd=default) => AddParameter(param, cmd ?? new TCommand());
 
-            return param;
-        }
-
-        public virtual TParam CreateNewParameter() => new TParam();
-
-        public virtual TParam CreateNewParameter(TParam param)
-        {
-            var p = new TParam();
-            if (param != null)
-            {
-                p.DbType = param.DbType;
-                p.Direction = param.Direction;
-                p.ParameterName = param.ParameterName;
-                p.Precision = param.Precision;
-                p.Scale = param.Scale;
-                p.Size = param.Size;
-                p.SourceColumn = param.SourceColumn;
-                p.Value = param.Value;
-            }
-
-            return p;
-        }
-
-        public virtual IDbDataParameter CreateNewParameter(IDbDataParameter param)
+        public virtual IDbDataParameter CreateNewParameter(IDbDataParameter param, IDbCommand cmd = null) => GetNewParameter(param, cmd ?? new TCommand());
+        /*
         {
 
             var p = GetNewParameter();
@@ -405,6 +362,6 @@ namespace Jlw.Utilities.Data.DbUtility
 
             return p;
         }
-
+        */
     }
 }

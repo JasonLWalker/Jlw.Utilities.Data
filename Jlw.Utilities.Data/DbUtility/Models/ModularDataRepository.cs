@@ -6,21 +6,6 @@ using System.Linq;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public interface IModularDataRepository<TInterface, TModel> where TModel : TInterface
-    {
-        string ConnectionString { get; }
-        DbConnectionStringBuilder ConnectionBuilder { get; }
-
-        IModularDbClient DbClient { get; }
-
-        TInterface GetRecordObject(TInterface objSearch, string definitionName);
-        TReturn GetRecordObject<TReturn>(TInterface objSearch, string definitionName);
-
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null);
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null);
-        RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null);
-    }
-
     public class ModularDataRepository<TInterface, TModel> : IModularDataRepository<TInterface, TModel>
     where TModel : TInterface
     {
@@ -29,6 +14,7 @@ namespace Jlw.Utilities.Data.DbUtility
         protected DbConnectionStringBuilder _builder { get; }
         protected IDictionary<string, RepositoryMethodDefinition<TInterface, TModel>> _definitions = new Dictionary<string, RepositoryMethodDefinition<TInterface, TModel>>();
         // ReSharper restore InconsistentNaming
+
 
         public DbConnectionStringBuilder ConnectionBuilder => _builder;
         public string ConnectionString => _builder.ConnectionString;
@@ -43,14 +29,6 @@ namespace Jlw.Utilities.Data.DbUtility
         protected RepositoryMethodDefinition<TInterface, TModel> GetDefinition(string key)
         {
             return _definitions.FirstOrDefault(o => o.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;            
-            /*
-            if (_definitions?.ContainsKey(key) ?? false)
-            {
-                return _definitions[key];
-            }
-
-            return null;
-            */
         }
 
         public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
