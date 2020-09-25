@@ -5,25 +5,6 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public delegate object RepositoryRecordCallback(IDataRecord o); // declare a delegate
-    public delegate object RepositoryParameterCallback (object o, IDbDataParameter param);
-
-    public class DbCallbackParameter : MockDbParameter
-    {
-        public RepositoryParameterCallback Callback = null;
-    }
-
-    public class RepositoryMethodDefinition<TModel> : RepositoryMethodDefinition<TModel, TModel>
-    {
-        public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback = null) : base(sql, paramList, callback) { }
-
-        public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback callback = null) : base(sql, paramList, callback) { }
-
-        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback = null) : base(sql, cmdType, paramList, callback) { }
-
-        public RepositoryMethodDefinition(string sql, CommandType cmdType, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback callback = null) : base(sql, cmdType, paramList, callback) { }
-    }
-
     public class RepositoryMethodDefinition<TInterface, TModel>
     where TModel : TInterface
     {
