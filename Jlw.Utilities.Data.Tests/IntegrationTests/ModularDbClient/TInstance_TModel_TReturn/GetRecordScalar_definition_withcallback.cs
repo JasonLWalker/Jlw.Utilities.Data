@@ -1,58 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SQLite;
 using Jlw.Utilities.Data.DbUtility;
 using Jlw.Utilities.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MySql.Data.MySqlClient;
 
-namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TModel
+namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TModel_TReturn
 {
     [TestClass]
-    public class GetRecordObject_definition_nocallback : SqlLocalDbInstanceFixtureBase<ModularDataRepository<ITestDataModel, TestDataModel>>
+    public class GetRecordScalar_definition_withcallback : SqlLocalDbInstanceFixtureBase<ModularDataRepository<ITestDataModel, TestDataModel>>
     {
         ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder> SqlClient = new ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder>();
 
         protected string SqlInitFilename = $"{AppDomain.CurrentDomain.BaseDirectory}Data\\Sql\\TSql\\InitializeDb.sql";
+        protected RepositoryRecordCallback RecordCallback = (o) => (DataUtility.ParseDouble(o) + 0.5);
+        protected RepositoryRecordCallback RecordCallback2 = (o) => (DataUtility.ParseDecimal(o) + (decimal)0.2);
+
+
         [TestMethod]
         public void Should_Succeed_ForSqlQuery_StringArray()
         {
             // Arrange
             base.InitializeInstanceData(SqlInitFilename);
-            var definition = new RepositoryMethodDefinition<ITestDataModel, TestDataModel>("SELECT TOP 1 * FROM TestTable WHERE Id = @id", new string[] { "Id" });
-
+            var definition = new RepositoryMethodDefinition<ITestDataModel, TestDataModel>("SELECT TOP 1 * FROM TestTable WHERE Id = @id AND Name=@name", new string[] { "Id", "Name" }, RecordCallback);
             var expected = new TestDataModel() { Id = 1, Name = "Test User", Description = "This is a test user", LastUpdated = DateTime.Now };
 
             // Act
-            var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(new TestDataModel(){Id=1}, ConnectionString, definition);
+            var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, double>(new TestDataModel() { Id = expected.Id, Name=expected.Name }, ConnectionString, definition);
 
             // Assert
-            Assert.AreEqual(expected.Id, response.Id);
-            Assert.AreEqual(expected.Name, response.Name);
-            Assert.AreEqual(expected.Description, response.Description);
-
-        }
-
-        [TestMethod]
-        public void Should_Succeed_ForSqlQuery_Kvp()
-        {
-            // Arrange
-            base.InitializeInstanceData(SqlInitFilename);
-            var definition = new RepositoryMethodDefinition<ITestDataModel, TestDataModel>("SELECT TOP 1 * FROM TestTable WHERE Name = @name AND Id=@id", new [] { new KeyValuePair<string, object>("Id", 1),  new KeyValuePair<string, object>("Name", "Test User") });
-
-            var expected = new TestDataModel() { Id = 1, Name = "Test User", Description = "This is a test user", LastUpdated = DateTime.Now };
-
-            // Act
-            var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(null, ConnectionString, definition);
-
-            // Assert
-            Assert.AreEqual(expected.Id, response.Id);
-            Assert.AreEqual(expected.Name, response.Name);
-            Assert.AreEqual(expected.Description, response.Description);
-
+            Assert.AreEqual((double)expected.Id + 0.5, response);
         }
 
         [TestMethod]
@@ -60,16 +37,32 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
         {
             // Arrange
             base.InitializeInstanceData(SqlInitFilename);
-            var definition = new RepositoryMethodDefinition<ITestDataModel, TestDataModel>("sp_GetRecordData", CommandType.StoredProcedure, new string[] { "Id" });
+            var definition = new RepositoryMethodDefinition<ITestDataModel, TestDataModel>("sp_GetRecordData", CommandType.StoredProcedure, new string[] { "Id" }, RecordCallback2);
             var expected = new TestDataModel() { Id = 2, Name = "Test User 2", Description = "This is another test user", LastUpdated = DateTime.Now };
 
             // Act
-            var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(new TestDataModel(){Id = 2}, ConnectionString, definition);
+            var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, decimal>(new TestDataModel(){Id = expected.Id}, ConnectionString, definition);
 
             // Assert
-            Assert.AreEqual(expected.Id, response.Id);
-            Assert.AreEqual(expected.Name, response.Name);
-            Assert.AreEqual(expected.Description, response.Description);
+            Assert.AreEqual((decimal)(expected.Id + (float)0.2), response);
+        }
+
+        [TestMethod]
+        public void Should_ThrowArgumentNullException_ForNullDefinition()
+        {
+            // Arrange
+            base.InitializeInstanceData(SqlInitFilename);
+            var expected = new TestDataModel() { Id = 1, Name = "Test User 2", Description = "This is another test user", LastUpdated = DateTime.Now };
+
+            // Act / Assert
+            var ex = Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, string>(new TestDataModel() { Id = expected.Id }, ConnectionString, default);
+            });
+
+            // Assert
+            StringAssert.Contains(ex.Message, "No definition provided");
+            Assert.AreEqual(ex.ParamName, "definition");
         }
 
         [TestMethod]
@@ -81,7 +74,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentException>(() =>
             {
-                var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, string>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
             });
 
             // Assert
@@ -98,7 +91,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentException>(() =>
             {
-                var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, long>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
             });
 
             // Assert
@@ -115,13 +108,12 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                var response = SqlClient.GetRecordObject<ITestDataModel, TestDataModel>(null, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, decimal>(null, ConnectionString, definition);
             });
 
             // Assert
             StringAssert.Contains(ex.Message, "cannot be null");
             Assert.AreEqual("o", ex.ParamName);
         }
-
     }
 }

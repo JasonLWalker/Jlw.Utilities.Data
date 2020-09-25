@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using Jlw.Utilities.Data.DbUtility;
-using Jlw.Utilities.Data.Tests.Models;
 using Jlw.Utilities.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

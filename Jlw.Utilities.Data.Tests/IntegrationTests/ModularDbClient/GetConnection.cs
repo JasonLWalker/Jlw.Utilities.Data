@@ -39,6 +39,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
         }
 
         [TestMethod]
+        [DataRow(null)]
         [DataRow("")]
         [DataRow("\n\t\r ")]
         [DataRow("\n;\t;\r; ;;")]
@@ -102,8 +103,8 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
             sut3.GetConnection(connString);
         }
 
+        /*
         [TestMethod]
-        [DataRow(null)]
         public void Should_Reject_ConnectionString_ForSQLiteConnection(string connString)
         {
             var sut1 = new ModularDbClient<SQLiteConnection>();
@@ -113,6 +114,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
             Assert.ThrowsException<ArgumentNullException>(() => sut2.GetConnection(connString));
             Assert.ThrowsException<ArgumentNullException>(() => sut3.GetConnection(connString));
         }
+        */
 
         [TestMethod]
         [DataRow("=")]

@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using Jlw.Utilities.Data.DbUtility;
-using Jlw.Utilities.Data.Tests.Models;
 using Jlw.Utilities.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -73,7 +72,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
 
             // Assert
             StringAssert.Contains(ex.Message, "Sql Query not provided");
-            StringAssert.Contains(ex.ParamName, "sSql");
+            StringAssert.Contains(ex.ParamName, "SqlQuery");
         }
 
         [TestMethod]
@@ -89,7 +88,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
 
             // Assert
             StringAssert.Contains(ex.Message, "Stored Procedure not provided");
-            Assert.AreEqual(ex.ParamName, "sSql");
+            Assert.AreEqual(ex.ParamName, "SqlQuery");
         }
 
     }
