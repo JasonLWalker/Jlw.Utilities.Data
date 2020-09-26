@@ -25,10 +25,10 @@ namespace Jlw.Utilities.Data
                     var asc = (int)(data.ToString()[0]);
                     if (asc > byte.MaxValue)
                         return byte.MaxValue;
-
+                    /*
                     if (asc < byte.MinValue)
                         return byte.MinValue;
-
+                    */
                     return (byte) asc;
                 }
 
@@ -77,6 +77,7 @@ namespace Jlw.Utilities.Data
                         if((bool)data)
                             return 1;
                         return 0;
+                    /*
                     case TypeCode.Char:
                         d = (ulong)Convert.ChangeType(data, typeof(ulong));
 
@@ -86,6 +87,7 @@ namespace Jlw.Utilities.Data
                         if (d < byte.MinValue)
                             return byte.MinValue;
                         return (byte)d;
+                    */
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:

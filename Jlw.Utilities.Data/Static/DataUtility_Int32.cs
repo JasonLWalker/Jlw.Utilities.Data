@@ -61,6 +61,7 @@ namespace Jlw.Utilities.Data
                     return int.MaxValue;
                 }
 
+                /*
                 try
                 {
                     long l = long.Parse(s.Trim());
@@ -70,6 +71,7 @@ namespace Jlw.Utilities.Data
                     return int.MaxValue;
                 }
                 catch(OverflowException)
+                */
                 {
                     double.TryParse(s.Trim(), out var d);
 
@@ -89,6 +91,7 @@ namespace Jlw.Utilities.Data
                         if((bool)data)
                             return 1;
                         return 0;
+                    /*
                     case TypeCode.Char:
                         d = (ulong)Convert.ChangeType(data, typeof(ulong));
 
@@ -98,6 +101,7 @@ namespace Jlw.Utilities.Data
                         if (d < int.MinValue)
                             return int.MinValue;
                         return (int)d;
+                    */
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:
