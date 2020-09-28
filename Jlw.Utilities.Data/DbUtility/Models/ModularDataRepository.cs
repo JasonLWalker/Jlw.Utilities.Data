@@ -31,25 +31,27 @@ namespace Jlw.Utilities.Data.DbUtility
             return _definitions.FirstOrDefault(o => o.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;            
         }
 
-        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
+        public RepositoryMethodDefinition<TInterface, TModel> AddDefinition(string name, RepositoryMethodDefinition<TInterface, TModel> definition)
         {
-            var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
-            _definitions.Add(name, def);
-            return def;
+            _definitions.Add(name, definition);
+            return _definitions[name];
         }
 
+        public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
+        {
+                var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
+                return AddDefinition(name, def);
+        }
         public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
-            _definitions.Add(name, def);
-            return def;
+            return AddDefinition(name, def);
         }
 
         public RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
-            _definitions.Add(name, def);
-            return def;
+            return AddDefinition(name, def);
         }
 
         public virtual TInterface GetRecordObject(TInterface objSearch, string definitionName) => GetRecordObject<TInterface>(objSearch, definitionName);
