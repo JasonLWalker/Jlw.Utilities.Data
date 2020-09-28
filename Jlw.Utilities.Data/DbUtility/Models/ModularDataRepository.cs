@@ -81,6 +81,24 @@ namespace Jlw.Utilities.Data.DbUtility
 
         }
 
+        public object GetRecordScalar(TInterface objSearch, string definitionName) => GetRecordScalar<object>(objSearch, definitionName);
+
+        public TReturn GetRecordScalar<TReturn>(TInterface objSearch, string definitionName)
+        {
+            var def = GetDefinition(definitionName);
+            if (def == null)
+            {
+                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
+            }
+
+
+
+            return _dbClient.GetRecordScalar<TInterface, TModel, TReturn>(objSearch, ConnectionString, def);
+
+        }
+
+
+
 
         public virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, nameof(GetRecord));
         public virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, nameof(InsertRecord));
