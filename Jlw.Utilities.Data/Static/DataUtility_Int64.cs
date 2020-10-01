@@ -45,7 +45,7 @@ namespace Jlw.Utilities.Data
                         return ((DateTime) data).ToBinary();
                 }
 
-                var d = long.Parse(s);
+                var d = long.Parse(s.Trim());
                 return (long) d;
             }
             catch (OverflowException)
@@ -62,15 +62,19 @@ namespace Jlw.Utilities.Data
                     return long.MaxValue;
                 }
 
+                /*
                 try
                 {
                     long l = long.Parse(s.Trim());
+                    
                     if (l < 0)
                         return long.MinValue;
 
                     return long.MaxValue;
+                    
                 }
                 catch(OverflowException)
+                */
                 {
                     double.TryParse(s.Trim(), out var d);
 
@@ -90,6 +94,7 @@ namespace Jlw.Utilities.Data
                         if((bool)data)
                             return 1;
                         return 0;
+                    /*
                     case TypeCode.Char:
                         d = (ulong)Convert.ChangeType(data, typeof(ulong));
 
@@ -99,6 +104,7 @@ namespace Jlw.Utilities.Data
                         if (d < long.MinValue)
                             return long.MinValue;
                         return (long)d;
+                    */
                     case TypeCode.Single:
                     case TypeCode.Double:
                     case TypeCode.Decimal:

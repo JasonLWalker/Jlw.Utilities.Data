@@ -79,43 +79,48 @@ namespace Jlw.Utilities.Data
             }
             catch (System.FormatException)
             {
-                TypeCode tc = Type.GetTypeCode(data.GetType());
                 double d;
-                switch (tc)
+                switch (data)
                 {
-                    case TypeCode.Boolean:
-                        if((bool)data)
-                            return 1;
+                    case bool b when b:
+                        return 1;
+                    case bool _:
                         return 0;
-                    case TypeCode.Char:
-                        d = (ulong)Convert.ChangeType(data, typeof(ulong));
+                    /*
+                    case char _:
+                    {
+                        d = (ulong) Convert.ChangeType(data, typeof(ulong));
 
                         if (d > Int16.MaxValue)
                             return Int16.MaxValue;
 
                         if (d < Int16.MinValue)
                             return Int16.MinValue;
-                        return (Int16)d;
-                    case TypeCode.Single:
-                    case TypeCode.Double:
-                    case TypeCode.Decimal:
-                        d = (double)Convert.ChangeType(data, typeof(double));
+                        return (Int16) d;
+                    }
+                    */
+                    case float _:
+                    case double _:
+                    case decimal _:
+                    {
+                        d = (double) Convert.ChangeType(data, typeof(double));
                         if (double.IsNaN(d))
                             return null;
 
-                        if (d > Int16.MaxValue)
+                        if (d > short.MaxValue)
                             return Int16.MaxValue;
 
                         if (d < Int16.MinValue)
                             return Int16.MinValue;
-                        return (Int16)d;
-                    case TypeCode.String:
-                        if (IsNullOrWhitespace(s))
-                            return null;
-
+                        return (Int16) d;
+                    }
+                    case string _ when IsNullOrWhitespace(s):
+                        return null;
+                    case string _:
+                    {
                         var l = s.Length;
-                        char? c0 = (l >= 1) ? (char?)s[0] : null;
-                        char? c1 = (l >= 2) ? (char?)s[1] : null;
+                        var c0 = (l >= 1) ? (char?) s[0] : null;
+                        var c1 = (l >= 2) ? (char?) s[1] : null;
 
                         if (c0 >= '0' && c0 <= '9')
                         {
@@ -131,11 +136,11 @@ namespace Jlw.Utilities.Data
 
                         if (c0 == '-')
                         {
-                            char? c2 = (l >= 3) ? (char?)s[2] : null;
+                            char? c2 = (l >= 3) ? (char?) s[2] : null;
                             if (
                                 (c1 >= '0' && c1 <= '9') ||
-                                (c1 == '.' && c2 >= '0' && c2 <= '9') 
-                                )
+                                (c1 == '.' && c2 >= '0' && c2 <= '9')
+                            )
                             {
                                 double.TryParse(s, out d);
                                 return ParseNullableInt16(d);
@@ -143,6 +148,7 @@ namespace Jlw.Utilities.Data
                         }
 
                         break;
+                    }
                 }
             }
 

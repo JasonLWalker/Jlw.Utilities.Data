@@ -48,7 +48,7 @@ namespace Jlw.Utilities.Data.DbUtility
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString)
         {
             _dbClient = dbClient ?? new ModularDbClient<NullDbConnection, NullDbCommand, NullDbParameter>();
-            _builder = _dbClient.CreateConnectionBuilder(connString);
+            _builder = _dbClient.GetConnectionBuilder(connString);
         }
 
         #region Internal Members

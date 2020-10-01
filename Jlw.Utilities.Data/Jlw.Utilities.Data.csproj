@@ -4,7 +4,7 @@
 		<Deterministic>False</Deterministic>
 		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 		<GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-		<RepositoryUrl>https://github.com/jasonlwalker/Jlw.Utilities.Data.git</RepositoryUrl>    
+		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Utilities.Data.git</RepositoryUrl>    
 		<VersionSuffix>$(VersionSuffix)</VersionSuffix>    
 		<AssemblyName>Jlw.Utilities.Data</AssemblyName>    
 		<RootNamespace>Jlw.Utilities.Data</RootNamespace>    
@@ -15,6 +15,7 @@
 		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<Authors>Jlw.Utilities.Data</Authors>
+		<LangVersion>8.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

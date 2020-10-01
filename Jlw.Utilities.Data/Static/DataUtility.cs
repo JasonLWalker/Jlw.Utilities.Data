@@ -144,12 +144,24 @@ namespace Jlw.Utilities.Data
             {
                 if (!string.IsNullOrWhiteSpace(key))
                 {
-                    if (obj is IEnumerable<KeyValuePair<string, object>> enumerable)
-                        o = enumerable.FirstOrDefault(kvp => kvp.Key == key).Value;
-                    if (obj is IDictionary dict)
-                        o = dict.Contains(key) ? dict[key] : null;
-                    else if (obj is IDataRecord record)
-                        o = record?[key];
+                    switch (obj)
+                    {
+                        case IEnumerable<KeyValuePair<string, object>> enumerable:
+                            return enumerable.FirstOrDefault(kvp => kvp.Key == key).Value;
+                        case IDictionary dict:
+                            return dict.Contains(key) ? dict[key] : null;
+                        case IDataRecord record:
+                            return record[key];
+                    }
+
+                    var t = obj?.GetType();
+                    var fieldInfo = t?.GetFields().FirstOrDefault(x => x.Name == key);
+                    if (fieldInfo != null)
+                        return fieldInfo.GetValue(obj);
+
+                    var propInfo = t?.GetProperties().FirstOrDefault(x => x.Name == key && x.CanRead);
+                    if (propInfo != null)
+                        return propInfo.GetValue(obj);
                 }
             }
             catch
