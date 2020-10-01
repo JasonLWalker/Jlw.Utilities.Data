@@ -102,7 +102,7 @@ namespace Jlw.Utilities.Data.DbUtility
                 foreach (var param in paramList)
                 {
                     DbCallbackParameter p = new DbCallbackParameter();
-                    if (param.Value.GetType() == typeof(RepositoryParameterCallback))
+                    if (param.Value is RepositoryParameterCallback)
                     {
                         p.Callback = (RepositoryParameterCallback)param.Value;
                     }
