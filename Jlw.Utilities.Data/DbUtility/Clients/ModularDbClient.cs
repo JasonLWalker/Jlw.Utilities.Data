@@ -93,9 +93,9 @@ namespace Jlw.Utilities.Data.DbUtility
         protected virtual IDbDataParameter GetNewParameterWithResolvedValue<TModel>(TModel o, IDbDataParameter param) 
         {
             PropertyInfo[] properties = typeof(TModel).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            if (properties.Any(x => x.CanRead && x.Name == param.SourceColumn))
+            if (properties.Any(x => x.CanRead && (x.Name.Equals(param.SourceColumn, StringComparison.InvariantCultureIgnoreCase) || (param.GetType() == typeof(DbCallbackParameter) && ((DbCallbackParameter)param).Callback != null))))
             {
-                var prop = properties.FirstOrDefault(x => x.Name == param.SourceColumn);
+                var prop = properties.FirstOrDefault(x => x.Name.Equals(param.SourceColumn, StringComparison.InvariantCultureIgnoreCase));
 
 
                 var p = GetNewParameter(param);
