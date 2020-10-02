@@ -173,6 +173,11 @@ namespace Jlw.Utilities.Data
             return o;
         }
 
+        public static string GetCaller([CallerMemberName] string caller = null)
+        {
+            return caller;
+        }
+
 
         protected static bool IsNullOrWhitespace(object data)
         {
@@ -226,5 +231,6 @@ namespace Jlw.Utilities.Data
 
             return s.ToString();
         }
+
     }
 }
