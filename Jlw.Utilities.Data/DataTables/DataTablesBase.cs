@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Jlw.Utilities.Data.DbUtility;
 
+
 /****************************************************************************\
  *
  * Jlw.Utilities.Data.DataTables 
@@ -50,7 +51,7 @@ namespace Jlw.Utilities.Data.DataTables
         internal bool bDebug = false;
         protected void Initialize(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
-            _dbClient = dbClient ?? new ModularSqlClient();
+            _dbClient = dbClient;
             Input = input ?? new DataTablesInput();
             Output = new DataTablesOutput(Input);
 
@@ -65,7 +66,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         public DataTablesBase(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
-            Initialize(input);
+            Initialize(input, dbClient);
         }
 
 
