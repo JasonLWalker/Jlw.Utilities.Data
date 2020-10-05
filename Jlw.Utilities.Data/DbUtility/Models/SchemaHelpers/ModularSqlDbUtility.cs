@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using Org.BouncyCastle.Pkix;
+using ModularSqlClient = Jlw.Utilities.Data.DbUtility.ModularDbClient<System.Data.SqlClient.SqlConnection, System.Data.SqlClient.SqlCommand, System.Data.SqlClient.SqlParameter, System.Data.SqlClient.SqlConnectionStringBuilder>;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
