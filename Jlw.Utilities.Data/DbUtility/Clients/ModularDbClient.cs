@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -118,14 +119,17 @@ namespace Jlw.Utilities.Data.DbUtility
             return GetNewParameter(param);
         }
 
-        public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<KeyValuePair<string, object>> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
+        //public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<KeyValuePair<string, object>> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
 
-        public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<string> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
+        //public virtual RepositoryMethodDefinition<TInterface, TModel> BuildRepositoryMethodDefinition<TInterface, TModel>(string sSql, IEnumerable<string> aParams = null, bool isStoredProc = false) where TModel : TInterface => new RepositoryMethodDefinition<TInterface, TModel>(sSql, isStoredProc ? CommandType.StoredProcedure : CommandType.Text, aParams);
 
         #region GetRecordObject
+        /*
         public virtual object GetRecordObject(object o, string connString, RepositoryMethodDefinition<object, object> definition) => GetRecordObject<object, object, object>(o, connString, definition);
         public virtual TModel GetRecordObject<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordObject<TModel, TModel, TModel>(o, connString, definition);
         public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, definition);
+        */
+
         public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
         {
             // Does definition exist?
@@ -177,7 +181,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
-
+        /*
         public virtual object GetRecordObject(object o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) => GetRecordObject<object, object, object>(o, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
         public virtual TModel GetRecordObject<TModel>(TModel o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TModel, TModel>(sSql, oParams, isStoredProc));
         public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, string sSql, IEnumerable<string> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
@@ -194,11 +198,12 @@ namespace Jlw.Utilities.Data.DbUtility
         public virtual TModel GetRecordObject<TModel>(TModel o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordObject<TModel, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TModel, TModel>(sSql, oParams, isStoredProc));
         public virtual TInterface GetRecordObject<TInterface, TModel>(TInterface o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TModel>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
         public virtual TReturn GetRecordObject<TInterface, TModel, TReturn>(TInterface o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) where TModel : TInterface => GetRecordObject<TInterface, TModel, TReturn>(o, connString, BuildRepositoryMethodDefinition<TInterface, TModel>(sSql, oParams, isStoredProc));
+        */
+
         #endregion
-
+        /*
         public virtual object GetRecordScalar(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordScalar<object, object, object>(default, connString, BuildRepositoryMethodDefinition<object, object>(sSql, oParams, isStoredProc));
-
-
+        */
 
         public virtual TReturn GetRecordScalar<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface
         {
@@ -249,7 +254,7 @@ namespace Jlw.Utilities.Data.DbUtility
 
 
         #region GetRecordList
-
+        /*
         public virtual IEnumerable<TModel> GetRecordList<TModel>(string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordList<TModel, TModel>(default, definition);
         public virtual IEnumerable<TModel> GetRecordList<TModel>(string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false) => GetRecordList<TModel, TModel>(default, connString, sSql, oParams, isStoredProc);
         public virtual IEnumerable<TModel> GetRecordList<TModel>(TModel o, string connString, RepositoryMethodDefinition<TModel, TModel> definition) => GetRecordList<TModel, TModel>(o, connString, definition);
@@ -264,7 +269,6 @@ namespace Jlw.Utilities.Data.DbUtility
         {
             throw new NotImplementedException();
         }
-
         public virtual IEnumerable<TInterface> GetRecordList<TInterface, TModel>(TInterface o, string connString, string sSql, IEnumerable<KeyValuePair<string, object>> oParams = null, bool isStoredProc = false)
         {
             if (string.IsNullOrWhiteSpace(sSql))
@@ -304,7 +308,59 @@ namespace Jlw.Utilities.Data.DbUtility
             }
             return oReturn;
         }
-        
+        */
+
+        public virtual IEnumerable<TReturn> GetRecordList<TInterface, TModel, TReturn>(TInterface o, string connString, RepositoryMethodDefinition<TInterface, TModel> definition) where TModel : TInterface 
+        {
+            // Does definition exist?
+            if (definition == null)
+                throw new ArgumentNullException(nameof(definition), "No definition provided for repository method");
+
+            // Does Query exist?
+            if (string.IsNullOrWhiteSpace(definition.SqlQuery))
+            {
+                if (definition.CommandType == CommandType.StoredProcedure)
+                    throw new ArgumentException("Stored Procedure not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
+
+                throw new ArgumentException("Sql Query not provided in definition for GetRecordObject", nameof(definition.SqlQuery));
+            }
+
+            // Set return value
+            List<TReturn> oReturn = new List<TReturn>();
+
+
+            using (var dbConn = GetConnection(connString))
+            {
+                OpenConnection(dbConn);
+                using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
+                {
+                    foreach (var param in definition.Parameters)
+                    {
+                        AddParameter(GetNewParameterWithResolvedValue(o, param), dbCmd);
+                    }
+
+                    dbCmd.CommandType = definition.CommandType;
+
+                    using (IDataReader sqlResult = dbCmd.ExecuteReader())
+                    {
+                        while (sqlResult.Read())
+                        {
+                            if (definition.Callback != null)
+                            {
+                                oReturn.Add((TReturn)definition.Callback(sqlResult));
+                            }
+                            else
+                            {
+                                oReturn.Add((TReturn)Activator.CreateInstance(typeof(TReturn), new object[] { sqlResult }));
+                            }
+                        }
+                    }
+                }
+                dbConn.Close();
+            }
+            return oReturn;
+        }
+
         #endregion
 
     }

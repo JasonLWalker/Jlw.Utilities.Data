@@ -10,7 +10,7 @@ namespace Jlw.Utilities.Data.DbUtility
         TInterface SaveRecord(TInterface o);
         TInterface UpdateRecord(TInterface o);
         TInterface DeleteRecord(TInterface o);
-        IEnumerable<KeyValuePair<string, string>> GetKvpList();
+        IEnumerable<KeyValuePair<string, string>> GetKvpList(string keyMember = null, string descMember = null);
     }
 
 
