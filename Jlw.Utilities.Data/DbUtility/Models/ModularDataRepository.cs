@@ -57,17 +57,6 @@ namespace Jlw.Utilities.Data.DbUtility
         }
 
         protected internal virtual TInterface GetRecordObject(TInterface objSearch, string definitionName) => GetRecordObject<TInterface>(objSearch, definitionName);
-        /*
-        {
-            RepositoryMethodDefinition<TInterface, TModel> def = GetDefinition(definitionName);
-            if (def == null)
-            {
-                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
-            }
-
-            return _dbClient.GetRecordObject(objSearch, ConnectionString, def);
-        }
-        */
 
         protected internal TReturn GetRecordObject<TReturn>(TInterface objSearch, string definitionName)
         {
@@ -83,7 +72,7 @@ namespace Jlw.Utilities.Data.DbUtility
 
         }
 
-        protected internal object GetRecordScalar(TInterface objSearch, string definitionName) => GetRecordScalar<object>(objSearch, definitionName);
+        protected internal TInterface GetRecordScalar(TInterface objSearch, string definitionName) => GetRecordScalar<TModel>(objSearch, definitionName);
 
         protected internal TReturn GetRecordScalar<TReturn>(TInterface objSearch, string definitionName)
         {
@@ -99,14 +88,28 @@ namespace Jlw.Utilities.Data.DbUtility
 
         }
 
+        protected internal IEnumerable<TInterface> GetRecordList(TInterface objSearch, string definitionName) => (IEnumerable<TInterface>)GetRecordList<TModel>(objSearch, definitionName);
+
+        protected internal IEnumerable<TReturn> GetRecordList<TReturn>(TInterface objSearch, string definitionName)
+        {
+            var def = GetDefinition(definitionName);
+            if (def == null)
+            {
+                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
+            }
 
 
 
-        protected internal virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, nameof(GetRecord));
-        protected internal virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, nameof(InsertRecord));
-        protected internal virtual TInterface SaveRecord(TInterface o) => GetRecordObject(o, nameof(SaveRecord));
-        protected internal virtual TInterface UpdateRecord(TInterface o) => GetRecordObject(o, nameof(UpdateRecord));
-        protected internal virtual TInterface DeleteRecord(TInterface o) => GetRecordObject(o, nameof(DeleteRecord));
+            return _dbClient.GetRecordList<TInterface, TModel, TReturn>(objSearch, ConnectionString, def);
+
+        }
+        
+
+        protected internal virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface SaveRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface UpdateRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface DeleteRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
 
     }
 }
