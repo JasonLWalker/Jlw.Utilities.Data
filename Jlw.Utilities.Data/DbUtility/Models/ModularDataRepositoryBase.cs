@@ -141,16 +141,16 @@ namespace Jlw.Utilities.Data.DbUtility
         }
         #endregion
 
-        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel, TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sGetRecord)));
-        public virtual IEnumerable<TInterface> GetAllRecords() => (IEnumerable<TInterface>)_dbClient.GetRecordList<TInterface, TModel, TModel>(default, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetAllRecords, CommandType.StoredProcedure, new string[]{}));
+        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sGetRecord)));
+        public virtual IEnumerable<TInterface> GetAllRecords() => (IEnumerable<TInterface>)_dbClient.GetRecordList<TModel>(default, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetAllRecords, CommandType.StoredProcedure, new string[]{}));
 
-        public virtual TInterface InsertRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel, TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sInsertRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sInsertRecord)));
+        public virtual TInterface InsertRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sInsertRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sInsertRecord)));
 
-        public virtual TInterface SaveRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel, TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sSaveRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sSaveRecord)));
+        public virtual TInterface SaveRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sSaveRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sSaveRecord)));
 
-        public virtual TInterface UpdateRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel, TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sUpdateRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sUpdateRecord)));
+        public virtual TInterface UpdateRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sUpdateRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sUpdateRecord)));
 
-        public virtual TInterface DeleteRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel, TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sDeleteRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sDeleteRecord)));
+        public virtual TInterface DeleteRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sDeleteRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sDeleteRecord)));
 
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetKvpList(string keyMember=null, string descMember = null)
