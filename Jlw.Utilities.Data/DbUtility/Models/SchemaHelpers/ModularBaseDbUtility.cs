@@ -32,7 +32,7 @@ namespace Jlw.Utilities.Data.DbUtility
 
         public virtual IEnumerable<IDatabaseSchema> GetDatabaseList() => GetDatabaseList(_connString);
 
-        public virtual IEnumerable<IDatabaseSchema> GetDatabaseList(string connString) => DbClient.GetRecordList<IDatabaseSchema, DatabaseSchema, DatabaseSchema>(null, connString, new RepositoryMethodDefinition<IDatabaseSchema, DatabaseSchema>(_sGetDatabaseList, new string[]{}));
+        public virtual IEnumerable<IDatabaseSchema> GetDatabaseList(string connString) => DbClient.GetRecordList<DatabaseSchema>(null, connString, new RepositoryMethodDefinition<IDatabaseSchema, DatabaseSchema>(_sGetDatabaseList, new string[]{}));
 
         public virtual IDatabaseSchema GetDatabaseSchema(string dbName) => GetDatabaseSchema(_connString, dbName);
 
@@ -45,11 +45,11 @@ namespace Jlw.Utilities.Data.DbUtility
         public virtual IEnumerable<IColumnSchema> GetTableColumns(string dbName, string tableName) => GetTableColumns(_connString, dbName, tableName);
 
 
-        public virtual IEnumerable<IColumnSchema> GetTableColumns(string connString, string dbName, string tableName) => DbClient.GetRecordList<IColumnSchema, ColumnSchema, ColumnSchema>(null, connString, new RepositoryMethodDefinition<IColumnSchema, ColumnSchema>(_sGetTableColumns, new []{new KeyValuePair<string, object>("dbName", dbName), new KeyValuePair<string, object>("tableName", tableName)}));
+        public virtual IEnumerable<IColumnSchema> GetTableColumns(string connString, string dbName, string tableName) => DbClient.GetRecordList<ColumnSchema>(null, connString, new RepositoryMethodDefinition<IColumnSchema, ColumnSchema>(_sGetTableColumns, new []{new KeyValuePair<string, object>("dbName", dbName), new KeyValuePair<string, object>("tableName", tableName)}));
 
         public virtual IEnumerable<ITableSchema> GetTableList(string dbName) => GetTableList(_connString, dbName);
 
-        public virtual IEnumerable<ITableSchema> GetTableList(string connString, string dbName) => DbClient.GetRecordList<ITableSchema, TableSchema, TableSchema>(null, connString, new RepositoryMethodDefinition<ITableSchema, TableSchema>(_sGetTableList, new []{new KeyValuePair<string, object>("dbName", dbName)}));
+        public virtual IEnumerable<ITableSchema> GetTableList(string connString, string dbName) => DbClient.GetRecordList<TableSchema>(null, connString, new RepositoryMethodDefinition<ITableSchema, TableSchema>(_sGetTableList, new []{new KeyValuePair<string, object>("dbName", dbName)}));
 
         public virtual string GetConnectionString(string serverName, string dbName = null)
         {

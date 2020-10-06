@@ -23,7 +23,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             var expected = new TestDataModel() { Id = 1, Name = "Test User", Description = "This is a test user", LastUpdated = DateTime.Now };
 
             // Act
-            var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, int>(new TestDataModel() { Id = expected.Id, Name=expected.Name }, ConnectionString, definition);
+            var response = SqlClient.GetRecordScalar<int>(new TestDataModel() { Id = expected.Id, Name=expected.Name }, ConnectionString, definition);
 
             // Assert
             Assert.AreEqual(expected.Id, response);
@@ -38,7 +38,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             var expected = new TestDataModel() { Id = 2, Name = "Test User 2", Description = "This is another test user", LastUpdated = DateTime.Now };
 
             // Act
-            var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, string>(new TestDataModel(){Id = expected.Id}, ConnectionString, definition);
+            var response = SqlClient.GetRecordScalar<string>(new TestDataModel(){Id = expected.Id}, ConnectionString, definition);
 
             // Assert
             Assert.AreEqual(expected.Id.ToString(), response);
@@ -57,7 +57,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, string>(new TestDataModel() { Id = expected.Id }, ConnectionString, default);
+                var response = SqlClient.GetRecordScalar<string>(new TestDataModel() { Id = expected.Id }, ConnectionString, default);
             });
 
             // Assert
@@ -74,7 +74,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentException>(() =>
             {
-                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, string>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<string>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
             });
 
             // Assert
@@ -91,7 +91,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentException>(() =>
             {
-                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, long>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<long>(new TestDataModel() { Id = 3 }, ConnectionString, definition);
             });
 
             // Assert
@@ -108,7 +108,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             // Act / Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                var response = SqlClient.GetRecordScalar<ITestDataModel, TestDataModel, decimal>(null, ConnectionString, definition);
+                var response = SqlClient.GetRecordScalar<decimal>(null, ConnectionString, definition);
             });
 
             // Assert

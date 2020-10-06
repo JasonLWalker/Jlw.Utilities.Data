@@ -5,8 +5,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public class RepositoryMethodDefinition<TInterface, TModel>
-    where TModel : TInterface
+    public class RepositoryMethodDefinition<TInterface, TModel> : IRepositoryMethodDefinition where TModel: TInterface
     {
         // ReSharper disable InconsistentNaming
         protected IList<IDbDataParameter> _dataParameters = new List<IDbDataParameter>();
