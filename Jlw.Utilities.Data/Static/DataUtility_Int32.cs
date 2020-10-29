@@ -35,7 +35,11 @@ namespace Jlw.Utilities.Data
             if(data == null || data is DBNull || data == DBNull.Value || data is DateTimeOffset || data is DateTime)
                 return null;
 
+            if (!(data is char) && string.IsNullOrWhiteSpace(data.ToString()))
+                return null;
+
             string s = ExtractNumericString(data?.ToString());
+            
             try
             {
                 if (data is char)
