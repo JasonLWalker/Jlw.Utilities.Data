@@ -16,7 +16,7 @@ namespace Jlw.Utilities.Data
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return DataUtility.ParseAs(typeof(T), reader.Value);
+            return DataUtility.ParseAs(typeof(T), existingValue);
         }
 
         public override bool CanConvert(Type objectType)
