@@ -141,21 +141,24 @@ namespace Jlw.Utilities.Data.DbUtility
         }
         #endregion
 
-        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sGetRecord, GetParamsForSql((TModel)o, _sGetRecord), true);
-        public virtual IEnumerable<TInterface> GetAllRecords() => _dbClient.GetRecordList<TInterface, TModel>(_connString, _sGetAllRecords, null, isStoredProc: true);
+        public virtual TInterface GetRecord(TInterface o) => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sGetRecord)));
+        public virtual IEnumerable<TInterface> GetAllRecords() => (IEnumerable<TInterface>)_dbClient.GetRecordList<TModel>(default, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sGetAllRecords, CommandType.StoredProcedure, new string[]{}));
 
-        public virtual TInterface InsertRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sInsertRecord, GetParamsForSql((TModel)o, _sInsertRecord), true);
+        public virtual TInterface InsertRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sInsertRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sInsertRecord)));
 
-        public virtual TInterface SaveRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sSaveRecord, GetParamsForSql((TModel)o, _sSaveRecord), true);
+        public virtual TInterface SaveRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sSaveRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sSaveRecord)));
 
-        public virtual TInterface UpdateRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sUpdateRecord, GetParamsForSql((TModel)o, _sUpdateRecord), true);
+        public virtual TInterface UpdateRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sUpdateRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sUpdateRecord)));
 
-        public virtual TInterface DeleteRecord(TInterface o)  => _dbClient.GetRecordObject<TInterface, TModel>(_connString, _sDeleteRecord, GetParamsForSql((TModel)o, _sDeleteRecord), true);
+        public virtual TInterface DeleteRecord(TInterface o)  => _dbClient.GetRecordObject<TModel>(o, _connString, new RepositoryMethodDefinition<TInterface, TModel>(_sDeleteRecord, CommandType.StoredProcedure, GetParamsForSql((TModel)o, _sDeleteRecord)));
 
 
-        public virtual IEnumerable<KeyValuePair<string, string>> GetKvpList() 
-        { 
-            if (string.IsNullOrWhiteSpace(_sListKeyMemberName) || string.IsNullOrWhiteSpace(_sListDescriptionMemberName))
+        public virtual IEnumerable<KeyValuePair<string, string>> GetKvpList(string keyMember=null, string descMember = null)
+        {
+            string key = keyMember ?? _sListKeyMemberName;
+            string desc = descMember ?? _sListDescriptionMemberName;
+
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(desc))
             {
                 throw new NotImplementedException("List Columns are not configured for GetKvpList");
             }
@@ -164,7 +167,8 @@ namespace Jlw.Utilities.Data.DbUtility
             List<KeyValuePair<string, string>> oReturn = new List<KeyValuePair<string, string>>();
             foreach(TInterface o in aList)
             {
-                oReturn.Add(new KeyValuePair<string, string>(typeof(TModel).GetProperty(_sListKeyMemberName)?.GetValue(o)?.ToString(), typeof(TModel).GetProperty(_sListDescriptionMemberName)?.GetValue(o)?.ToString()));
+                oReturn.Add(new KeyValuePair<string, string>(DataUtility.Parse<string>(o, key), DataUtility.Parse<string>(o, desc)));
+                //oReturn.Add(new KeyValuePair<string, string>(typeof(TModel).GetProperty(_sListKeyMemberName)?.GetValue(o)?.ToString(), typeof(TModel).GetProperty(_sListDescriptionMemberName)?.GetValue(o)?.ToString()));
             }
 
             return oReturn;

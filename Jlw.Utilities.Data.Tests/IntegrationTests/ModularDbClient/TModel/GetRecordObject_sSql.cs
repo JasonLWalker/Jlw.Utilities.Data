@@ -11,6 +11,7 @@ using MySql.Data.MySqlClient;
 
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TModel
 {
+    /*
     [TestClass]
     public class GetRecordObject_sSql : SqlLocalDbInstanceFixtureBase<ModularDataRepository<ITestDataModel, TestDataModel>>
     {
@@ -86,4 +87,5 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TModel
         }
 
     }
+    */
 }

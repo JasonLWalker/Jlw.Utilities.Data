@@ -29,7 +29,12 @@ namespace Jlw.Utilities.Data
             if (type == null)
                 return null;
 
-            if (type.IsPrimitive || type == typeof(string))
+            if (data != null && type.IsInstanceOfType(data))
+                return data;
+
+            Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+
+            if (type.IsPrimitive || underlyingType == typeof(string) || underlyingType == typeof(DateTime) || underlyingType == typeof(DateTimeOffset))
             {
                 return ParsePrimitiveAs(type, data);
             }
@@ -81,7 +86,7 @@ namespace Jlw.Utilities.Data
                         return ParseString(data);
                 }
 
-                if (data is DateTimeOffset)
+                if (type == typeof(DateTimeOffset?))
                     return ParseNullableDateTimeOffset(data);
 
                 return null;
@@ -128,7 +133,7 @@ namespace Jlw.Utilities.Data
                 }
             }
 
-            if (data is DateTimeOffset)
+            if (type == typeof(DateTimeOffset))
                 return ParseDateTimeOffset(data);
 
             return Activator.CreateInstance(type);
@@ -151,7 +156,7 @@ namespace Jlw.Utilities.Data
                         case IDictionary dict:
                             return dict.Contains(key) ? dict[key] : null;
                         case IDataRecord record:
-                            return record[key];
+                            return (Enumerable.Range(0, record.FieldCount).Any(x => record.GetName(x) == key)) ? record[key] : DBNull.Value;
                     }
 
                     var t = obj?.GetType();
@@ -171,6 +176,11 @@ namespace Jlw.Utilities.Data
             }
 
             return o;
+        }
+
+        public static string GetCaller([CallerMemberName] string caller = null)
+        {
+            return caller;
         }
 
 
@@ -226,5 +236,6 @@ namespace Jlw.Utilities.Data
 
             return s.ToString();
         }
+
     }
 }

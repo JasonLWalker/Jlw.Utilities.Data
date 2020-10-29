@@ -8,13 +8,20 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Jlw.Utilities.Data.Tests")]
 namespace Jlw.Utilities.Data.DbUtility
 {
+    public class ModularDataRepository : ModularDataRepository<object, object>
+    {
+        public ModularDataRepository(IModularDbClient dbClient, string connString = "") : base(dbClient, connString)
+        {
+        }
+    }
+    
     public class ModularDataRepository<TInterface, TModel> : IModularDataRepository<TInterface, TModel>
     where TModel : TInterface
     {
         // ReSharper disable InconsistentNaming
         protected IModularDbClient _dbClient;
         protected DbConnectionStringBuilder _builder { get; }
-        protected IDictionary<string, RepositoryMethodDefinition<TInterface, TModel>> _definitions = new Dictionary<string, RepositoryMethodDefinition<TInterface, TModel>>();
+        protected IDictionary<string, IRepositoryMethodDefinition> _definitions = new Dictionary<string, IRepositoryMethodDefinition>();
         // ReSharper restore InconsistentNaming
 
 
@@ -28,48 +35,37 @@ namespace Jlw.Utilities.Data.DbUtility
             _builder = _dbClient.GetConnectionBuilder(connString);
         }
 
-        protected internal RepositoryMethodDefinition<TInterface, TModel> GetDefinition(string key)
+        protected internal IRepositoryMethodDefinition GetDefinition(string key)
         {
             return _definitions.FirstOrDefault(o => o.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;            
         }
 
-        protected internal RepositoryMethodDefinition<TInterface, TModel> AddDefinition(string name, RepositoryMethodDefinition<TInterface, TModel> definition)
+        protected internal IRepositoryMethodDefinition AddDefinition(string name, IRepositoryMethodDefinition definition)
         {
             _definitions.Add(name, definition);
             return _definitions[name];
         }
 
-        protected internal RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
+        protected internal IRepositoryMethodDefinition AddNewDefinition(string name, string query, IEnumerable<string> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
         {
                 var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
                 return AddDefinition(name, def);
         }
-        protected internal RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
+        protected internal IRepositoryMethodDefinition AddNewDefinition(string name, string query, IEnumerable<KeyValuePair<string, object>> paramList, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
             return AddDefinition(name, def);
         }
 
-        protected internal RepositoryMethodDefinition<TInterface, TModel> AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
+        protected internal IRepositoryMethodDefinition AddNewDefinition(string name, string query, IEnumerable<IDbDataParameter> paramList = null, CommandType cmdType = CommandType.Text, RepositoryRecordCallback callback = null)
         {
             var def = new RepositoryMethodDefinition<TInterface, TModel>(query, cmdType, paramList, callback);
             return AddDefinition(name, def);
         }
 
         protected internal virtual TInterface GetRecordObject(TInterface objSearch, string definitionName) => GetRecordObject<TInterface>(objSearch, definitionName);
-        /*
-        {
-            RepositoryMethodDefinition<TInterface, TModel> def = GetDefinition(definitionName);
-            if (def == null)
-            {
-                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
-            }
 
-            return _dbClient.GetRecordObject(objSearch, ConnectionString, def);
-        }
-        */
-
-        protected internal TReturn GetRecordObject<TReturn>(TInterface objSearch, string definitionName)
+        protected internal TReturn GetRecordObject<TReturn>(object objSearch, string definitionName)
         {
             var def = GetDefinition(definitionName);
             if (def == null)
@@ -79,13 +75,13 @@ namespace Jlw.Utilities.Data.DbUtility
 
 
 
-            return _dbClient.GetRecordObject<TInterface, TModel, TReturn>(objSearch, ConnectionString, def);
+            return _dbClient.GetRecordObject<TReturn>(objSearch, ConnectionString, def);
 
         }
 
-        protected internal object GetRecordScalar(TInterface objSearch, string definitionName) => GetRecordScalar<object>(objSearch, definitionName);
+        protected internal TInterface GetRecordScalar(TInterface objSearch, string definitionName) => GetRecordScalar<TModel>(objSearch, definitionName);
 
-        protected internal TReturn GetRecordScalar<TReturn>(TInterface objSearch, string definitionName)
+        protected internal TReturn GetRecordScalar<TReturn>(object objSearch, string definitionName)
         {
             var def = GetDefinition(definitionName);
             if (def == null)
@@ -95,18 +91,32 @@ namespace Jlw.Utilities.Data.DbUtility
 
 
 
-            return _dbClient.GetRecordScalar<TInterface, TModel, TReturn>(objSearch, ConnectionString, def);
+            return _dbClient.GetRecordScalar<TReturn>(objSearch, ConnectionString, def);
 
         }
 
+        protected internal IEnumerable<TInterface> GetRecordList(TInterface objSearch, string definitionName) => (IEnumerable<TInterface>)GetRecordList<TModel>(objSearch, definitionName);
+
+        protected internal IEnumerable<TReturn> GetRecordList<TReturn>(object objSearch, string definitionName)
+        {
+            var def = GetDefinition(definitionName);
+            if (def == null)
+            {
+                throw new ArgumentException($"No repository definition found named \"{definitionName}\"", nameof(definitionName));
+            }
 
 
 
-        protected internal virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, nameof(GetRecord));
-        protected internal virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, nameof(InsertRecord));
-        protected internal virtual TInterface SaveRecord(TInterface o) => GetRecordObject(o, nameof(SaveRecord));
-        protected internal virtual TInterface UpdateRecord(TInterface o) => GetRecordObject(o, nameof(UpdateRecord));
-        protected internal virtual TInterface DeleteRecord(TInterface o) => GetRecordObject(o, nameof(DeleteRecord));
+            return _dbClient.GetRecordList<TReturn>(objSearch, ConnectionString, def);
+
+        }
+        
+
+        protected internal virtual TInterface GetRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface InsertRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface SaveRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface UpdateRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
+        protected internal virtual TInterface DeleteRecord(TInterface o) => GetRecordObject(o, DataUtility.GetCaller());
 
     }
 }

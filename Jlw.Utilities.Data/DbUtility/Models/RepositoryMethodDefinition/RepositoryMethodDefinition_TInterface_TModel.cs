@@ -5,8 +5,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    public class RepositoryMethodDefinition<TInterface, TModel>
-    where TModel : TInterface
+    public class RepositoryMethodDefinition<TInterface, TModel> : IRepositoryMethodDefinition
     {
         // ReSharper disable InconsistentNaming
         protected IList<IDbDataParameter> _dataParameters = new List<IDbDataParameter>();
@@ -15,9 +14,10 @@ namespace Jlw.Utilities.Data.DbUtility
         protected readonly string _sqlQuery;
         // ReSharper restore InconsistentNaming
 
+
         public readonly System.Type InterfaceType = typeof(TInterface);
         public readonly System.Type ModelType = typeof(TModel);
-        public readonly System.Type ReturnType = typeof(object);
+        public readonly System.Type ReturnType;
 
         public IEnumerable<IDbDataParameter> Parameters => _dataParameters;
         public RepositoryRecordCallback Callback => _callback;
@@ -29,13 +29,6 @@ namespace Jlw.Utilities.Data.DbUtility
         public RepositoryMethodDefinition(string sql, IEnumerable<KeyValuePair<string, object>> paramList, RepositoryRecordCallback callback = null, Type returnType = default) : this(sql, CommandType.Text, paramList, callback, returnType) { }
         
         public RepositoryMethodDefinition(string sql, IEnumerable<IDbDataParameter> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default) : this(sql, CommandType.Text, paramList, callback, returnType) { }
-
-        /*
-        protected RepositoryParameterCallback DefaultParameterCallback(IDbDataParameter param)
-        {
-            return param.Value;
-        }
-        */
 
         public RepositoryMethodDefinition(string sql, CommandType cmdType = CommandType.Text, IEnumerable<string> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default)
         {

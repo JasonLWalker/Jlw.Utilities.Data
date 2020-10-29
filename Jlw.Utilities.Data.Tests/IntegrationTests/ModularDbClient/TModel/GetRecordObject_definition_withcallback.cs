@@ -11,6 +11,7 @@ using MySql.Data.MySqlClient;
 
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TModel
 {
+    /*
     [TestClass]
     public class GetRecordObject_definition_withcallback : SqlLocalDbInstanceFixtureBase<ModularDataRepository<ITestDataModel, TestDataModel>>
     {
@@ -132,4 +133,5 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TModel
         }
 
     }
+    */
 }
