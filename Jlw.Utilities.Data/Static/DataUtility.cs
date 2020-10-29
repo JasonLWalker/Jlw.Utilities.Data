@@ -156,7 +156,7 @@ namespace Jlw.Utilities.Data
                         case IDictionary dict:
                             return dict.Contains(key) ? dict[key] : null;
                         case IDataRecord record:
-                            return (Enumerable.Range(0, record.FieldCount).Any(x => record.GetName(x) == "columnName")) ? record[key] : DBNull.Value;
+                            return (Enumerable.Range(0, record.FieldCount).Any(x => record.GetName(x) == key)) ? record[key] : DBNull.Value;
                     }
 
                     var t = obj?.GetType();
