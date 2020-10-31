@@ -1,10 +1,12 @@
 name: Build and Deploy (Alpha)
 
+#on:
+#  push:
+#    branches: #all branches that are NOT master.
+#      - '*'
+#      - '!primary'
 on:
-  push:
-    branches: #all branches that are NOT master.
-      - '*'
-      - '!primary'
+  workflow_dispatch:
 
 jobs:
   build:
