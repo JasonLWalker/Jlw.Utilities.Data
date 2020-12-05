@@ -60,11 +60,17 @@ jobs:
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        echo "::set-env name=DOTNET_NOLOGO::1"
-        echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
-        echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
-        echo "::set-env name=PKGNAME::$PKG_NAME"
-        echo "::set-env name=CURRENTDIR::$CURRENT_DIR"
+        $PKG_NAME=(Get-Item -Path ".\").Name
+        echo "DOTNET_NOLOGO=1" >> $GITHUB_ENV
+        echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> $GITHUB_ENV
+        echo "DOTNET_MULTILEVEL_LOOKUP=1" >> $GITHUB_ENV
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
+        echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
+        #echo "::set-env name=DOTNET_NOLOGO::1"
+        #echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
+        #echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
+        #echo "::set-env name=PKGNAME::$PKG_NAME"
+        #echo "::set-env name=CURRENTDIR::$CURRENT_DIR"
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
