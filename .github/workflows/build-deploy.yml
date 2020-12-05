@@ -24,9 +24,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: "${{ runner.os }}-nuget-${{ env.pkgname }}"
+        key: ${{ runner.os }}-nuget-$pkgname
         restore-keys: |
-          ${{ runner.os }}-nuget-
+          ${{ runner.os }}-nuget-$pkgname
     #- name: Setup .NET Core 2.1
     #  uses: actions/setup-dotnet@v1
     #  with:
