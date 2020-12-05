@@ -97,8 +97,8 @@ jobs:
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
-        "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
+        echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
@@ -106,7 +106,7 @@ jobs:
     - name: Get Package Version
       run: |
         export PKG_VERSION="$(echo `ls ./${{ env.PKGNAME }}/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')"
-        "PKGVERSION=$PKG_VERSION" | Add-Content -Path $ENV:GITHUB_ENV
+        echo "PKGVERSION=$PKG_VERSION" >> $GITHUB_ENV
     - name: Publish to github (using curl)
       run: |
         for f in ./${{ env.PKGNAME }}/bin/Release/*.nupkg
@@ -150,7 +150,7 @@ jobs:
     - name: Config Environment Variables
       run: |
         export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
-        "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV        
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV        
     - name: Delete Artifacts
       uses: geekyeggo/delete-artifact@v1
       with:
