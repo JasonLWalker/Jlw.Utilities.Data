@@ -16,7 +16,7 @@ jobs:
         echo "DOTNET_NOLOGO=1" >> $GITHUB_ENV
         echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> $GITHUB_ENV
         echo "DOTNET_MULTILEVEL_LOOKUP=1" >> $GITHUB_ENV
-        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
+        echo "pkgname=$PKG_NAME" >> $GITHUB_ENV
         echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: "${{ runner.os }}-nuget-${{ env::PKGNAME }}"
+        key: "${{ runner.os }}-nuget-${{ env.pkgname }}"
         restore-keys: |
           ${{ runner.os }}-nuget-
     #- name: Setup .NET Core 2.1
