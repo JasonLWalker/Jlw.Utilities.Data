@@ -10,6 +10,7 @@ jobs:
     - name: Config Environment Variables
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
+        echo "$PKG_NAME"
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
         echo "DOTNET_NOLOGO=1" >> $GITHUB_ENV
         echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> $GITHUB_ENV
