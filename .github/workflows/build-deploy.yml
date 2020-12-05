@@ -20,16 +20,16 @@ jobs:
         echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
     - name: check
       run: |
-        echo $pkgname
+        echo $env:pkgname
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-$pkgname
+        key: ${{ runner.os }}-nuget-${{ pkgname }}
         restore-keys: |
-          ${{ runner.os }}-nuget-$pkgname
+          ${{ runner.os }}-nuget-${{ env.pkgname }}
     #- name: Setup .NET Core 2.1
     #  uses: actions/setup-dotnet@v1
     #  with:
