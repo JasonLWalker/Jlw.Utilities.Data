@@ -20,7 +20,7 @@ jobs:
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
+        $GITHUB_ENV.PKGNAME = $PKG_NAME
         echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
     - name: check
       run: |
