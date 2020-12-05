@@ -25,8 +25,9 @@ namespace Jlw.Utilities.Data.DataTables
         protected IDataTablesInput Input;
         protected IDataTablesOutput Output;
         protected IModularDbClient _dbClient;
-
         public IEnumerable<object> Data => Output?.data;
+
+        public bool UseOrderedPaging { get; set; } = false;
 
         protected Dictionary<string, string> SortColumns { get; set; } // Internal list to hold list of columns that can be sorted on.
         protected Dictionary<string, string> SearchColumns { get; set; } // Internal list to hold list of columns that can be sorted on.        
@@ -159,9 +160,6 @@ namespace Jlw.Utilities.Data.DataTables
 
             if (string.IsNullOrWhiteSpace(sqlFragment))
                 sqlFragment = columnName;
-            //    throw new ArgumentException("SQL Fragment is required.", nameof(sqlFragment));
-
-
 
             Regex r = new Regex(@"^\w+$");
             if (!r.IsMatch(columnName))
@@ -172,6 +170,40 @@ namespace Jlw.Utilities.Data.DataTables
 
             SortColumns?.Add(columnName, sqlFragment);
 
+        }
+
+        public virtual IDataTablesOutput FetchQuery(string connString, string sSql)
+        {
+            using (IDbConnection conn = _dbClient.GetConnection(connString))
+            {
+                conn.Open();
+                string sSearch = "%" + Input?.search?.value + "%";
+
+                // Retrieve filtered and paginated data
+                SqlQueryDebug = sSql;
+                using (var cmd = _dbClient.GetCommand(sSql, conn))
+                {
+                    _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
+                    _dbClient.AddParameterWithValue("@nRowStart", (Input?.start ?? 0), cmd); // SQL offset begins with 0
+                    _dbClient.AddParameterWithValue("@nPageSize", (Input?.length ?? 10), cmd);
+                    AddParamsToSqlCommand(cmd);
+
+                    using (IDataReader result = cmd.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            ((List<object>)Output.data).Add(BuildRow(result));
+                            Output.recordsFiltered = DataUtility.ParseInt(result, "jlwDtFilteredCount");
+                            Output.recordsTotal = DataUtility.ParseInt(result, "jlwDtTotalCount");
+                        }
+                    }
+                }
+            }
+
+            if (bDebug)
+                Output.debug = SqlQueryDebug;
+
+            return Output;
         }
 
         public virtual IDataTablesOutput FetchData(string connString, string tables)
@@ -185,70 +217,39 @@ namespace Jlw.Utilities.Data.DataTables
             using (IDbConnection conn = _dbClient.GetConnection(connString))
             {
                 conn.Open();
-                var sql = "SELECT COUNT(*) as nCount FROM " + tables;
-                if (!string.IsNullOrWhiteSpace(GlobalFilter))
-                    sql += " WHERE " + GlobalFilter;
-                SqlQueryDebug = sql;
-
-                // Retrieve total record count with just the global filter.
-                using (var cmd = _dbClient.GetCommand(sql, conn)) // Wrap in Using statement so that the system automatically frees result
-                {
-                    AddParamsToSqlCommand(cmd);
-                    var result = cmd.ExecuteScalar().ToString();
-                    int.TryParse(result, out n);
-                    Output.recordsTotal = n;
-                }
-
-                //string sqlSort = BuildSort();
-
-                string sqlCriteria = BuildFilter();
-                //string sqlInner = BuildInnerQuery(tables, sqlSort, sqlCriteria);
-                //sql = BuildContraint(sqlColumns, sqlInner);
+                var sql = "";
                 sql = BuildQuery(tables);
 
                 string sSearch = "%" + Input?.search?.value + "%";
-                //sDebugQuery = sql;
-                //if (bDebugQuery) return;
-
 
                 // Retrieve filtered and paginated data
                 using (var cmd = _dbClient.GetCommand(sql, conn))
                 {
                     _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
-                    _dbClient.AddParameterWithValue("@nRowStart", Input?.start + 1, cmd);// Correct for SQL rows beginning with 1 and not 0
-                    _dbClient.AddParameterWithValue("@nRowEnd", Input?.start + Input?.length, cmd);// Correct for SQL rows beginning with 1 and not 0
-                    //cmd.Parameters.AddWithValue("@sSearch", sSearch);
-                    //cmd.Parameters.AddWithValue("@nRowStart", Input?.start + 1); // Correct for SQL rows beginning with 1 and not 0
-                    //cmd.Parameters.AddWithValue("@nRowEnd", Input?.start + Input?.length); // Correct for SQL rows beginning with 1 and not 0
-
+                    if (UseOrderedPaging)
+                    {
+                        _dbClient.AddParameterWithValue("@nRowStart", (Input?.start ?? 0) + 1, cmd); // Correct for SQL rows beginning with 1 and not 0
+                        _dbClient.AddParameterWithValue("@nRowEnd", Input?.start + Input?.length, cmd); // Correct for SQL rows beginning with 1 and not 0
+                    }
+                    else
+                    {
+                        _dbClient.AddParameterWithValue("@nRowStart", (Input?.start ?? 0), cmd); // SQL offset begins with 0
+                        _dbClient.AddParameterWithValue("@nPageSize", (Input?.length ?? 10), cmd);
+                    }
                     AddParamsToSqlCommand(cmd);
-
+                    
                     using (IDataReader result = cmd.ExecuteReader())
                     {
                         while (result.Read())
                         {
                             ((List<object>)Output.data).Add(BuildRow(result));
+                            Output.recordsFiltered = DataUtility.ParseInt(result, "jlwDtFilteredCount");
+                            Output.recordsTotal = DataUtility.ParseInt(result, "jlwDtTotalCount");
                         }
                     }
                 }
                 SqlQueryDebug = sql;
-
-                sql = "SELECT COUNT(*) as nCount FROM " + tables + ((string.IsNullOrWhiteSpace(sqlCriteria)) ? "" : " WHERE " + sqlCriteria);
-                // Retrieve record count of filtered data
-                using (var cmd = _dbClient.GetCommand(sql, conn))
-                {
-                    
-                    _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
-                    //cmd.Parameters.AddWithValue("@sSearch", sSearch);
-
-                    AddParamsToSqlCommand(cmd);
-
-                    var r = cmd.ExecuteScalar();
-                    if (r != null)
-                        Output.recordsFiltered = int.Parse(r.ToString());
-                }
-
-
+                
                 if (bDebug)
                     Output.debug = SqlQueryDebug;
 
@@ -262,7 +263,6 @@ namespace Jlw.Utilities.Data.DataTables
             foreach (KeyValuePair<string, string> o in ExtraParams)
             {
                 _dbClient.AddParameterWithValue(o.Key, o.Value, cmd); // Initialize any additional parameters
-                //cmd.Parameters.AddWithValue(o.Key, o.Value); // Initialize any additional parameters
             }
 
             foreach (IDbDataParameter parameter in cmd.Parameters)
@@ -276,17 +276,12 @@ namespace Jlw.Utilities.Data.DataTables
 
         internal virtual string BuildQuery(string tables)
         {
-            var sql = "SELECT COUNT(*) as nCount FROM " + tables;
-
             string sqlColumns = BuildColumns();
-
             string sqlSort = BuildSort();
-
             string sqlCriteria = BuildFilter();
             string sqlInner = BuildInnerQuery(tables, sqlSort, sqlCriteria);
-            sql = BuildContraint(sqlColumns, sqlInner);
 
-            return sql;
+            return "DECLARE @jlwDtTotalCount int = (SELECT COUNT(*) FROM " + tables + ");" + BuildContraint(sqlColumns, sqlInner);
         }
 
         internal virtual string BuildFilter()
@@ -395,7 +390,7 @@ namespace Jlw.Utilities.Data.DataTables
             if (ValidColumns?.Count < 1)
                 throw new ArgumentException("at least one element is required", "ValidColumns");
 
-            string s = "SELECT ";
+            string s = @"SELECT ";
             foreach (KeyValuePair<string, string> o in ValidColumns)
             {
                 if (o.Value == "[" + o.Key + "]" || o.Value == o.Key)
@@ -404,15 +399,36 @@ namespace Jlw.Utilities.Data.DataTables
                     s += o.Value + " as [" + o.Key + "], ";
             }
             s = s.Trim(cTrim);
-            s += ", ROW_NUMBER() OVER (ORDER BY " + sSortSQL + ") as rownum FROM " + sTables + ((string.IsNullOrWhiteSpace(sCriteriaSQL)) ? "" : " WHERE " + sCriteriaSQL);
+
+            s += ", COUNT(*) OVER () AS jlwDtFilteredCount, @jlwDtTotalCount AS jlwDtTotalCount";
+
+            if (UseOrderedPaging)
+            {
+                s += ", ROW_NUMBER() OVER (ORDER BY " + sSortSQL + ") as rownum";
+            }
+            s += " FROM " + sTables + ((string.IsNullOrWhiteSpace(sCriteriaSQL)) ? "" : " WHERE " + sCriteriaSQL);
+
+            if (!UseOrderedPaging)
+            {
+                s += " ORDER BY " + sSortSQL;
+            }
             return s;
         }
 
         internal virtual string BuildContraint(string columns, string sqlInner)
         {
-            var s = "WITH ORDERED AS ( " + sqlInner + " ) SELECT " + columns + " FROM ORDERED";
-            if (Input?.length > 0 || Input?.start > 0)
-                s += " WHERE rownum BETWEEN @nRowStart AND @nRowEnd";
+            var s = "";
+
+            if (UseOrderedPaging)
+            {
+                s="WITH ORDERED AS ( " + sqlInner + " ) SELECT " + columns + ", jlwDtFilteredCount, jlwDtTotalCount FROM ORDERED";
+                if (Input?.length > 0 || Input?.start > 0)
+                    s += " WHERE rownum BETWEEN @nRowStart AND @nRowEnd";
+            }
+            else
+            {
+                s = sqlInner + @" OFFSET @nRowStart ROWS FETCH NEXT @nPageSize ROWS ONLY";
+            }
             return s;
         }
 
