@@ -22,9 +22,13 @@ jobs:
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
         $env:PKGNAME = $PKG_NAME
         echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
+        echo "action_state=yellow" >> $GITHUB_ENV
     - name: check
       run: |
         echo $env.PKGNAME
+        echo $action_state
+        echo $env.action_state
+        
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
@@ -58,16 +62,21 @@ jobs:
   test:
     needs: build
     runs-on: windows-latest
+    env: 
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_MULTILEVEL_LOOKUP: 1
+      PKGNAME: Jlw_Utilities_Data
+      CURRENTDIR: ""
+      
     steps:
     - name: Config Environment Variables
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        echo "::set-env name=DOTNET_NOLOGO::1"
-        echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
-        echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
-        echo "::set-env name=PKGNAME::$PKG_NAME"
-        echo "::set-env name=CURRENTDIR::$CURRENT_DIR"
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
+        echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
+        
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
