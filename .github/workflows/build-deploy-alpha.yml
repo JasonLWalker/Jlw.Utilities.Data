@@ -28,9 +28,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+        key: ${{ runner.os }}-nuget-${{ PKGNAME }}
         restore-keys: |
-          ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+          ${{ runner.os }}-nuget-$PKGNAME
     #- name: Setup .NET Core 2.1
     #  uses: actions/setup-dotnet@v1
     #  with:
@@ -47,10 +47,10 @@ jobs:
       run: dotnet pack --version-suffix="-alpha" --configuration Release
     - uses: actions/upload-artifact@v2
       with:
-        name: "${{ env.PKGNAME }}"
+        name: "$PKGNAME"
         path: |
-          ${{ env.PKGNAME }}**/bin/Release
-          ${{ env.PKGNAME }}**/obj/Release
+          $PKGNAME**/bin/Release
+          $PKGNAME**/obj/Release
 
   test:
     needs: build
@@ -82,13 +82,13 @@ jobs:
           ${{ runner.os }}-nuget-
     - uses: actions/download-artifact@v2
       with:
-        name: ${{ env.PKGNAME }}
+        name: $PKGNAME
     - name: Install dependencies
       run: dotnet restore
     - name: Test with dotnet 3.1
-      run: dotnet test --no-build --configuration Release --verbosity normal ${{ env.PKGNAME }}.Tests
+      run: dotnet test --no-build --configuration Release --verbosity normal ${{ PKGNAME }}.Tests
     - name: Test with dotnet 2.1
-      run: dotnet test --no-build --configuration Release --verbosity normal ${{ env.PKGNAME }}.Tests-netcoreapp2.1
+      run: dotnet test --no-build --configuration Release --verbosity normal ${{ PKGNAME }}.Tests-netcoreapp2.1
 
   deploy:
     needs: test
