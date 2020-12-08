@@ -1,12 +1,12 @@
 name: Build and Test
 
 on:
-  pull_request:
-    branches: [ primary ]
   push:
     branches: #all branches that are NOT master.
       - '*'
-      - '!primary
+      - '!primary'
+  pull_request:
+    branches: [ primary ]
 
 jobs:
   build:
@@ -65,7 +65,6 @@ jobs:
     #- name: Test with dotnet 2.1
     #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-netcoreapp2.1
 
-    
   cleanup:
     needs: test
     if: always()
@@ -78,6 +77,6 @@ jobs:
     - name: Delete Artifacts
       uses: geekyeggo/delete-artifact@v1
       with:
-        name: ${{ env.PKGNAME }}  
+        name: ${{ env.PKGNAME }}
         failOnError: false
 
