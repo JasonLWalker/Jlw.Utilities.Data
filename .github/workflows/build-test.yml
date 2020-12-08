@@ -1,13 +1,12 @@
 name: Build and Test
 
 on:
+  pull_request:
+    branches: [ primary ]
   push:
     branches: #all branches that are NOT master.
       - '*'
       - '!primary
-
-  pull_request:
-    branches: [ primary ]
 
 jobs:
   build:
