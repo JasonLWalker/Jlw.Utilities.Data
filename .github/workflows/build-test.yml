@@ -4,7 +4,9 @@ on:
   push:
     branches: #all branches that are NOT master.
       - '*'
-      - '!primary'    
+      - '!primary'
+  pull_request:
+    branches: [ primary ]
 
   pull_request:
     branches: [ primary ]
@@ -34,7 +36,7 @@ jobs:
       run: dotnet pack --version-suffix="-alpha" --configuration Release
     - uses: actions/upload-artifact@v2
       with:
-        name: "$PKGNAME"
+        name: ${{ env.PKGNAME }}
         path: |
           ${{ env.PKGNAME }}**/bin/Release
           ${{ env.PKGNAME }}**/obj/Release
@@ -58,7 +60,7 @@ jobs:
       uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
       with:
-        name: $PKGNAME
+        name: ${{ env.PKGNAME }}
     - name: Install dependencies
       run: dotnet restore
     - name: Test with dotnet 3.1
@@ -66,7 +68,6 @@ jobs:
     #- name: Test with dotnet 2.1
     #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-netcoreapp2.1
 
-    
   cleanup:
     needs: test
     if: always()
@@ -79,6 +80,6 @@ jobs:
     - name: Delete Artifacts
       uses: geekyeggo/delete-artifact@v1
       with:
-        name: ${{ env.PKGNAME }}  
+        name: ${{ env.PKGNAME }}
         failOnError: false
 
