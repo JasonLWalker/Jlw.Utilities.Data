@@ -8,25 +8,27 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env: 
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_MULTILEVEL_LOOKUP: 1
+      
     steps:
-    - name: Config Environment Variables
+    - name: Export Environment Variables
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        echo "::set-env name=DOTNET_NOLOGO::1"
-        echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
-        echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
-        echo "::set-env name=PKGNAME::$PKG_NAME"
-        echo "::set-env name=CURRENTDIR::$CURRENT_DIR"
+        "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
+        "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
         restore-keys: |
-          ${{ runner.os }}-nuget-
+          ${{ runner.os }}-nuget-${{ env.PKGNAME }}
     #- name: Setup .NET Core 2.1
     #  uses: actions/setup-dotnet@v1
     #  with:
@@ -51,25 +53,27 @@ jobs:
   test:
     needs: build
     runs-on: windows-latest
+    env: 
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_MULTILEVEL_LOOKUP: 1
+      
     steps:
-    - name: Config Environment Variables
+    - name: Export Environment Variables
       run: |
         $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        echo "::set-env name=DOTNET_NOLOGO::1"
-        echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
-        echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
-        echo "::set-env name=PKGNAME::$PKG_NAME"
-        echo "::set-env name=CURRENTDIR::$CURRENT_DIR"
+        "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
+        "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Restore Nuget package cache
       uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
         restore-keys: |
-          ${{ runner.os }}-nuget-
+          ${{ runner.os }}-nuget-${{ env.PKGNAME }}
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
@@ -83,14 +87,16 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    env: 
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_MULTILEVEL_LOOKUP: 1
+      
     steps:
-    - name: Config Environment Variables
+    - name: Export Environment Variables
       run: |
         export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
-        echo "::set-env name=PKGNAME::$PKG_NAME"        
-        echo "::set-env name=DOTNET_NOLOGO::1"
-        echo "::set-env name=DOTNET_CLI_TELEMETRY_OPTOUT::1"
-        echo "::set-env name=DOTNET_MULTILEVEL_LOOKUP::1"
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
@@ -98,7 +104,7 @@ jobs:
     - name: Get Package Version
       run: |
         export PKG_VERSION="$(echo `ls ./${{ env.PKGNAME }}/bin/Release/*.nupkg` | sed 's/[^0-9]*\([0-9.a-z\-]*\)\.nupkg/v\1/')"
-        echo "::set-env name=PKGVERSION::$PKG_VERSION"
+        echo "PKGVERSION=$PKG_VERSION" >> $GITHUB_ENV
     - name: Publish to github (using curl)
       run: |
         for f in ./${{ env.PKGNAME }}/bin/Release/*.nupkg
@@ -130,6 +136,11 @@ jobs:
         asset_content_type: application/zip
 
   cleanup:
+    env: 
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_MULTILEVEL_LOOKUP: 1
+      
     needs: deploy
     if: always()
     runs-on: ubuntu-latest
@@ -137,7 +148,7 @@ jobs:
     - name: Config Environment Variables
       run: |
         export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
-        echo "::set-env name=PKGNAME::$PKG_NAME"        
+        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV        
     - name: Delete Artifacts
       uses: geekyeggo/delete-artifact@v1
       with:
