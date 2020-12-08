@@ -1,4 +1,4 @@
-name: Build and Deploy (Alpha)
+name: Build and Test
 
 on:
   workflow_dispatch:
@@ -20,21 +20,6 @@ jobs:
         "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
-    #- name: Restore Nuget package cache
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: ~/.nuget/packages
-    #    key: ${{ runner.os }}-nuget-$env:PKGNAME
-    #    restore-keys: |
-    #      ${{ runner.os }}-nuget-$env:PKGNAME
-    #- name: Setup .NET Core 2.1
-    #  uses: actions/setup-dotnet@v1
-    #  with:
-    #    dotnet-version: 2.1.x
-    #- name: Show .NET Info
-    #  run: |
-    #    dotnet --list-sdks
-    #    dotnet --list-runtimes
     - name: Install dependencies
       run: dotnet restore
     - name: Build with dotnet
