@@ -4,8 +4,7 @@ on:
   push:
     branches: #all branches that are NOT master.
       - '*'
-      - '!primary'    
-
+      - '!primary
 
 jobs:
   build:
