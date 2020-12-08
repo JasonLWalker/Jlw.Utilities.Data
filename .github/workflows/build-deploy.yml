@@ -95,10 +95,8 @@ jobs:
     steps:
     - name: Export Environment Variables
       run: |
-        $PKG_NAME=(Get-Item -Path ".\").Name
-        $CURRENT_DIR=(Get-Item -Path ".\").FullName
+        export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
         echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
-        echo "CURRENTDIR=$CURRENT_DIR" >> $GITHUB_ENV
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
