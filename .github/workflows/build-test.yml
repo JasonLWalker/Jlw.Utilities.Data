@@ -1,7 +1,11 @@
 name: Build and Test
 
 on:
-  workflow_dispatch:
+  push:
+    branches: #all branches that are NOT master.
+      - '*'
+      - '!primary'    
+
 
 jobs:
   build:
