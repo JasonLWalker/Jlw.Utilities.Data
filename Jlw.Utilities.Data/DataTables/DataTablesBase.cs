@@ -208,7 +208,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         public virtual IDataTablesOutput FetchData(string connString, string tables)
         {
-            int n = 0;
+            //int n = 0;
             string sqlColumns = BuildColumns();
 
             if (string.IsNullOrWhiteSpace(sqlColumns)) return Output;
@@ -417,7 +417,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         internal virtual string BuildContraint(string columns, string sqlInner)
         {
-            var s = "";
+            string s;
 
             if (UseOrderedPaging)
             {

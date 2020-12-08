@@ -54,7 +54,7 @@ namespace Jlw.Utilities.Data.DbUtility
         #region Internal Members
         protected virtual IDbConnection GetConnection(string connString = null)
         {
-            connString = connString ?? _connString;
+            connString ??= _connString;
 
             if (string.IsNullOrWhiteSpace(connString))
             {
