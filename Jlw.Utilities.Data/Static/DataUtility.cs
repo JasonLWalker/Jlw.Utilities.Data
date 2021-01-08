@@ -160,6 +160,7 @@ namespace Jlw.Utilities.Data
                     }
 
                     var t = obj?.GetType();
+
                     var fieldInfo = t?.GetFields().FirstOrDefault(x => x.Name == key);
                     if (fieldInfo != null)
                         return fieldInfo.GetValue(obj);
@@ -167,6 +168,12 @@ namespace Jlw.Utilities.Data
                     var propInfo = t?.GetProperties().FirstOrDefault(x => x.Name == key && x.CanRead);
                     if (propInfo != null)
                         return propInfo.GetValue(obj);
+                }
+
+                if (obj is Enum)
+                {
+                    Type enumType = Enum.GetUnderlyingType(obj.GetType());
+                    return Convert.ChangeType(obj, enumType);
                 }
             }
             catch
