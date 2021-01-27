@@ -207,6 +207,7 @@ namespace Jlw.Utilities.Data
 
         public static T GenerateRandom<T>(int? minLength = null, int? maxLength = null, string validChars = null)
         {
+            /*
             T val = default;
             var t = typeof(T);
 
@@ -216,7 +217,7 @@ namespace Jlw.Utilities.Data
                 case long l:
                     return Parse<T>(Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)));
                 case bool b:
-                    return Parse<T>( Rand.Next(0, 1));
+                    return Parse<T>(Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) > 0);
                 case double d:
                 case float f:
                 case decimal dc:
@@ -225,9 +226,40 @@ namespace Jlw.Utilities.Data
 
             if (t == typeof(string))
                 return Parse<T>(GetRandomString(minLength ?? 10, maxLength, validChars));
-
+            
             return val;
+            */
+            return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars)) ?? default(T);
         }
+
+        public static object GenerateRandom(Type t, int? minLength = null, int? maxLength = null, string validChars = null)
+        {
+            object val = default;
+            //var t = typeof(T);
+
+            switch (Type.GetTypeCode(t))
+            {
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                    return ParseAs(t, Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)));
+                case TypeCode.Boolean:
+                    return ParseAs(t, Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) > 0);
+                case TypeCode.Double:
+                case TypeCode.Single:
+                case TypeCode.Decimal:
+                    return ParseAs(t, (Rand.NextDouble() * Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) + Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue));
+            }
+
+            if (t == typeof(string))
+                return ParseAs(t, GetRandomString(minLength ?? 10, maxLength, validChars));
+
+            if (t.IsValueType)
+                return Activator.CreateInstance(t);
+
+            return null;
+        }
+
+
 
         protected static string GetRandomString(int minLength = 10, int? maxLength = null, string validChars = null)
         {
@@ -243,6 +275,75 @@ namespace Jlw.Utilities.Data
 
             return s.ToString();
         }
+
+        
+        protected static string GetTypeArgs(Type[] typeArray)
+        {
+            string sArgList = "";
+            foreach (Type typ in typeArray)
+            {
+                string sType = GetTypeName(typ);
+                sArgList += $"{sType}, ";
+            }
+
+
+            return sArgList.Trim(',', ' ');
+        }
+
+        protected static string GetTypeName(Type t)
+        {
+            var tc = Type.GetTypeCode(t);
+            switch (tc)
+            {
+                case TypeCode.Boolean:
+                    return "bool";
+                case TypeCode.Byte:
+                    return "byte";
+                case TypeCode.Char:
+                    return "char";
+                case TypeCode.Double:
+                    return "double";
+                case TypeCode.Int16:
+                    return "short";
+                case TypeCode.Int32:
+                    return "int";
+                case TypeCode.Int64:
+                    return "long";
+                case TypeCode.Object:
+                    if (t.IsGenericType)
+                    {
+                        if (t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                            return GetTypeName(t.GetGenericArguments()[0]) + "?";
+                        else
+                        {
+                            return GetGenericTypeString(t) + ", ";
+                        }
+                    }
+
+                    break;
+                case TypeCode.Single:
+                    return "float";
+                case TypeCode.String:
+                    return "string";
+            }
+
+            return t.Name;
+        }
+
+        // from https://stackoverflow.com/questions/2448800/given-a-type-instance-how-to-get-generic-type-name-in-c#2448918
+        protected static string GetGenericTypeString(Type t)
+        {
+            if (!t.IsGenericType)
+                return GetTypeName(t);
+            string genericTypeName = t.GetGenericTypeDefinition().Name;
+            genericTypeName = genericTypeName.Substring(0,
+                genericTypeName.IndexOf('`'));
+            string genericArgs = string.Join(", ",
+                t.GetGenericArguments()
+                    .Select(ta => GetGenericTypeString(ta)).ToArray());
+            return genericTypeName + "<" + genericArgs + ">";
+        }
+
 
     }
 }
