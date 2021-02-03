@@ -1,4 +1,4 @@
-name: Build
+name: Sonnar Build
 on:
   push:
     branches:
