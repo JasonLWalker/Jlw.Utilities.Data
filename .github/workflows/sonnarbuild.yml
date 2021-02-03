@@ -49,5 +49,6 @@ jobs:
           dotnet restore
           dotnet build --configuration Release --no-restore
           cd Jlw.Utilities.Data.Tests
-          dotnet dotcover test
+          dotnet dotcover test -dcReportType=HTML
+          cd ..
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
