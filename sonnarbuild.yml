@@ -45,10 +45,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"JasonLWalker_Jlw.Utilities.Data" /o:"jasonlwalker" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"JasonLWalker_Jlw.Utilities.Data" /o:"jasonlwalker" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.dotcover.reportsPaths="./dotCover.Unit.Output.html"
           dotnet restore
-          dotnet build --configuration Release --no-restore
+          dotnet build --configuration Debug --no-restore
           cd Jlw.Utilities.Data.Tests
-          dotnet dotcover test -dcReportType=HTML
+          dotnet dotcover test -dcXML=dotCover.config.xml
           cd ..
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"

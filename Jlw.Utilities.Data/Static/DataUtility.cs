@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -205,53 +206,108 @@ namespace Jlw.Utilities.Data
             return true;
         }
 
-        public static T GenerateRandom<T>(int? minLength = null, int? maxLength = null, string validChars = null)
-        {
-            /*
-            T val = default;
-            var t = typeof(T);
-
-            switch (val)
-            {
-                case int n:
-                case long l:
-                    return Parse<T>(Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)));
-                case bool b:
-                    return Parse<T>(Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) > 0);
-                case double d:
-                case float f:
-                case decimal dc:
-                    return Parse<T>( (Rand.NextDouble() * Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) + Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue));
-            }
-
-            if (t == typeof(string))
-                return Parse<T>(GetRandomString(minLength ?? 10, maxLength, validChars));
-            
-            return val;
-            */
-            return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars)) ?? default(T);
-        }
-
         public static object GenerateRandom(Type t, int? minLength = null, int? maxLength = null, string validChars = null)
         {
-            object val = default;
-            //var t = typeof(T);
+            return GenerateRandom(t, (object)minLength, (object)maxLength, validChars);
+        }
+
+        public static T GenerateRandom<T>(int? minLength = null, int? maxLength = null, string validChars = null)
+        {
+            return Parse<T>(GenerateRandom(typeof(T), (object)minLength, (object)maxLength, validChars)) ?? default(T);
+        }
+
+        public static T GenerateRandom<T>(object minLength = null, object maxLength = null, string validChars = null, Random rand=null)
+        {
+            return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars, rand)) ?? default(T);
+        }
+
+        public static object GenerateRandom(Type t, object minLength = null, object maxLength = null, string validChars = null, Random rand=null)
+        {
+            // Initialize Random number Generator with default if not specified.
+            var rng = rand ?? Rand;
+
+            double minDbl;
+            double maxDbl;
+            double dbl;
+
+            int minInt;
+            int maxInt;
+            int val;
+
+            long minLong;
+            long maxLong;
+            long lng;
+
 
             switch (Type.GetTypeCode(t))
             {
+                case TypeCode.Boolean:
+                    minInt = ParseNullableInt(minLength) ?? int.MinValue;
+                    maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
+                    return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)) > 0);
+                case TypeCode.Byte:
+                    minInt = ParseNullableByte(minLength) ?? byte.MinValue;
+                    maxInt = ParseNullableByte(maxLength) ?? ParseNullableByte(minLength) ?? byte.MaxValue;
+                    val = Math.Max(minInt, maxInt);
+                    minInt = Math.Min(minInt, maxInt);
+                    maxInt = val;
+                    return ParseAs(t, rng.Next(minInt, maxInt));
+                case TypeCode.DateTime:
+                    return DateTime.FromBinary(GenerateRandom<long>(minLength, maxLength, validChars, rand));
+                case TypeCode.Int16:
+                    minInt = ParseNullableInt16(minLength) ?? Int16.MinValue;
+                    maxInt = ParseNullableInt16(maxLength) ?? ParseNullableInt(minLength) ?? Int16.MaxValue;
+                    return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
                 case TypeCode.Int32:
                 case TypeCode.Int64:
-                    return ParseAs(t, Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)));
-                case TypeCode.Boolean:
-                    return ParseAs(t, Rand.Next(Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue), Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) > 0);
+                    minInt = ParseNullableInt(minLength) ?? int.MinValue;
+                    maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
+                    return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
+                case TypeCode.SByte:
+                    minInt = ParseNullableSByte(minLength) ?? sbyte.MinValue;
+                    maxInt = ParseNullableSByte(maxLength) ?? ParseNullableSByte(minLength) ?? sbyte.MaxValue;
+                    val = Math.Max(minInt, maxInt);
+                    minInt = Math.Min(minInt, maxInt);
+                    maxInt = val;
+                    return ParseAs(t, rng.Next(minInt, maxInt));
                 case TypeCode.Double:
+                    // Set the minimum value
+                    minDbl = ParseNullableDouble(minLength) ?? Double.MinValue;
+                    // Set the maximum value
+                    maxDbl = ParseNullableDouble(maxLength) ?? ParseNullableDouble(minLength) ?? Double.MaxValue;
+                    // ensure min/max is valid
+                    dbl = Math.Max(minDbl, maxDbl);
+                    minDbl = Math.Min(minDbl, maxDbl);
+                    maxDbl = dbl;
+                    // Retrieve random number
+                    return ParseAs(t, rng.NextDouble() * (maxDbl - minDbl) + minDbl);
                 case TypeCode.Single:
+                    // Set the minimum value
+                    minDbl = ParseNullableDouble(minLength) ?? Single.MinValue;
+                    // Set the maximum value
+                    maxDbl = ParseNullableDouble(maxLength) ?? ParseNullableDouble(minLength) ?? Single.MaxValue;
+                    // ensure min/max is valid
+                    dbl = Math.Max(minDbl, maxDbl);
+                    minDbl = Math.Max(Single.MinValue, Math.Min(minDbl, maxDbl));
+                    maxDbl = Math.Min(Single.MaxValue, dbl);
+                    return ParseAs(t, ParseSingle(rng.NextDouble() * (maxDbl - minDbl) + minDbl));
                 case TypeCode.Decimal:
-                    return ParseAs(t, (Rand.NextDouble() * Math.Max(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue)) + Math.Min(minLength ?? int.MinValue, maxLength ?? minLength ?? int.MaxValue));
+                    Decimal minDec = ParseNullableDecimal(minLength) ?? Decimal.MinValue;
+                    Decimal maxDec = ParseNullableDecimal(maxLength) ?? ParseNullableDecimal(minLength) ?? Decimal.MaxValue;
+                    Decimal dec = Math.Max(minDec, maxDec);
+                    minDec = Math.Min(minDec, maxDec);
+                    maxDec = dec;
+                    return ParseAs(t, ParseDecimal(rng.NextDouble()) * (maxDec - minDec) + minDec);
+
             }
 
             if (t == typeof(string))
-                return ParseAs(t, GetRandomString(minLength ?? 10, maxLength, validChars));
+            {
+                minInt = ParseNullableInt(minLength) ?? int.MinValue;
+                maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
+                minInt = Math.Max(minInt, 1);
+                return ParseAs(t, GetRandomString(minInt, maxInt, validChars, rng));
+            }
 
             if (t.IsValueType)
                 return Activator.CreateInstance(t);
@@ -261,16 +317,17 @@ namespace Jlw.Utilities.Data
 
 
 
-        protected static string GetRandomString(int minLength = 10, int? maxLength = null, string validChars = null)
+        protected static string GetRandomString(int minLength = 10, int? maxLength = null, string validChars = null, Random rand = null)
         {
+            Random rng = rand ?? Rand;
             int min = Math.Min(minLength, maxLength ?? minLength);
             int max = Math.Max(minLength, maxLength ?? minLength);
-            int len = Rand.Next(min, max);
+            int len = rng.Next(min, max);
             var s = new StringBuilder("", max);
             string chars = validChars ?? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopsrstuvwxyz1234567890";
             while (s.Length < len)
             {
-                s.Append(chars[Rand.Next(0, chars.Length)]);
+                s.Append(chars[rng.Next(0, chars.Length)]);
             }
 
             return s.ToString();

@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.dotCover.DotNetCliTool" Version="2020.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Jlw.Utilities.Testing" Version="1.1.7565.16742-alpha" />
     <PackageReference Include="MartinCostello.SqlLocalDb" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
@@ -39,5 +43,7 @@
   <ItemGroup>
     <Folder Include="IntegrationTests\TSql\" />
   </ItemGroup>
-
+  <ItemGroup>
+    <DotNetCliToolReference Include="JetBrains.dotCover.DotNetCliTool" Version="2020.3.2" />
+  </ItemGroup>
 </Project>
