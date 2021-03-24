@@ -39,8 +39,10 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-dot[cC]over.[oO]utput*/
-dot[cC]over.[oO]utput.*
+dot[cC]over.*.[oO]utput*/
+dot[cC]over.*.[oO]utput.*
+sonnarbuild.cmd
+.sonarqube
 
 # NUNIT
 *.VisualState.xml

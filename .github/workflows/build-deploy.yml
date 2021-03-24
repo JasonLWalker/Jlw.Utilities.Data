@@ -14,21 +14,21 @@ jobs:
       DOTNET_MULTILEVEL_LOOKUP: 1
       
     steps:
-    - name: Export Environment Variables
+    - name: Config Environment Variables
       run: |
-        $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
+        $PKG_NAME=(Get-Item -Path ".\").Name
         "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
         "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
-    - name: Restore Nuget package cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+    #- name: Restore Nuget package cache
+    #  uses: actions/cache@v2
+    #  with:
+    #    path: ~/.nuget/packages
+    #    key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+    #    restore-keys: |
+    #      ${{ runner.os }}-nuget-${{ env.PKGNAME }}
     #- name: Setup .NET Core 2.1
     #  uses: actions/setup-dotnet@v1
     #  with:
@@ -61,19 +61,19 @@ jobs:
     steps:
     - name: Export Environment Variables
       run: |
-        $PKG_NAME=(Get-Item -Path ".\").Name
         $CURRENT_DIR=(Get-Item -Path ".\").FullName
+        $PKG_NAME=(Get-Item -Path ".\").Name
         "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
         "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
     - name: Checkout Repository
       uses: actions/checkout@v2
-    - name: Restore Nuget package cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+    #- name: Restore Nuget package cache
+    #  uses: actions/cache@v2
+    #  with:
+    #    path: ~/.nuget/packages
+    #    key: ${{ runner.os }}-nuget-${{ env.PKGNAME }}
+    #    restore-keys: |
+    #      ${{ runner.os }}-nuget-${{ env.PKGNAME }}
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.PKGNAME }}
@@ -81,8 +81,8 @@ jobs:
       run: dotnet restore
     - name: Test with dotnet 3.1
       run: dotnet test --no-build --configuration Release --verbosity normal ${{ env.PKGNAME }}.Tests
-    - name: Test with dotnet 2.1
-      run: dotnet test --no-build --configuration Release --verbosity normal ${{ env.PKGNAME }}.Tests-netcoreapp2.1
+    #- name: Test with dotnet 2.1
+    #  run: dotnet test --no-build --configuration Release --verbosity normal ${{ env.PKGNAME }}.Tests-netcoreapp2.1
 
   deploy:
     needs: test
@@ -136,14 +136,14 @@ jobs:
         asset_content_type: application/zip
 
   cleanup:
+    needs: deploy
+    if: always()
+    runs-on: ubuntu-latest
     env: 
       DOTNET_NOLOGO: 1
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_MULTILEVEL_LOOKUP: 1
       
-    needs: deploy
-    if: always()
-    runs-on: ubuntu-latest
     steps:
     - name: Config Environment Variables
       run: |

@@ -206,6 +206,16 @@ namespace Jlw.Utilities.Data
             return true;
         }
 
+        public static object GenerateRandom(Type t, int? minLength = null, int? maxLength = null, string validChars = null)
+        {
+            return GenerateRandom(t, (object)minLength, (object)maxLength, validChars);
+        }
+
+        public static T GenerateRandom<T>(int? minLength = null, int? maxLength = null, string validChars = null)
+        {
+            return Parse<T>(GenerateRandom(typeof(T), (object)minLength, (object)maxLength, validChars)) ?? default(T);
+        }
+
         public static T GenerateRandom<T>(object minLength = null, object maxLength = null, string validChars = null, Random rand=null)
         {
             return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars, rand)) ?? default(T);
