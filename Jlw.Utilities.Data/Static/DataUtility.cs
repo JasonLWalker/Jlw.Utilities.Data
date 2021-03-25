@@ -221,7 +221,7 @@ namespace Jlw.Utilities.Data
             return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars, rand)) ?? default(T);
         }
 
-        public static object GenerateRandom(Type t, object minLength = null, object maxLength = null, string validChars = null, Random rand=null)
+        public static object GenerateRandom(Type t, object minLength, object maxLength = null, string validChars = null, Random rand=null)
         {
             // Initialize Random number Generator with default if not specified.
             var rng = rand ?? Rand;
