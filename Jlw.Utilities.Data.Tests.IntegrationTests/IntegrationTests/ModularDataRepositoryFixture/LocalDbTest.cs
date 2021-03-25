@@ -22,8 +22,8 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDataRepositoryFixture
         public override void TestInitialize()
         {
             base.TestInitialize();
-            DefaultRepo.AddNewDefinition("GetRecord", "sp_GetRecordData", new string[] { "Id" }, CommandType.StoredProcedure, RecordCallback);
-            DefaultRepo.AddNewDefinition("SaveRecord", "sp_SaveRecordData", new string[] { "Id", "Name", "Description", "LastUpdated" }, CommandType.StoredProcedure, RecordCallback);
+            //DefaultRepo.AddNewDefinition("GetRecord", "sp_GetRecordData", new string[] { "Id" }, CommandType.StoredProcedure, RecordCallback);
+            //DefaultRepo.AddNewDefinition("SaveRecord", "sp_SaveRecordData", new string[] { "Id", "Name", "Description", "LastUpdated" }, CommandType.StoredProcedure, RecordCallback);
         }
 
         /*

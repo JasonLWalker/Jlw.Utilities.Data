@@ -32,10 +32,18 @@ namespace Jlw.Utilities.Data
                 return null;
             try
             {
-                decimal.TryParse(data.ToString().Trim(), out var d);
-                return d;
+                if (decimal.TryParse(data.ToString().Trim(), out var d))
+                    return d;
+
+                string s = data.ToString()?.Trim();
+                if (s?.Length > 0 &&  s[0] == '-')
+                    return Decimal.MinValue;
+                else 
+                    return Decimal.MaxValue;
             }
-            catch (OverflowException) { }
+            catch (OverflowException ex)
+            {
+            }
             return null;
         }
 
