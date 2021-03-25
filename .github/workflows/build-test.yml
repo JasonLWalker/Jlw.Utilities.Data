@@ -70,7 +70,7 @@ jobs:
   #  #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-netcoreapp2.1
 
   cleanup:
-    needs: build
+    needs: build-test
     if: always()
     runs-on: ubuntu-latest
     steps:
