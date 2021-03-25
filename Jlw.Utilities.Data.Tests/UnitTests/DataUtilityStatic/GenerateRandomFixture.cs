@@ -113,6 +113,33 @@ namespace Jlw.Utilities.Data.Tests.UnitTests.DataUtilityStatic
         }
 
         [TestMethod]
+        public void ShouldReturnRandomValueWithoutArgs()
+        {
+            object newVal = null;
+            object prevVal = newVal;
+            
+            newVal = DataUtility.GenerateRandom(typeof(int));
+            Console.WriteLine($"Previous Value: {prevVal ?? "<NULL>"}, New Value: {newVal ?? "<NULL>"}");
+            Assert.AreNotEqual(prevVal, newVal, "Previous value should not match random value");
+
+            prevVal = newVal;
+            newVal = DataUtility.GenerateRandom(typeof(float));
+            Console.WriteLine($"Previous Value: {prevVal ?? "<NULL>"}, New Value: {newVal ?? "<NULL>"}");
+            Assert.AreNotEqual(prevVal, newVal, "Previous value should not match random value");
+
+            prevVal = newVal;
+            newVal = DataUtility.GenerateRandom<int>();
+            Console.WriteLine($"Previous Value: {prevVal ?? "<NULL>"}, New Value: {newVal ?? "<NULL>"}");
+            Assert.AreNotEqual(prevVal, newVal, "Previous value should not match random value");
+
+            prevVal = newVal;
+            newVal = DataUtility.GenerateRandom<float>();
+            Console.WriteLine($"Previous Value: {prevVal ?? "<NULL>"}, New Value: {newVal ?? "<NULL>"}");
+            Assert.AreNotEqual(prevVal, newVal, "Previous value should not match random value");
+        }
+
+
+        [TestMethod]
         [GenerateRandomTestData(typeof(Byte))]
         [DataRow(typeof(string), null, 0, DisplayName = "ShouldReturnRandomValueOfType(string, null, 0)")]
         [GenerateRandomTestData(typeof(SByte))]
