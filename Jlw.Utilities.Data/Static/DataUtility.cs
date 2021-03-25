@@ -35,7 +35,7 @@ namespace Jlw.Utilities.Data
 
             Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
 
-            if (type.IsPrimitive || underlyingType == typeof(string) || underlyingType == typeof(DateTime) || underlyingType == typeof(DateTimeOffset))
+            if (type.IsPrimitive || underlyingType == typeof(string) || underlyingType == typeof(DateTime) || underlyingType == typeof(DateTimeOffset) || underlyingType == typeof(Decimal))
             {
                 return ParsePrimitiveAs(type, data);
             }
@@ -216,7 +216,7 @@ namespace Jlw.Utilities.Data
             return Parse<T>(GenerateRandom(typeof(T), (object)minLength, (object)maxLength, validChars)) ?? default(T);
         }
 
-        public static T GenerateRandom<T>(object minLength = null, object maxLength = null, string validChars = null, Random rand=null)
+        public static T GenerateRandom<T>(object minLength, object maxLength = null, string validChars = null, Random rand=null)
         {
             return Parse<T>(GenerateRandom(typeof(T), minLength, maxLength, validChars, rand)) ?? default(T);
         }
@@ -243,29 +243,29 @@ namespace Jlw.Utilities.Data
             {
                 case TypeCode.Boolean:
                     minInt = ParseNullableInt(minLength) ?? int.MinValue;
-                    maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
+                    maxInt = ParseNullableInt(maxLength) ?? int.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)) > 0);
                 case TypeCode.Byte:
                     minInt = ParseNullableByte(minLength) ?? byte.MinValue;
-                    maxInt = ParseNullableByte(maxLength) ?? ParseNullableByte(minLength) ?? byte.MaxValue;
+                    maxInt = ParseNullableByte(maxLength) ?? byte.MaxValue;
                     val = Math.Max(minInt, maxInt);
                     minInt = Math.Min(minInt, maxInt);
                     maxInt = val;
                     return ParseAs(t, rng.Next(minInt, maxInt));
                 case TypeCode.DateTime:
-                    return DateTime.FromBinary(GenerateRandom<long>(minLength, maxLength, validChars, rand));
+                    return DateTime.Now - new TimeSpan(GenerateRandom<int>(minLength, maxLength, validChars, rand) * 3600000);
                 case TypeCode.Int16:
                     minInt = ParseNullableInt16(minLength) ?? Int16.MinValue;
-                    maxInt = ParseNullableInt16(maxLength) ?? ParseNullableInt(minLength) ?? Int16.MaxValue;
+                    maxInt = ParseNullableInt16(maxLength) ?? Int16.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
                 case TypeCode.Int32:
                 case TypeCode.Int64:
                     minInt = ParseNullableInt(minLength) ?? int.MinValue;
-                    maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
+                    maxInt = ParseNullableInt(maxLength) ?? int.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
                 case TypeCode.SByte:
                     minInt = ParseNullableSByte(minLength) ?? sbyte.MinValue;
-                    maxInt = ParseNullableSByte(maxLength) ?? ParseNullableSByte(minLength) ?? sbyte.MaxValue;
+                    maxInt = ParseNullableSByte(maxLength) ?? sbyte.MaxValue;
                     val = Math.Max(minInt, maxInt);
                     minInt = Math.Min(minInt, maxInt);
                     maxInt = val;
@@ -274,18 +274,22 @@ namespace Jlw.Utilities.Data
                     // Set the minimum value
                     minDbl = ParseNullableDouble(minLength) ?? Double.MinValue;
                     // Set the maximum value
-                    maxDbl = ParseNullableDouble(maxLength) ?? ParseNullableDouble(minLength) ?? Double.MaxValue;
+                    maxDbl = ParseNullableDouble(maxLength) ?? Double.MaxValue;
                     // ensure min/max is valid
                     dbl = Math.Max(minDbl, maxDbl);
                     minDbl = Math.Min(minDbl, maxDbl);
                     maxDbl = dbl;
                     // Retrieve random number
-                    return ParseAs(t, rng.NextDouble() * (maxDbl - minDbl) + minDbl);
+                    if (minLength == null && maxLength == null)
+                        return ParseAs(t, rng.NextDouble());
+                    else
+                        return ParseAs(t, rng.NextDouble() * (maxDbl - minDbl) + minDbl);
+                    
                 case TypeCode.Single:
                     // Set the minimum value
                     minDbl = ParseNullableDouble(minLength) ?? Single.MinValue;
                     // Set the maximum value
-                    maxDbl = ParseNullableDouble(maxLength) ?? ParseNullableDouble(minLength) ?? Single.MaxValue;
+                    maxDbl = ParseNullableDouble(maxLength) ?? Single.MaxValue;
                     // ensure min/max is valid
                     dbl = Math.Max(minDbl, maxDbl);
                     minDbl = Math.Max(Single.MinValue, Math.Min(minDbl, maxDbl));
@@ -293,20 +297,26 @@ namespace Jlw.Utilities.Data
                     return ParseAs(t, ParseSingle(rng.NextDouble() * (maxDbl - minDbl) + minDbl));
                 case TypeCode.Decimal:
                     Decimal minDec = ParseNullableDecimal(minLength) ?? Decimal.MinValue;
-                    Decimal maxDec = ParseNullableDecimal(maxLength) ?? ParseNullableDecimal(minLength) ?? Decimal.MaxValue;
+                    Decimal maxDec = ParseNullableDecimal(maxLength) ?? Decimal.MaxValue;
                     Decimal dec = Math.Max(minDec, maxDec);
                     minDec = Math.Min(minDec, maxDec);
                     maxDec = dec;
-                    return ParseAs(t, ParseDecimal(rng.NextDouble()) * (maxDec - minDec) + minDec);
-
+                    minDec = Math.Max(minDec, Decimal.MinValue);
+                    dec = ParseDecimal(rng.NextDouble());
+                    try
+                    {
+                        return ParseAs(t, dec * (maxDec - minDec) + minDec);
+                    }
+                    catch (Exception ex)
+                    {
+                        //
+                    }
+                    return dec;
             }
 
             if (t == typeof(string))
             {
-                minInt = ParseNullableInt(minLength) ?? int.MinValue;
-                maxInt = ParseNullableInt(maxLength) ?? ParseNullableInt(minLength) ?? int.MaxValue;
-                minInt = Math.Max(minInt, 1);
-                return ParseAs(t, GetRandomString(minInt, maxInt, validChars, rng));
+                return ParseAs(t, GetRandomString(ParseNullableInt(minLength), ParseNullableInt(maxLength), validChars, rng));
             }
 
             if (t.IsValueType)
@@ -317,11 +327,15 @@ namespace Jlw.Utilities.Data
 
 
 
-        protected static string GetRandomString(int minLength = 10, int? maxLength = null, string validChars = null, Random rand = null)
+        protected static string GetRandomString(int? minLength = null, int? maxLength = null, string validChars = null, Random rand = null)
         {
             Random rng = rand ?? Rand;
-            int min = Math.Min(minLength, maxLength ?? minLength);
-            int max = Math.Max(minLength, maxLength ?? minLength);
+            int min = Math.Max(minLength ?? maxLength ?? 10, 0);
+            int max = Math.Min(maxLength ?? minLength ?? 10, UInt16.MaxValue);
+            int swap = Math.Min(min, max);
+            max = Math.Max(min, max) + 1;
+            min = swap;
+
             int len = rng.Next(min, max);
             var s = new StringBuilder("", max);
             string chars = validChars ?? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopsrstuvwxyz1234567890";
@@ -334,7 +348,7 @@ namespace Jlw.Utilities.Data
         }
 
         
-        protected static string GetTypeArgs(Type[] typeArray)
+        public static string GetTypeArgs(Type[] typeArray)
         {
             string sArgList = "";
             foreach (Type typ in typeArray)
@@ -347,7 +361,7 @@ namespace Jlw.Utilities.Data
             return sArgList.Trim(',', ' ');
         }
 
-        protected static string GetTypeName(Type t)
+        public static string GetTypeName(Type t)
         {
             var tc = Type.GetTypeCode(t);
             switch (tc)
@@ -388,7 +402,7 @@ namespace Jlw.Utilities.Data
         }
 
         // from https://stackoverflow.com/questions/2448800/given-a-type-instance-how-to-get-generic-type-name-in-c#2448918
-        protected static string GetGenericTypeString(Type t)
+        public static string GetGenericTypeString(Type t)
         {
             if (!t.IsGenericType)
                 return GetTypeName(t);
