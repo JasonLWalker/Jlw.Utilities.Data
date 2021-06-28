@@ -13,6 +13,9 @@
 		<PackageId>Jlw.Utilities.Data</PackageId>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
+    <Description>
+      A utility package providing static string manipulation and conversion utilities, as well as a modular database framework meant to provide a way to decouple database implementations when working with data repositories.
+    </Description>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<Authors>Jlw.Utilities.Data</Authors>
 		<LangVersion>8.0</LangVersion>
@@ -21,6 +24,15 @@
 	  <PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
 
+  <PropertyGroup>
+    <DebugSymbols>true</DebugSymbols>
+    <EmbedAllSources>true</EmbedAllSources>
+    <DebugType>portable</DebugType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  
 	<ItemGroup>
 		<PackageReference Include="MySql.Data" Version="8.0.21">
 			<PrivateAssets>All</PrivateAssets>
