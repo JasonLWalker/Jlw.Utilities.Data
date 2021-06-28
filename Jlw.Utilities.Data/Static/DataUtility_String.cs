@@ -13,7 +13,17 @@ namespace Jlw.Utilities.Data
         {
             try
             {
-                return (GetObjectValue(obj, key) ?? "").ToString();
+                Type t = obj.GetType();
+
+                if (t.IsPrimitive || obj is string || obj is IEnumerable)
+                {
+                    return GetObjectValue(obj, key)?.ToString();
+                }
+
+                var s = (GetObjectValue(obj, key) ?? "").ToString();
+
+
+                return t.ToString() == s ? "" : s;
             }
             catch
             {
