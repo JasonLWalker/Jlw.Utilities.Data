@@ -5,7 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Jlw.Utilities.Data.Tests")]
+//[assembly: InternalsVisibleTo("Jlw.Utilities.Data.Tests")]
 namespace Jlw.Utilities.Data.DbUtility
 {
     public class ModularDataRepository : ModularDataRepository<object, object>
