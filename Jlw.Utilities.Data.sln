@@ -27,7 +27,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jlw.Utilities.Data.Tests.IntegrationTests", "Jlw.Utilities.Data.Tests.IntegrationTests\Jlw.Utilities.Data.Tests.IntegrationTests.csproj", "{60506AAE-4ADB-44D4-A76C-79D8320FDC50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jlw.Utilities.Data.Tests.IntegrationTests", "Jlw.Utilities.Data.Tests.IntegrationTests\Jlw.Utilities.Data.Tests.IntegrationTests.csproj", "{60506AAE-4ADB-44D4-A76C-79D8320FDC50}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-scripts", "build-scripts", "{B604DD90-5ABE-4C52-9DFD-FB547E1622AA}"
+	ProjectSection(SolutionItems) = preProject
+		build-scripts\build.ps1 = build-scripts\build.ps1
+		build-scripts\test.ps1 = build-scripts\test.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +63,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E91CB968-BD7C-4499-BA36-A0DCC5DDA7DD} = {14E9660E-30FA-4CA9-9EF1-B70A87547C9E}
+		{B604DD90-5ABE-4C52-9DFD-FB547E1622AA} = {14E9660E-30FA-4CA9-9EF1-B70A87547C9E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D22CDC3-8ED5-4117-9980-F197EDB2D074}

@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build with dotnet
-      run: dotnet build --version-suffix="-alpha" --configuration Release --no-restore
+      run: ./build-scripts/build.ps1 -buildType "Release"  -versionSuffix "$(versionSuffix)"
     #- name: Pack NuGet package
     #  run: dotnet pack --version-suffix="-alpha" --configuration Release
     #- uses: actions/upload-artifact@v2
