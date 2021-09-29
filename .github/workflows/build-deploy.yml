@@ -39,10 +39,10 @@ jobs:
     #    dotnet --list-runtimes
     - name: Install dependencies
       run: dotnet restore
-    - name: Build with dotnet
-      run: dotnet build --configuration Release --no-restore
-    - name: Pack NuGet package
-      run: dotnet pack --configuration Release
+    - name: Build / Pack
+      run: ./build-scripts/build.ps1 -buildType "Release"
+    #- name: Pack NuGet package
+    #  run: dotnet pack --configuration Release
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PKGNAME }}

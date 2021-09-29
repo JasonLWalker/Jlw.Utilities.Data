@@ -1,28 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net452;net48</TargetFrameworks>
-		<Deterministic>False</Deterministic>
-		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Deterministic>False</Deterministic>
 		<GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
 		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Utilities.Data.git</RepositoryUrl>    
-		<VersionSuffix>$(VersionSuffix)</VersionSuffix>    
-		<AssemblyName>Jlw.Utilities.Data</AssemblyName>    
-		<RootNamespace>Jlw.Utilities.Data</RootNamespace>    
 		<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageId>Jlw.Utilities.Data</PackageId>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+	
+  <PropertyGroup>
+    <PackageId>Jlw.Utilities.Data</PackageId>
+    <AssemblyName>$(PackageId)</AssemblyName>
+    <RootNamespace>$(PackageId)</RootNamespace>
+    <Company></Company>
+    <Authors>JasonLWalker</Authors>
     <Description>
       A utility package providing static string manipulation and conversion utilities, as well as a modular database framework meant to provide a way to decouple database implementations when working with data repositories.
     </Description>
-		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Authors>Jlw.Utilities.Data</Authors>
-		<LangVersion>8.0</LangVersion>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-	  <PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
+    <Copyright>Copyright ©2012-2021 Jason L. Walker</Copyright>
+    <VersionPrefix Condition="'$(VersionPrefix)' == ''">0.0.0.1</VersionPrefix>
+    <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+  </PropertyGroup>
 
   <PropertyGroup>
     <DebugSymbols>true</DebugSymbols>
@@ -39,7 +48,6 @@
     <None Include="..\key.snk" Link="key.snk" />
   </ItemGroup>
 
-  
 	<ItemGroup>
 		<PackageReference Include="MySql.Data" Version="8.0.21">
 			<PrivateAssets>All</PrivateAssets>
