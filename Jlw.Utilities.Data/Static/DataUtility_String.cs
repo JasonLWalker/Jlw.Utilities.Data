@@ -11,6 +11,9 @@ namespace Jlw.Utilities.Data
     {
         public static string ParseString(object obj, string key = null)
         {
+            if (obj is null)
+                return "";
+
             try
             {
                 Type t = obj.GetType();
