@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jason L. Walker")]
 [assembly: AssemblyProduct("Jlw.Utilites.Data")]
-[assembly: AssemblyCopyright("Copyright ©2012-2020 Jason L. Walker")]
+[assembly: AssemblyCopyright("Copyright ©2012-2021 Jason L. Walker")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.0.*")]
+[assembly: AssemblyVersion("4.2.*")]

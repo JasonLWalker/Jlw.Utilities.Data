@@ -16,6 +16,7 @@ namespace Jlw.Utilities.Data
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetObjectValue(object obj, string key = null)
         {
+            if (obj is null) return null;
             object o = obj;
             try
             {
