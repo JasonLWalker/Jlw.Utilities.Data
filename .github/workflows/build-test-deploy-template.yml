@@ -74,10 +74,9 @@ jobs:
         shell: pwsh
         run: |
           Compress-Archive -Path "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.REPO_PKGNAME }}/bin/${{ env.INPUT_BUILD_CONFIG }}/*", README.md, LICENSE -DestinationPath "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.REPO_PKGNAME }}.${{ env.PKGVERSION }}.zip"
-          Compress-Archive -Path "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.RCL_PKGNAME }}/bin/${{ env.INPUT_BUILD_CONFIG }}/*", README.md, LICENSE -DestinationPath "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.RCL_PKGNAME }}.${{ env.PKGVERSION }}.zip"
 
-      - name: Create DataRepo Release
-        id: create_datarepo_release
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,36 +86,15 @@ jobs:
           draft: true
           prerelease: true
       - name: Upload Release Asset
-        id: upload-datarepo-release-asset 
+        id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_datarepo_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.REPO_PKGNAME }}.${{ env.PKGVERSION }}.zip"
           asset_name: "${{ env.REPO_PKGNAME }}.${{ env.PKGVERSION }}.zip"
           asset_content_type: application/zip
-      - name: Create RCL Release
-        id: create_rcl_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: RCL-${{ env.PKGVERSION }} 
-          release_name: RCL Release ${{ env.RCL_PKGNAME }}
-          draft: true
-          prerelease: true
-      - name: Upload RCL Release Asset
-        id: upload-rcl-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_rcl_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: "${{ env.BUILD_WORKSPACE_PATH }}/${{ env.RCL_PKGNAME }}.${{ env.PKGVERSION }}.zip"
-          asset_name: "${{ env.RCL_PKGNAME }}.${{ env.PKGVERSION }}.zip"
-          asset_content_type: application/zip
-
       - name: Publish the packages to GPR
         run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.nupkg  -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json -k ${{secrets.GITHUB_TOKEN }} --skip-duplicate
       - name: Publish the source packages to GPR
@@ -124,8 +102,6 @@ jobs:
 
       - name: Publish the packages to NuGet
         run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.nupkg  -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_KEY }} --skip-duplicate
-      #- name: Publish the source packages to NuGet
-      #  run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.snupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_KEY }} --skip-duplicate
       #- name: Generate README.md
       #  shell: pwsh
       #  run: |
