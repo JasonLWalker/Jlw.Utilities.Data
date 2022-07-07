@@ -39,8 +39,8 @@ jobs:
     #      ${{ env.PKGNAME }}**/obj/Release
     - name: Test with dotnet 3.1
       run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests
-    #- name: Test with dotnet 2.1
-    #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-netcoreapp2.1
+    #- name: Test with dotnet 5.0
+    #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-net5.0
 
   #test:
   #  needs: build
