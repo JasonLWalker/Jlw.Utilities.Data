@@ -2,85 +2,23 @@ name: Build and Test
 
 on:
   push:
-    branches: #all branches that are NOT master.
-      - '*'
-      - '!primary'
+    branches-ignore:    # Automatically run when pushing to all branches that are NOT main or staging. (These will be run when pull requests come in)
+      [ 'primary', 'staging' ]
+    paths-ignore:       # Do not automatically run if changes are only in the following directories
+      [ 'Help/**', 'docs/**', 'wiki/**', '.github/**', 'build-scripts/**', '**/README.md' ]
   pull_request:
-    branches: [ primary ]
-
+    branches:           # Run when pull requests are submitted to main or staging
+      [ primary, staging ]
+    paths-ignore:       # Do not automatically run if changes are only in the following directories
+      [ 'Help/**', 'docs/**', 'wiki/**', '.github/**', 'build-scripts/**', '**/README.md' ]
+  workflow_dispatch:    # Run on demand
 jobs:
   build-test:
-    runs-on: windows-latest
-    env: 
-      DOTNET_NOLOGO: 1
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_MULTILEVEL_LOOKUP: 1
-      
-    steps:
-    - name: Config Environment Variables
-      run: |
-        $CURRENT_DIR=(Get-Item -Path ".\").FullName
-        $PKG_NAME=(Get-Item -Path ".\").Name
-        "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
-        "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build with dotnet
-      run: ./build-scripts/build.ps1 -buildType "Release"  -versionSuffix ""
-    #- name: Pack NuGet package
-    #  run: dotnet pack --version-suffix="-alpha" --configuration Release
-    #- uses: actions/upload-artifact@v2
-    #  with:
-    #    name: ${{ env.PKGNAME }}
-    #    path: |
-    #      ${{ env.PKGNAME }}**/bin/Release
-    #      ${{ env.PKGNAME }}**/obj/Release
-    - name: Test with dotnet 3.1
-      run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests
-    #- name: Test with dotnet 5.0
-    #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-net5.0
-
-  #test:
-  #  needs: build
-  #  runs-on: windows-latest
-  #  env: 
-  #    DOTNET_NOLOGO: 1
-  #    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  #    DOTNET_MULTILEVEL_LOOKUP: 1
-  #    
-  #  steps:
-  #  - name: Config Environment Variables
-  #    run: |
-  #      $CURRENT_DIR=(Get-Item -Path ".\").FullName
-  #      $PKG_NAME=(Get-Item -Path ".\").Name
-  #      "PKGNAME=$PKG_NAME" | Add-Content -Path $ENV:GITHUB_ENV
-  #      "CURRENTDIR=$CURRENT_DIR" | Add-Content -Path $ENV:GITHUB_ENV
-  #  - name: Checkout Repository
-  #    uses: actions/checkout@v2
-  #  - uses: actions/download-artifact@v2
-  #    with:
-  #      name: ${{ env.PKGNAME }}
-  #  - name: Install dependencies
-  #    run: dotnet restore
-  #  - name: Test with dotnet 3.1
-  #    run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests
-  #  #- name: Test with dotnet 2.1
-  #  #  run: dotnet test --no-build --configuration Release --verbosity normal {$PKGNAME}.Tests-netcoreapp2.1
-
-  cleanup:
-    needs: build-test
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-    - name: Config Environment Variables
-      run: |
-        export PKG_NAME="$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')"
-        echo "PKGNAME=$PKG_NAME" >> $GITHUB_ENV
-    - name: Delete Artifacts
-      uses: geekyeggo/delete-artifact@v1
-      with:
-        name: ${{ env.PKGNAME }}
-        failOnError: false
+    uses: ./.github/workflows/build-test-template.yml
+    with:
+        buildConfig: "Debug"
+        versionPrefix: ""
+        versionSuffix: ""
+    secrets:
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
