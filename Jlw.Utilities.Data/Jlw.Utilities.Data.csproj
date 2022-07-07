@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net452;net48</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;</TargetFrameworks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,15 +49,19 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySql.Data" Version="8.0.21">
+		<PackageReference Include="MySql.Data" Version="8.0.29">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="10.0.1">
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.2">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
 	</ItemGroup>
 
 	<Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">
