@@ -19,7 +19,7 @@
 |||
 |-----|-----|
 |Namespace|Jlw.Utilities.Data|
-|Target Framework||
+|Target Framework|netstandard2.0|
 |Author(s)|JasonLWalker|
 |Copyright|Copyright ©2012-2021 Jason L. Walker|
 
