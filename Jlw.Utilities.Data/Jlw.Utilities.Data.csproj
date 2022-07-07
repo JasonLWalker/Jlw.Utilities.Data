@@ -4,9 +4,6 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
 
   <PropertyGroup>
 	<Product>Jlw.Utilities.Data</Product>
@@ -60,10 +57,5 @@
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\" />
-	</ItemGroup>
-
 
 </Project>
