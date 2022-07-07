@@ -9,6 +9,7 @@ using System.Reflection;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class ModularDbClient<TConnection> : IModularDbClient
         where TConnection : IDbConnection, new()
     {

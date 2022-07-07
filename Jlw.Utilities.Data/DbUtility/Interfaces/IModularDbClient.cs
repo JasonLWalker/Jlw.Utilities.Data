@@ -5,6 +5,10 @@ using System.Data.Common;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IModularDbClient
+    /// </summary>
+    /// TODO Edit XML Comment Template for IModularDbClient
     public interface IModularDbClient
     {
         DbConnectionStringBuilder GetConnectionBuilder(string connString = default);

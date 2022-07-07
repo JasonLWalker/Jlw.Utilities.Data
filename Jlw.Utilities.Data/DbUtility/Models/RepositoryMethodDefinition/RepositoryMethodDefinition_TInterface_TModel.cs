@@ -5,6 +5,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class RepositoryMethodDefinition<TInterface, TModel> : IRepositoryMethodDefinition
     {
         // ReSharper disable InconsistentNaming

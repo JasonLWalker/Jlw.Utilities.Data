@@ -8,13 +8,15 @@ using System.Runtime.CompilerServices;
 //[assembly: InternalsVisibleTo("Jlw.Utilities.Data.Tests")]
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class ModularDataRepository : ModularDataRepository<object, object>
     {
         public ModularDataRepository(IModularDbClient dbClient, string connString = "") : base(dbClient, connString)
         {
         }
     }
-    
+
+    /// <inheritdoc />
     public class ModularDataRepository<TInterface, TModel> : IModularDataRepository<TInterface, TModel>
     where TModel : TInterface
     {

@@ -3,11 +3,13 @@ using MySql.Data.MySqlClient;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class NullDbConnection : NullDbConnection<NullDbCommand>
     {
 
     }
 
+    /// <inheritdoc />
     public class NullDbConnection<TCommand> : IDbConnection
         where TCommand : IDbCommand, new()
     {

@@ -20,13 +20,20 @@ using Jlw.Utilities.Data.DbUtility;
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <inheritdoc />
     public class DataTablesBase : IDataTablesBase
     {
+        /// <summary>The DataTables.net input object (parsed from JSON)</summary>
         protected IDataTablesInput Input;
+        /// <summary>The DataTables.net output object (parsed from JSON)</summary>
         protected IDataTablesOutput Output;
+        /// <summary>A reference to the instance of the IModularDbClient singleton object</summary>
         protected IModularDbClient _dbClient;
+        
+        /// <inheritdoc />
         public IEnumerable<object> Data => Output?.data;
 
+        /// <inheritdoc />
         public bool UseOrderedPaging { get; set; } = false;
 
         protected Dictionary<string, string> SortColumns { get; set; } // Internal list to hold list of columns that can be sorted on.
@@ -65,12 +72,14 @@ namespace Jlw.Utilities.Data.DataTables
             //Output
         }
 
+        /// <inheritdoc />
         public DataTablesBase(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
             Initialize(input, dbClient);
         }
 
 
+        /// <inheritdoc />
         public void SetDebug(bool b)
         {
             bDebug = b;
@@ -101,6 +110,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         }
 
+        /// <inheritdoc />
         public void SetGlobalFilter(string sqlFragment)
         {
             if (string.IsNullOrWhiteSpace(sqlFragment))
@@ -110,6 +120,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         }
 
+        /// <inheritdoc />
         public void AddExtraParams(string columnName, string sqlFragment)
         {
             if (string.IsNullOrWhiteSpace(columnName))
@@ -134,6 +145,7 @@ namespace Jlw.Utilities.Data.DataTables
             ExtraParams?.Add(columnName, sqlFragment);
         }
 
+        /// <inheritdoc />
         public void AddSearchColumns(string columnName, string sqlFragment =  null)
         {
             if (string.IsNullOrWhiteSpace(columnName))
@@ -153,6 +165,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         }
 
+        /// <inheritdoc />
         public void AddSortColumns(string columnName, string sqlFragment = null)
         {
             if (string.IsNullOrWhiteSpace(columnName))
@@ -172,6 +185,7 @@ namespace Jlw.Utilities.Data.DataTables
 
         }
 
+        /// <inheritdoc />
         public virtual IDataTablesOutput FetchQuery(string connString, string sSql)
         {
             using (IDbConnection conn = _dbClient.GetConnection(connString))
@@ -206,6 +220,7 @@ namespace Jlw.Utilities.Data.DataTables
             return Output;
         }
 
+        /// <inheritdoc />
         public virtual IDataTablesOutput FetchData(string connString, string tables)
         {
             //int n = 0;

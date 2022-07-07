@@ -14,6 +14,7 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <inheritdoc />
     public class DataTablesOutput : IDataTablesOutput
     {
         public int draw { get; set; }

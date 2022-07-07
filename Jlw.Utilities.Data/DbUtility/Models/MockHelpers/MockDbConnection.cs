@@ -8,12 +8,14 @@ using MySql.Data.MySqlClient;
 namespace Jlw.Utilities.Data.DbUtility
 {
 
+    /// <inheritdoc />
     public class MockDbConnection : MockDbConnection<NullDbCommand>
     {
 
     }
 
 
+    /// <inheritdoc />
     public class MockDbConnection<TCommand> : IDbConnection
         where TCommand : IDbCommand, new()
     {
