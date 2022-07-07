@@ -16,6 +16,12 @@
 [![Nuget](https://img.shields.io/nuget/v/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28release%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab) [![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28preview%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab)
 
 ## Information / Requirements
+|||
+|-----|-----|
+|Namespace|Jlw.Utilities.Data|
+|Target Framework||
+|Author(s)|JasonLWalker|
+|Copyright|Copyright ©2012-2021 Jason L. Walker|
 
 
 ## Dependencies
