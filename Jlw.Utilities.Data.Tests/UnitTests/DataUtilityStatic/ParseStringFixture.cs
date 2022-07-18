@@ -19,7 +19,7 @@ namespace Jlw.Utilities.Data.Tests.UnitTests.DataUtilityStatic
         [Int64IDataRecordDataSource]
         public void Should_BeEmpty_ForUnknown_WhenInitialized(string key, object expectedValue, string displayName)
         {
-            var actual = new TestDataModel() { Name = expectedValue.ToString() };
+            var actual = new TestDataModel() { Id = (long)expectedValue, Name = expectedValue.ToString(), Description = displayName, LastUpdated = DateTime.Now };
 
             Assert.AreEqual(String.Empty, DataUtility.ParseString(actual, "Unknown"));
         }
@@ -28,19 +28,42 @@ namespace Jlw.Utilities.Data.Tests.UnitTests.DataUtilityStatic
         [Int64IDataRecordDataSource]
         public void Should_BeEmpty_ForObject_WhenInitialized(string key, object expectedValue, string displayName)
         {
-            var actual = new TestDataModel() { Name = expectedValue.ToString() };
+            var sut = new TestDataModel() { Id = (long)expectedValue, Name = key, Description = displayName, LastUpdated = DateTime.Now };
+            string actual = DataUtility.ParseString(sut);
+            Assert.AreEqual(String.Empty, actual);
 
-            Assert.AreEqual(String.Empty, DataUtility.ParseString(actual));
+            actual = DataUtility.Parse<string>(sut);
+            Assert.AreEqual(String.Empty, actual);
+
+            actual = DataUtility.Parse<String>(sut);
+            Assert.AreEqual(String.Empty, actual);
+
         }
 
         [TestMethod]
         [Int64IDataRecordDataSource]
         public void Should_Match_ForId_WhenInitialized(string key, object expectedValue, string displayName)
         {
-            var actual = new TestDataModel() { Id = (long)expectedValue };
+            // Arrange
+            var sut = new TestDataModel() { Id = (long)expectedValue, Name = key, Description = displayName, LastUpdated = DateTime.Now };
+            
+            // Act
+            string actual = DataUtility.ParseString(sut, "Id");
+            // Assert
+            Assert.AreEqual(expectedValue.ToString(), actual);
 
-            Assert.AreEqual(expectedValue.ToString(), DataUtility.ParseString(actual, "Id"));
+            // Act
+            actual = DataUtility.Parse<string>(sut, "Id");
+            // Assert
+            Assert.AreEqual(expectedValue.ToString(), actual);
+
+            // Act
+            actual = DataUtility.Parse<String>(sut, "Id");
+            // Assert
+            Assert.AreEqual(expectedValue.ToString(), actual);
+
         }
+
 
 
     }

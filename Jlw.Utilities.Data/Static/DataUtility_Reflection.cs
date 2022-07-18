@@ -13,6 +13,7 @@ namespace Jlw.Utilities.Data
 {
     public partial class DataUtility
     {
+        /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetObjectValue(object obj, string key = null)
         {
@@ -41,6 +42,9 @@ namespace Jlw.Utilities.Data
                     var propInfo = t?.GetProperties().FirstOrDefault(x => x.Name == key && x.CanRead);
                     if (propInfo != null)
                         return propInfo.GetValue(obj);
+
+                    // Unable to match a field, or property to a key assume that key is not found and return null
+                    return null;
                 }
 
                 if (obj is Enum)
@@ -48,6 +52,7 @@ namespace Jlw.Utilities.Data
                     Type enumType = Enum.GetUnderlyingType(obj.GetType());
                     return Convert.ChangeType(obj, enumType);
                 }
+
             }
             catch
             {

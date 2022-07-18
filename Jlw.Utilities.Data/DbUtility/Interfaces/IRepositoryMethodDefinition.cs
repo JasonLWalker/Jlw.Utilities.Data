@@ -3,6 +3,10 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IRepositoryMethodDefinition
+    /// </summary>
+    /// TODO Edit XML Comment Template for IRepositoryMethodDefinition
     public interface IRepositoryMethodDefinition
     {
         IEnumerable<IDbDataParameter> Parameters { get; }

@@ -45,11 +45,12 @@ namespace Jlw.Utilities.Data.Tests.UnitTests.DataUtilityStatic
         }
 
         [TestMethod]
-        public void Should_ReturnOriginalFor_NonMember()
+        public void Should_ReturnNullFor_NonMember() // This is a change by JLW on 10/4/2021 due to unforeseen bugs being introduced by returning the object value. Will bump version to 4.3 due to potential breaking change.
         {
+
             var actual = new TestDataModel();
 
-            Assert.AreSame(actual, DataUtility.GetObjectValue(actual, "Foo"));
+            Assert.AreSame(null, DataUtility.GetObjectValue(actual, "Foo"));
         }
 
     }

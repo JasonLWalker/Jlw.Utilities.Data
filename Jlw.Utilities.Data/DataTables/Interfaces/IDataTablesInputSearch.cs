@@ -13,6 +13,10 @@
 // ReSharper disable InconsistentNaming
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <summary>
+    /// Interface IDataTablesInputSearch
+    /// </summary>
+    /// TODO Edit XML Comment Template for IDataTablesInputSearch
     public interface IDataTablesInputSearch
     {
         bool regex { get; set; }

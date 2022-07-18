@@ -1,34 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net452;net48</TargetFrameworks>
+  <PropertyGroup>
+	  <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Deterministic>False</Deterministic>
-		<GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Utilities.Data.git</RepositoryUrl>    
-		<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
-		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-	</PropertyGroup>
+	<Product>Jlw.Utilities.Data</Product>
+    <PackageId>Jlw.Utilities.Data</PackageId>
+	<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Utilities.Data.git</RepositoryUrl>    
+	<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
+	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+	  <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+	  <IsPackable>True</IsPackable>
+  </PropertyGroup>
 	
   <PropertyGroup>
-    <PackageId>Jlw.Utilities.Data</PackageId>
     <AssemblyName>$(PackageId)</AssemblyName>
     <RootNamespace>$(PackageId)</RootNamespace>
-    <Company></Company>
-    <Authors>JasonLWalker</Authors>
+	  <Company>Jason L. Walker</Company>
+	  <Authors>Jason L. Walker</Authors>
     <Description>
       A utility package providing static string manipulation and conversion utilities, as well as a modular database framework meant to provide a way to decouple database implementations when working with data repositories.
     </Description>
-    <Copyright>Copyright ©2012-2021 Jason L. Walker</Copyright>
+    <Copyright>Copyright ©2012-2022 Jason L. Walker</Copyright>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">0.0.0.1</VersionPrefix>
     <Version>$(VersionPrefix)$(VersionSuffix)</Version>
   </PropertyGroup>
@@ -49,25 +47,15 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySql.Data" Version="8.0.21">
+		<PackageReference Include="MySql.Data" Version="8.0.29">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="10.0.1">
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.2">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 	</ItemGroup>
-
-	<Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">
-		<GetAssemblyIdentity AssemblyFiles="$(OutputPath)\netstandard2.0\$(AssemblyName).dll">
-			<Output TaskParameter="Assemblies" ItemName="PackAssembly" />
-		</GetAssemblyIdentity>
-		<PropertyGroup>
-			<PackageVersion>%(PackAssembly.Version)$(VersionSuffix)</PackageVersion>
-		</PropertyGroup>
-	</Target>
-
 
 </Project>

@@ -2,6 +2,7 @@
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class NullDbTransaction : IDbTransaction
     {
         public IDbConnection Connection { get; }

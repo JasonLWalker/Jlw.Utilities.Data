@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class DataRecordMock : IDataRecord
     {
         protected IDictionary<string, object> _data = new Dictionary<string, object>();

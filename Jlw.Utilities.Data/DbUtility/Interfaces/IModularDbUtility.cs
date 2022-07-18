@@ -3,6 +3,10 @@ using System.Data.Common;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IModularDbUtility
+    /// </summary>
+    /// TODO Edit XML Comment Template for IModularDbUtility
     public interface IModularDbUtility
     {
         string DbType { get; }

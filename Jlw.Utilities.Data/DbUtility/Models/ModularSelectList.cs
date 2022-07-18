@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class ModularSelectList<TSelectListItem, TInterface, TModel> : IModularSelectList<TSelectListItem, TInterface, TModel>
         where TModel : class, TInterface
     {

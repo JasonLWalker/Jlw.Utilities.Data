@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class MockDataParameterCollection : DbParameterCollection
     {
         protected IList<DbParameter> Parameters = new List<DbParameter>();

@@ -2,6 +2,12 @@
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IModularDataRepositoryBase
+    /// </summary>
+    /// <typeparam name="TInterface">The type of the t interface.</typeparam>
+    /// <typeparam name="TModel">The type of the t model.</typeparam>
+    /// TODO Edit XML Comment Template for IModularDataRepositoryBase`2
     public interface IModularDataRepositoryBase<TInterface, TModel>
     {
         TInterface GetRecord(TInterface o);

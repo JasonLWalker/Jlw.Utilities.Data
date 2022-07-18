@@ -5,11 +5,13 @@ using System.Data.Common;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class NullDbCommand : NullDbCommand<NullDbParameter>
     {
 
     }
 
+    /// <inheritdoc />
     public class NullDbCommand<TParam> : IDbCommand 
         where TParam : IDbDataParameter, new()
     {

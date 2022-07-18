@@ -14,6 +14,10 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <summary>
+    /// Interface IDataTablesBase
+    /// </summary>
+    /// TODO Edit XML Comment Template for IDataTablesBase
     public interface IDataTablesBase
     {
         IEnumerable<object> Data { get; }

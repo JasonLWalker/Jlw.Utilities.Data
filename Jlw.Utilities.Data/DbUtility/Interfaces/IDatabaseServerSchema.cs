@@ -1,5 +1,9 @@
 ﻿namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IDatabaseServerSchema
+    /// </summary>
+    /// TODO Edit XML Comment Template for IDatabaseServerSchema
     public interface IDatabaseServerSchema
     {
         string Name { get; set; }

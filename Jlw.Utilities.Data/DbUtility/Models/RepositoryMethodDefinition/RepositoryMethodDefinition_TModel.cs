@@ -5,6 +5,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class RepositoryMethodDefinition : RepositoryMethodDefinition<object, object>
     {
         public RepositoryMethodDefinition(string sql, IEnumerable<string> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default) : base(sql, paramList, callback, returnType) { }
@@ -21,6 +22,7 @@ namespace Jlw.Utilities.Data.DbUtility
     }
 
 
+    /// <inheritdoc />
     public class RepositoryMethodDefinition<TModel> : RepositoryMethodDefinition<TModel, TModel>
     {
         public RepositoryMethodDefinition(string sql, IEnumerable<string> paramList = null, RepositoryRecordCallback callback = null, Type returnType = default) : base(sql, paramList, callback, returnType) { }

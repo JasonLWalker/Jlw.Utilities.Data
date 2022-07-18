@@ -14,6 +14,10 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <summary>
+    /// Interface IDataTablesInput
+    /// </summary>
+    /// TODO Edit XML Comment Template for IDataTablesInput
     public interface IDataTablesInput
     {
         // ReSharper disable once InconsistentNaming

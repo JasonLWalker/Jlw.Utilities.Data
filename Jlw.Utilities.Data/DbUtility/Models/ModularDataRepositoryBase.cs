@@ -6,24 +6,13 @@ using System.Reflection;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
-    /*
-    public class ModularDataRepositoryBase : ModularDataRepositoryBase<object, object>
-    {
-        public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
-    }
-
-    public class ModularDataRepositoryBase<TModel> : ModularDataRepositoryBase<TModel, TModel>
-        where TModel : class
-    {
-        public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
-    }
-    */
-
+    /// <inheritdoc />
     public class ModularDataRepositoryBase<TModel> : ModularDataRepositoryBase<TModel, TModel>
     {
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
     }
 
+    /// <inheritdoc />
     public class ModularDataRepositoryBase<TInterface, TModel> : IModularDataRepositoryBase<TInterface, TModel>
         where TModel : TInterface
     {
