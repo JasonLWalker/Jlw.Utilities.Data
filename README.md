@@ -20,8 +20,8 @@
 |-----|-----|
 |Namespace|Jlw.Utilities.Data|
 |Target Framework|netstandard2.0|
-|Author(s)|JasonLWalker|
-|Copyright|Copyright ©2012-2021 Jason L. Walker|
+|Author(s)|Jason L. Walker|
+|Copyright|Copyright ©2012-2022 Jason L. Walker|
 
 
 ## Dependencies
