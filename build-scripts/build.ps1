@@ -9,7 +9,7 @@ if (-Not ($packageName)){
 }
 
 if (-Not ($versionPrefix)){
-	$versionPrefix="4.2.$([System.TimeSpan]::FromTicks($([System.DateTime]::UtcNow.Ticks)).Subtract($([System.TimeSpan]::FromTicks(630822816000000000))).TotalDays.ToString().SubString(0,9))"
+	$versionPrefix="4.5.$([System.TimeSpan]::FromTicks($([System.DateTime]::UtcNow.Ticks)).Subtract($([System.TimeSpan]::FromTicks(630822816000000000))).TotalDays.ToString().SubString(0,9))"
 }
 
 # Install dependencies
@@ -17,7 +17,7 @@ if (-Not ($versionPrefix)){
 
 # Build/Pack with dotnet
 if (-Not ($versionSuffix)){
-dotnet build -p:VersionPrefix=$versionPrefix --configuration $buildType
+dotnet build -p:VersionPrefix=$versionPrefix -p:Configuration=$buildType
 } else {
-dotnet build -p:VersionPrefix=$versionPrefix --configuration "$buildType" -p:VersionSuffix="$versionSuffix"
+dotnet build -p:VersionPrefix=$versionPrefix -p:VersionSuffix=$versionSuffix -p:Configuration=$buildType
 }

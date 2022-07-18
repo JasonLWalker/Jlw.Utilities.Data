@@ -12,11 +12,17 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <inheritdoc />
     public class DataTablesInputOrder : IDataTablesInputOrder
     {
+        /// <inheritdoc />
         public int column { get; set; }
+        /// <inheritdoc />
         public string dir { get; set; } = "ASC";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataTablesInputOrder"/> class.
+        /// </summary>
         public DataTablesInputOrder()
         {
         }

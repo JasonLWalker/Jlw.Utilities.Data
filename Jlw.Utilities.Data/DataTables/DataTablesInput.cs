@@ -14,14 +14,21 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <inheritdoc />
     public class DataTablesInput : IDataTablesInput
     {
+        /// <inheritdoc />
         public int draw { get; set; }
+        /// <inheritdoc />
         public int start { get; set; }
 
+        /// <inheritdoc />
         public int length { get; set; }
+        /// <inheritdoc />
         public DataTablesInputSearch search { get; set; }
+        /// <inheritdoc />
         public IEnumerable<DataTablesInputOrder> order { get; set; }
+        /// <inheritdoc />
         public IEnumerable<DataTablesInputColumn> columns { get; set; }
 
     }

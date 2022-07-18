@@ -12,6 +12,7 @@
 
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <inheritdoc />
     public class DataTablesInputSearch : IDataTablesInputSearch
     {
         public string value { get; set; }

@@ -13,6 +13,10 @@
 // ReSharper disable InconsistentNaming
 namespace Jlw.Utilities.Data.DataTables
 {
+    /// <summary>
+    /// Interface IDataTablesInputOrder
+    /// </summary>
+    /// TODO Edit XML Comment Template for IDataTablesInputOrder
     public interface IDataTablesInputOrder
     {
         int column { get; set; }

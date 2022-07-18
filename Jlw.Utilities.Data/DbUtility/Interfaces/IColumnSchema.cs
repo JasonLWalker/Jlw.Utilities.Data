@@ -1,5 +1,9 @@
 ﻿namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <summary>
+    /// Interface IColumnSchema
+    /// </summary>
+    /// TODO Edit XML Comment Template for IColumnSchema
     public interface IColumnSchema
     {
         string Database { get; }

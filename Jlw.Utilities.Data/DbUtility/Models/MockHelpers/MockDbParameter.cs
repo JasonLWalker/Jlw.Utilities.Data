@@ -3,6 +3,7 @@ using System.Data;
 
 namespace Jlw.Utilities.Data.DbUtility
 {
+    /// <inheritdoc />
     public class MockDbParameter : IDbDataParameter
     {
         protected static bool CheckNullable<T>(T obj)
