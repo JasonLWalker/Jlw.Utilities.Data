@@ -11,7 +11,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JasonLWalker_Jlw.Utilities.Data&metric=alert_status)](https://sonarcloud.io/dashboard?id=JasonLWalker_)
 
 
-# Data Repository
+# Data Utility
 <!--  -->
 [![Nuget](https://img.shields.io/nuget/v/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28release%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab) [![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28preview%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab)
 
@@ -32,5 +32,23 @@
 |[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.1|[MIT](https://licenses.nuget.org/MIT)||
 |[System.Data.SqlClient](https://github.com/dotnet/corefx)|4.8.2|[MIT](https://licenses.nuget.org/MIT)||
 
+
+
+# Data Parsing Extension
+<!--  -->
+
+## Information / Requirements
+|||
+|-----|-----|
+|Namespace|Jlw.Extensions.DataParsing|
+|Target Framework|netstandard2.1|
+|Author(s)|Jason L. Walker|
+|Copyright|Copyright ©2012-2022 Jason L. Walker|
+
+
+## Dependencies
+
+|Dependency|Version|License|Purpose|
+|-----|-----|-----|-----|
 
 

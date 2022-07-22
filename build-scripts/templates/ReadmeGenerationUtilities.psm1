@@ -74,10 +74,15 @@ function Get-ProjectDependencyTable {
     $tableString = "|Dependency|Version|License|Purpose|`r`n|-----|-----|-----|-----|`r`n"
 
     $xmlProject.SelectNodes("//ItemGroup/PackageReference").ForEach( {
+        
 	    $packageLower = $_.Include.ToLower()
 	    $packagePath = "$globalPackageFolder$packageLower\$($_.Version)\$packageLower*.nuspec"
-	    $xmlPackage = [XML](Get-Content -Path $packagePath)
+	    
+        $xmlPackage = [XML](Get-Content -Path $packagePath)
 	    $packageId = $xmlPackage.package.metadata.id;
+
+        Write-Host "    - Generating Dependency info for: $packageId"
+
 	    if ($xmlPackage.package.metadata.projectUrl) {
 		    $packageId = "[$packageId]($($xmlPackage.package.metadata.projectUrl))"
 	    }
