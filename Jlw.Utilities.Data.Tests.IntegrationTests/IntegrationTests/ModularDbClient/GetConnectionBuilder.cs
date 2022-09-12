@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
 {
     [TestClass]
-    public class GetConnectionBuilder : BaseModelFixture<ModularDbClient<SqlConnection>>
+    public class GetConnectionBuilder : BaseModelFixture<ModularDbClient<SqlConnection>, NullTestSchema<ModularDbClient<SqlConnection>>>
     {
         [TestMethod]
         [DataRow(null)]

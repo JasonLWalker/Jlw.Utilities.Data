@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
 {
     [TestClass]
-    public class ModularDbClientFixture : BaseModelFixture<ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder>>
+    public class ModularDbClientFixture : BaseModelFixture<ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder>, NullTestSchema<ModularDbClient<SqlConnection, SqlCommand, SqlParameter, SqlConnectionStringBuilder>>>
     {
         protected string SqlInitFilename = $"{AppDomain.CurrentDomain.BaseDirectory}Data\\Sql\\TSql\\InitializeDb.sql";
 
