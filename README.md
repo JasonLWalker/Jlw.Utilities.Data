@@ -28,9 +28,9 @@
 
 |Dependency|Version|License|Purpose|
 |-----|-----|-----|-----|
-|[MySql.Data](https://dev.mysql.com/downloads/)|8.0.29|[...](https://downloads.mysql.com/docs/licenses/connector-net-8.0-gpl-en.pdf)||
+|[MySql.Data](https://dev.mysql.com/downloads/)|8.0.30|[...](https://downloads.mysql.com/docs/licenses/connector-net-8.0-gpl-en.pdf)||
 |[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.1|[MIT](https://licenses.nuget.org/MIT)||
-|[System.Data.SqlClient](https://github.com/dotnet/corefx)|4.8.2|[MIT](https://licenses.nuget.org/MIT)||
+|[System.Data.SqlClient](https://github.com/dotnet/corefx)|4.8.3|[MIT](https://licenses.nuget.org/MIT)||
 
 
 
