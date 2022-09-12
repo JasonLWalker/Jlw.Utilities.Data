@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Workflows", "GitHub 
 		sonnarbuild.yml = sonnarbuild.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jlw.Utilities.Data.Tests-net5.0", "Jlw.Utilities.Data.Tests-netcoreapp2.1\Jlw.Utilities.Data.Tests-net5.0.csproj", "{577E080F-318F-4E0D-ACBF-0CD60AB2D5C9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14E9660E-30FA-4CA9-9EF1-B70A87547C9E}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
@@ -62,10 +60,6 @@ Global
 		{2093E5D2-C688-4E28-BEFD-502194848C20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2093E5D2-C688-4E28-BEFD-502194848C20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2093E5D2-C688-4E28-BEFD-502194848C20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{577E080F-318F-4E0D-ACBF-0CD60AB2D5C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{577E080F-318F-4E0D-ACBF-0CD60AB2D5C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{577E080F-318F-4E0D-ACBF-0CD60AB2D5C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{577E080F-318F-4E0D-ACBF-0CD60AB2D5C9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60506AAE-4ADB-44D4-A76C-79D8320FDC50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60506AAE-4ADB-44D4-A76C-79D8320FDC50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60506AAE-4ADB-44D4-A76C-79D8320FDC50}.Release|Any CPU.ActiveCfg = Release|Any CPU
