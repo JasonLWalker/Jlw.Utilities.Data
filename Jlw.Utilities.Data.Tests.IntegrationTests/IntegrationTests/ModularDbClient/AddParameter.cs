@@ -3,15 +3,15 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using Jlw.Utilities.Data.DbUtility;
-using Jlw.Utilities.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Jlw.Utilities.Testing;
 using MySql.Data.MySqlClient;
 
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
 {
     [TestClass]
-    public class AddParameter : BaseModelFixture<ModularDbClient<SqlConnection>>
+    public class AddParameter : BaseModelFixture<ModularDbClient<SqlConnection>, NullTestSchema<ModularDbClient<SqlConnection>>>
     {
         protected IDbDataParameter Param1 = new MockDbParameter()
         {
@@ -118,6 +118,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
             Size = 14
         };
 
+        
         protected SQLiteParameter SQLiteParam1 = new SQLiteParameter()
         {
             DbType = DbType.Int16,
@@ -169,6 +170,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
             Scale = 0,
             Size = 30
         };
+        
 
         protected SqlParameter SqlParam1 = new SqlParameter()
         {

@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient
 {
     [TestClass]
-    public class AddParameterWithValue : BaseModelFixture<ModularDbClient<SqlConnection>>
+    public class AddParameterWithValue : BaseModelFixture<ModularDbClient<SqlConnection>, NullTestSchema<ModularDbClient<SqlConnection>>>
     {
         protected IDbDataParameter Param1 = new MockDbParameter()
         {

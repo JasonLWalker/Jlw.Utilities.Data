@@ -34,5 +34,14 @@ namespace Jlw.Utilities.Data
             }
             return "";
         }
+
+        public static string ParseNullableString(object obj, string key = null)
+        {
+            if (obj is null || GetObjectValue(obj, key) is null)
+                return null;
+
+            return ParseString(obj, key);
+        }
+
     }
 }

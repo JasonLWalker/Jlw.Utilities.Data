@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Linq;
 
 namespace Jlw.Utilities.Data
 {
@@ -27,6 +28,12 @@ namespace Jlw.Utilities.Data
                     {
                         case IEnumerable<KeyValuePair<string, object>> enumerable:
                             return enumerable.FirstOrDefault(kvp => kvp.Key == key).Value;
+                        case JArray ja:
+                            return GetObjectValue(ja.FirstOrDefault(x=>x.Path == key));
+                        case JObject jo:
+                            return GetObjectValue(jo[key]);
+                        case JToken jt:
+                            return GetObjectValue(jt.FirstOrDefault(x => x.Path == key));
                         case IDictionary dict:
                             return dict.Contains(key) ? dict[key] : null;
                         case IDataRecord record:
@@ -47,11 +54,44 @@ namespace Jlw.Utilities.Data
                     return null;
                 }
 
+                switch (obj)
+                {
+                    case Enum:
+                        Type enumType = Enum.GetUnderlyingType(obj.GetType());
+                        return Convert.ChangeType(obj, enumType);
+                    case JObject:
+                    case JValue:
+                        var jv = (JToken)obj;
+                        switch (jv.Type)
+                        {
+                            case JTokenType.Boolean:
+                                return jv.ToObject<bool>();
+                            case JTokenType.Date:
+                                return jv.ToObject<DateTime>();
+                            case JTokenType.TimeSpan:
+                                return jv.ToObject<TimeSpan>();
+                            case JTokenType.Float:
+                                return jv.ToObject<double>();
+                            case JTokenType.Integer:
+                                return jv.ToObject<long>();
+                            case JTokenType.Null:
+                                return null;
+                            case JTokenType.Uri:
+                            case JTokenType.String:
+                            case JTokenType.Guid:
+                                return jv.ToObject<string>();
+                        }
+                        break;
+                }
+
+                /*
                 if (obj is Enum)
                 {
                     Type enumType = Enum.GetUnderlyingType(obj.GetType());
                     return Convert.ChangeType(obj, enumType);
                 }
+                */
+
 
             }
             catch
