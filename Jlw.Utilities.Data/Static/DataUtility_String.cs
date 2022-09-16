@@ -9,6 +9,16 @@ namespace Jlw.Utilities.Data
 {
     public partial class DataUtility
     {
+        public static string ParseString(object obj, string key, int length)
+        {
+            return Left(ParseString(obj, key), length);
+        }
+
+        public static string ParseString(object obj, int length)
+        {
+            return Left(ParseString(obj), length);
+        }
+
         public static string ParseString(object obj, string key = null)
         {
             if (obj is null)
@@ -42,6 +52,17 @@ namespace Jlw.Utilities.Data
 
             return ParseString(obj, key);
         }
+
+        public static string ParseNullableString(object obj, string key, int length)
+        {
+            return Left(ParseNullableString(obj, key), length);
+        }
+
+        public static string ParseNullableString(object obj, int length)
+        {
+            return Left(ParseNullableString(obj), length);
+        }
+
 
     }
 }
