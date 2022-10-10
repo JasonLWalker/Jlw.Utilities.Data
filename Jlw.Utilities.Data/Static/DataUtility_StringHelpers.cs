@@ -80,6 +80,16 @@ namespace Jlw.Utilities.Data
             return sb.ToString();
         }
 
+        public static string Left(string s, int length)
+        {
+            if (string.IsNullOrEmpty(s) || s.Length < length) return s;
+
+            if (length < 1) return "";
+
+            int len = Math.Min(length, s.Length);
+
+            return s.Substring(0, len);
+        }
 
         /// <summary>
         /// Extracts the date as a string from a nullable <c>DateTime</c> object.

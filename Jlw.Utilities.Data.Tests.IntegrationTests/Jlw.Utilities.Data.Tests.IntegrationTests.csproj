@@ -7,23 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jlw.Utilities.Testing" Version="1.1.7565.16742-alpha" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
-    <PackageReference Include="coverlet.collector" Version="3.0.3">
+	  <PackageReference Include="Jlw.Utilities.Testing" Version="2.0.7844.22164" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MySql.Data" Version="8.0.30" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.116" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="IntegrationTests\TSql\" />
   </ItemGroup>
-
+	
   <ItemGroup>
     <ProjectReference Include="..\Jlw.Utilities.Data.Tests\Jlw.Utilities.Data.Tests.csproj" />
   </ItemGroup>
-
+	
 </Project>

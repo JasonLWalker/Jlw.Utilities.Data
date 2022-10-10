@@ -84,7 +84,7 @@ namespace Jlw.Utilities.Data
                     case TypeCode.DateTime:
                         return ParseNullableDateTime(data);
                     case TypeCode.String:
-                        return ParseString(data);
+                        return ParseNullableString(data);
                 }
 
                 if (type == typeof(DateTimeOffset?))
