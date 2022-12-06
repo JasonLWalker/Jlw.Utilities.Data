@@ -41,7 +41,6 @@
     <DelaySign>false</DelaySign>
     <AssemblyOriginatorKeyFile>..\key.snk</AssemblyOriginatorKeyFile>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
