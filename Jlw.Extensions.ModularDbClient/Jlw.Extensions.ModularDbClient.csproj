@@ -7,10 +7,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Product>Jlw.Extensions.DataParsing</Product>
-		<PackageId>Jlw.Extensions.DataParsing</PackageId>
+		<Product>Jlw.Extensions.ModularDbClient</Product>
+		<PackageId>Jlw.Extensions.ModularDbClient</PackageId>
 		<RepositoryUrl>https://github.com/JasonLWalker/Jlw.Utilities.Data.git</RepositoryUrl>
-		<UserSecretsId>b0baf13d-060e-4f80-8a29-b64539dd310d</UserSecretsId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
@@ -25,9 +24,9 @@
 		<Company>Jason L. Walker</Company>
 		<Authors>Jason L. Walker</Authors>
 		<Description>
-			A utility extension providing generic parsing of any object to another data type via the DataUtility class.
+			A utility extension to easily add the ModularDbClient and ModularDbOptions services via Dependency injection.
 		</Description>
-		<Copyright>Copyright ©2012-2022 Jason L. Walker</Copyright>
+		<Copyright>Copyright ©2022 Jason L. Walker</Copyright>
 		<VersionPrefix Condition="'$(VersionPrefix)' == ''">0.0.0.1</VersionPrefix>
 		<Version>$(VersionPrefix)$(VersionSuffix)</Version>
 	</PropertyGroup>
@@ -52,7 +51,11 @@
 
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Jlw.Utilities.Data\Jlw.Utilities.Data.csproj" />
-  </ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Jlw.Utilities.Data\Jlw.Utilities.Data.csproj" />
+	</ItemGroup>
 
 </Project>
