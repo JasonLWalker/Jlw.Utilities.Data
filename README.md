@@ -32,6 +32,17 @@
 |[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.1|[MIT](https://licenses.nuget.org/MIT)||
 |[System.Data.SqlClient](https://github.com/dotnet/corefx)|4.8.3|[MIT](https://licenses.nuget.org/MIT)||
 
+# ModularDbClient Extension
+<!--  -->
+
+## Information / Requirements
+|||
+|-----|-----|
+|Namespace|Jlw.Extensions.ModularDbClient|
+|Target Framework|netstandard2.1|
+|Author(s)|Jason L. Walker|
+|Copyright|Copyright ©2022 Jason L. Walker|
+
 
 
 # Data Parsing Extension
