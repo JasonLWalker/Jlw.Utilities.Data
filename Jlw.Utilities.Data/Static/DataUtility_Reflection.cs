@@ -212,6 +212,56 @@ namespace Jlw.Utilities.Data
             return genericTypeName + "<" + genericArgs + ">";
         }
 
+        public static object GetReflectedObjectInstanceFromAssembly(Assembly assembly, string objName)
+        {
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            Type t = assembly.GetType(objName);
+
+            if (t == null) throw new NullReferenceException($"unable to locate {objName} in assembly");
+
+            object instance = Activator.CreateInstance(t, false);
+            if (t == null) throw new NullReferenceException($"unable to create an instance of {objName}");
+
+            return instance;
+        }
+
+        public static MethodInfo GetReflectedMethodInfoFromAssembly(object instance, string methodName, IEnumerable<Type> argTypeList)
+        {
+            if (instance == null) throw new ArgumentNullException(nameof(instance));
+
+            Type t = instance.GetType();
+
+            MethodInfo methodInfo = t.GetMethod(methodName, argTypeList.ToArray());
+
+            if (methodInfo == null) throw new NullReferenceException($"unable to retrieve method {methodName} from {GetGenericTypeString(t)}");
+
+            return methodInfo;
+        }
+
+
+
+        public static object InvokeReflectedMethodFromAssembly(Assembly assembly, string objName, string methodName, IEnumerable<object> argList)
+        {
+            object instance = GetReflectedObjectInstanceFromAssembly(assembly, objName);
+            if (instance == null) throw new NullReferenceException($"unable to create an instance of {objName}");
+
+            object[] args = argList as object[] ?? argList.ToArray();
+
+            MethodInfo methodInfo = GetReflectedMethodInfoFromAssembly(instance, methodName, args.Select(o => o.GetType()));
+            if (methodInfo == null) throw new NullReferenceException($"unable to retrieve method {methodName} from {GetGenericTypeString(instance.GetType())}");
+
+            return methodInfo.Invoke(instance, args);
+        }
+
+        public static object? InvokeReflectedMethodFromInstance(object? instance, MethodInfo? method, IEnumerable<object> argList)
+        {
+            if (instance == null) throw new ArgumentNullException(nameof(instance));
+            if (method == null) throw new ArgumentNullException(nameof(method));
+
+            object[] args = argList as object[] ?? argList.ToArray();
+            return method.Invoke(instance, args);
+        }
+
 
 
     }
