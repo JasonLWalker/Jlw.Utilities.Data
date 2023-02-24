@@ -26,7 +26,7 @@
     <Description>
       A utility package providing static string manipulation and conversion utilities, as well as a modular database framework meant to provide a way to decouple database implementations when working with data repositories.
     </Description>
-    <Copyright>Copyright ©2012-2022 Jason L. Walker</Copyright>
+    <Copyright>Copyright ©2012-2023 Jason L. Walker</Copyright>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">0.0.0.1</VersionPrefix>
     <Version>$(VersionPrefix)$(VersionSuffix)</Version>
   </PropertyGroup>
