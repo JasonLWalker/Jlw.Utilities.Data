@@ -152,7 +152,7 @@ namespace Jlw.Utilities.Data
         {
             var t = instance?.GetType();
             var o = t?.GetProperty(memberName, flags);
-            object val = DataUtility.ParseAs(o?.PropertyType ?? typeof(object), o?.GetValue(instance));
+            object val = DataUtility.ParseAs(o?.PropertyType ?? typeof(object), value);
             if (o?.SetMethod != null)
             {
                 InvokeReflectedMethodFromInstance(instance, o.SetMethod, new Object[] { val });
