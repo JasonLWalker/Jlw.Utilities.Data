@@ -128,6 +128,52 @@ namespace Jlw.Utilities.Data
             return default;
         }
 
+        public static object SetReflectedMemberValueByName(object instance, string memberName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+        {
+            var t = instance?.GetType();
+            var memberInfo = t?.GetMember(memberName, flags).FirstOrDefault(o => o.MemberType == MemberTypes.Field || o.MemberType == MemberTypes.Property);
+            if (memberInfo is null)
+                return default;
+
+            if (memberInfo.MemberType is MemberTypes.Field)
+            {
+                return SetReflectedFieldValueByName(instance, memberName, value, flags);
+            }
+
+            if (memberInfo.MemberType is MemberTypes.Property)
+            {
+                return SetReflectedPropertyValueByName(instance, memberName, value, flags);
+            }
+
+            return default;
+        }
+
+        public static object SetReflectedPropertyValueByName(object instance, string memberName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+        {
+            var t = instance?.GetType();
+            var o = t.GetProperty(memberName, flags);
+            if (o?.SetMethod == null)
+                return ParseAs(t, default);
+
+            object val = ParseAs(t, value);
+            o.SetValue(instance, val);
+
+            return o.GetValue(instance);
+        }
+
+        public static object SetReflectedFieldValueByName(object instance, string memberName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+        {
+            var t = instance?.GetType();
+            var o = t?.GetField(memberName, flags);
+            if (o == null) return ParseAs(t, default); ;
+            object val = ParseAs(t, value);
+            o.SetValue(instance, val);
+
+            return o.GetValue(instance);
+        }
+
+
+
         public static object GetReflectedPropertyValueByName(object instance, string memberName, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
         {
             var t = instance?.GetType();
@@ -237,9 +283,6 @@ namespace Jlw.Utilities.Data
 
             return methodInfo;
         }
-
-
-
         public static object InvokeReflectedMethodFromAssembly(Assembly assembly, string objName, string methodName, IEnumerable<object> argList)
         {
             object instance = GetReflectedObjectInstanceFromAssembly(assembly, objName);
