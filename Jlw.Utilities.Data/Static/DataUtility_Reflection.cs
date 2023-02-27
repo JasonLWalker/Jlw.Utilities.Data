@@ -151,22 +151,23 @@ namespace Jlw.Utilities.Data
         public static object SetReflectedPropertyValueByName(object instance, string memberName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
         {
             var t = instance?.GetType();
-            var o = t.GetProperty(memberName, flags);
-            if (o?.SetMethod == null)
-                return ParseAs(t, default);
-
-            object val = ParseAs(t, value);
-            o.SetValue(instance, val);
-
-            return o.GetValue(instance);
+            var o = t?.GetProperty(memberName, flags);
+            object val = DataUtility.ParseAs(o?.PropertyType ?? typeof(object), o?.GetValue(instance));
+            if (o != null)
+            {
+                o.SetValue(instance, val);
+                val = DataUtility.ParseAs(o.PropertyType, o.GetValue(instance));
+            }
+            return val;
         }
 
         public static object SetReflectedFieldValueByName(object instance, string memberName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
         {
             var t = instance?.GetType();
             var o = t?.GetField(memberName, flags);
-            if (o == null) return ParseAs(t, default); ;
-            object val = ParseAs(t, value);
+            if (o == null) return default;
+
+            object val = DataUtility.ParseAs(o.FieldType , o.GetValue(instance));
             o.SetValue(instance, val);
 
             return o.GetValue(instance);
@@ -300,7 +301,7 @@ namespace Jlw.Utilities.Data
         {
             if (instance == null) throw new ArgumentNullException(nameof(instance));
 
-            object[] args = argList as object[] ?? argList.ToArray();
+            object[] args = argList as object[] ?? argList?.ToArray() ?? new object[]{};
             MethodInfo methodInfo = GetReflectedMethodInfoFromAssembly(instance, methodName, args.Select(o => o.GetType()));
             if (methodInfo == null) throw new NullReferenceException($"unable to retrieve method {methodName} from {GetGenericTypeString(instance.GetType())}");
             return methodInfo.Invoke(instance, args);
