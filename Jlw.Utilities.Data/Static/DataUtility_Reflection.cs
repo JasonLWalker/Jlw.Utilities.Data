@@ -153,10 +153,10 @@ namespace Jlw.Utilities.Data
             var t = instance?.GetType();
             var o = t?.GetProperty(memberName, flags);
             object val = DataUtility.ParseAs(o?.PropertyType ?? typeof(object), o?.GetValue(instance));
-            if (o != null)
+            if (o?.SetMethod != null)
             {
-                o.SetValue(instance, val);
-                val = DataUtility.ParseAs(o.PropertyType, o.GetValue(instance));
+                InvokeReflectedMethodFromInstance(instance, o.SetMethod, new Object[] { val });
+                val = ParseAs(o.PropertyType, o.GetValue(instance));
             }
             return val;
         }
