@@ -169,7 +169,9 @@ namespace Jlw.Utilities.Data.DbUtility
 			return oReturn;
 		}
 
-        public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
+		public virtual TReturn GetRecordObject<TReturn>(IRepositoryMethodDefinition definition) => GetRecordObject<TReturn>(null, default, definition);
+
+		public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
             if (definition == null)
@@ -220,6 +222,8 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
+		public virtual TReturn GetRecordScalar<TReturn>(IRepositoryMethodDefinition definition) => GetRecordScalar<TReturn>(null, default, definition);
+
         public virtual TReturn GetRecordScalar<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
@@ -266,6 +270,8 @@ namespace Jlw.Utilities.Data.DbUtility
             }
             return oReturn;
         }
+
+        public virtual IEnumerable<TReturn> GetRecordList<TReturn>(IRepositoryMethodDefinition definition) => GetRecordList<TReturn>(null, default, definition);
 
         public virtual IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
