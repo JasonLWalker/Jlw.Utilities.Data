@@ -8,5 +8,7 @@
         /// <inheritdoc/>
         public string ConnectionString { get; set; }
 
+        /// <inheritdoc/>
+        public int CommandTimeout { get; set; } = 30;
     }
 }
