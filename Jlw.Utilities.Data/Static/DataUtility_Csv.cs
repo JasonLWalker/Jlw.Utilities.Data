@@ -4,8 +4,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using MySqlX.XDevAPI.Relational;
+using Newtonsoft.Json.Linq;
 
 namespace Jlw.Utilities.Data
 {
@@ -123,6 +125,61 @@ namespace Jlw.Utilities.Data
             return aReturn;
         }
 
+		public static string ParseToCsv(object o, IEnumerable<CsvParserOption> opts)
+		{
+			// Initialize StringBuilder to hold CSV
+			StringBuilder sb = new StringBuilder();
+			List<string> aHeader = new List<string>();
+			JToken oToken = JToken.FromObject(o);
 
-    }
+
+			bool useComma = false;
+			foreach (var opt in opts)
+			{
+				if (useComma)
+					sb.Append(",");
+				useComma = true;
+
+				sb.Append($"\"{opt.Label}\"");
+			}
+
+			sb.AppendLine();
+
+			foreach (var row in oToken)
+			{
+				useComma = false;
+				foreach (var opt in opts)
+				{
+					if (useComma)
+						sb.Append(",");
+					useComma = true;
+					sb.Append(opt.Transform(row));
+				}
+				sb.AppendLine();
+			}
+
+
+			return sb.ToString();
+		}
+
+		public static string ParseToCsv(object o)
+		{
+			// Initialize StringBuilder to hold CSV
+			JToken oToken = JToken.FromObject(o);
+			List<string> aHeaders = new List<string>();
+
+			// Pre-parse headers
+			foreach (var obj in oToken)
+			{
+				var headers = obj.Select(x => x.ToObject<JProperty>().Name).Except(aHeaders).ToArray();
+				if (headers.Any())
+				{
+					aHeaders.AddRange(headers);
+				}
+			}
+
+			return ParseToCsv(o, aHeaders.Select(s => new CsvParserOption() { Key = s }).ToList());
+		}
+
+	}
 }

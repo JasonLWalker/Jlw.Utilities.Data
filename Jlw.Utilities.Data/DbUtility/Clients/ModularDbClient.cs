@@ -129,7 +129,49 @@ namespace Jlw.Utilities.Data.DbUtility
             return GetNewParameter(param);
         }
 
-        public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
+		public virtual int ExecuteNonQuery(IRepositoryMethodDefinition definition) => ExecuteNonQuery(null, default, definition);
+
+		public virtual int ExecuteNonQuery(object o, string connString, IRepositoryMethodDefinition definition)
+		{
+			// Does definition exist?
+			if (definition == null)
+				throw new ArgumentNullException(nameof(definition), "No definition provided for repository method");
+
+			// Does Query exist?
+			if (string.IsNullOrWhiteSpace(definition.SqlQuery))
+			{
+				if (definition.CommandType == CommandType.StoredProcedure)
+					throw new ArgumentException("Stored Procedure not provided in definition for ExecuteNonQuery", nameof(definition.SqlQuery));
+
+				throw new ArgumentException("Sql Query not provided in definition for ExecuteNonQuery", nameof(definition.SqlQuery));
+			}
+
+			// Set return value
+			int oReturn = default;
+
+
+			using (var dbConn = GetConnection(connString))
+			{
+				OpenConnection(dbConn);
+				using (var dbCmd = GetCommand(definition.SqlQuery, dbConn))
+				{
+					foreach (var param in definition.Parameters)
+					{
+						AddParameter(GetNewParameterWithResolvedValue(o, param), dbCmd);
+					}
+
+					dbCmd.CommandType = definition.CommandType;
+
+					oReturn = dbCmd.ExecuteNonQuery();
+				}
+				dbConn.Close();
+			}
+			return oReturn;
+		}
+
+		public virtual TReturn GetRecordObject<TReturn>(IRepositoryMethodDefinition definition) => GetRecordObject<TReturn>(null, default, definition);
+
+		public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
             if (definition == null)
@@ -180,6 +222,8 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
+		public virtual TReturn GetRecordScalar<TReturn>(IRepositoryMethodDefinition definition) => GetRecordScalar<TReturn>(null, default, definition);
+
         public virtual TReturn GetRecordScalar<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
@@ -226,6 +270,8 @@ namespace Jlw.Utilities.Data.DbUtility
             }
             return oReturn;
         }
+
+        public virtual IEnumerable<TReturn> GetRecordList<TReturn>(IRepositoryMethodDefinition definition) => GetRecordList<TReturn>(null, default, definition);
 
         public virtual IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
