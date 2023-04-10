@@ -29,7 +29,9 @@ namespace Jlw.Utilities.Data.DataTables
         protected IDataTablesOutput Output;
         /// <summary>A reference to the instance of the IModularDbClient singleton object</summary>
         protected IModularDbClient _dbClient;
-        
+
+        public int CommandTimeout { get; set; } = 30;
+
         /// <inheritdoc />
         public IEnumerable<object> Data => Output?.data;
 
@@ -197,6 +199,7 @@ namespace Jlw.Utilities.Data.DataTables
                 SqlQueryDebug = sSql;
                 using (var cmd = _dbClient.GetCommand(sSql, conn))
                 {
+	                cmd.CommandTimeout = CommandTimeout;
                     _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
                     _dbClient.AddParameterWithValue("@nRowStart", (Input?.start ?? 0), cmd); // SQL offset begins with 0
                     _dbClient.AddParameterWithValue("@nPageSize", (Input?.length ?? 10), cmd);
@@ -240,6 +243,7 @@ namespace Jlw.Utilities.Data.DataTables
                 // Retrieve filtered and paginated data
                 using (var cmd = _dbClient.GetCommand(sql, conn))
                 {
+	                cmd.CommandTimeout = CommandTimeout;
                     _dbClient.AddParameterWithValue("@sSearch", sSearch, cmd);
                     if (UseOrderedPaging)
                     {

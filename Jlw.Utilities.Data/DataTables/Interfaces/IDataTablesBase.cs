@@ -20,6 +20,8 @@ namespace Jlw.Utilities.Data.DataTables
     /// TODO Edit XML Comment Template for IDataTablesBase
     public interface IDataTablesBase
     {
+        int CommandTimeout { get; set; }
+
         IEnumerable<object> Data { get; }
 
         void AddColumn(string columnName, string sqlFragment = null);
