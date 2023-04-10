@@ -10,9 +10,10 @@ using System.Reflection;
 namespace Jlw.Utilities.Data.DbUtility
 {
     /// <inheritdoc />
-    public class ModularDbClient<TConnection> : IModularDbClient
-        where TConnection : IDbConnection, new()
+    public class ModularDbClient<TConnection> : IModularDbClient where TConnection : IDbConnection, new()
     {
+	    public int CommandTimeout { get; set; } = 30;
+    
         public virtual DbConnectionStringBuilder GetConnectionBuilder(string connString = default) => new DbConnectionStringBuilder(){ConnectionString = connString ?? ""};
 
         public virtual IDbConnection GetConnection(string connString = default) => new TConnection() { ConnectionString = connString ?? ""};
@@ -20,6 +21,7 @@ namespace Jlw.Utilities.Data.DbUtility
         public IDbCommand GetCommand(string cmd, IDbConnection conn = default)
         {
             var oCmd = conn?.CreateCommand() ?? new TConnection().CreateCommand();
+            oCmd.CommandTimeout = CommandTimeout;
             oCmd.CommandText = cmd;
             return oCmd;
         }
