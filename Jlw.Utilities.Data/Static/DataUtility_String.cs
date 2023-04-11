@@ -30,7 +30,7 @@ namespace Jlw.Utilities.Data
 
                 if (t.IsPrimitive || obj is string || obj is IEnumerable)
                 {
-                    return GetObjectValue(obj, key)?.ToString();
+                    return (GetObjectValue(obj, key) ?? "").ToString();
                 }
 
                 var s = (GetObjectValue(obj, key) ?? "").ToString();
