@@ -33,6 +33,8 @@ public class CsvParserOption
 
 	public string DefaultTransform(object rowData)
 	{
+		if (ParseType == null) return "";
+
 		switch (Type.GetTypeCode(ParseType))
 		{
 			case TypeCode.Boolean:
@@ -53,6 +55,6 @@ public class CsvParserOption
 
 		string s = DataUtility.ParseString(rowData, Key);
 
-		return $"\"{s.Replace(@"\", @"\\").Replace("\"", "\"\"")}\"";
+		return $"\"{(s??"").Replace(@"\", @"\\").Replace("\"", "\"\"")}\"";
 	}
 }
