@@ -22,7 +22,7 @@ namespace Jlw.Utilities.Data
 
             string s = (data ?? "").ToString().Trim();
 
-            if (string.IsNullOrWhiteSpace(s) || data is DBNull)
+            if (string.IsNullOrWhiteSpace(s) || data is DBNull || data == DBNull.Value)
                 return null;
 
             if (data?.GetType() == typeof(DateTimeOffset))
