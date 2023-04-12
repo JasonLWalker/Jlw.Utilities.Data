@@ -11,6 +11,8 @@ namespace Jlw.Utilities.Data.DbUtility
     /// TODO Edit XML Comment Template for IModularDbClient
     public interface IModularDbClient
     {
+	    public int CommandTimeout { get; set; }
+
         DbConnectionStringBuilder GetConnectionBuilder(string connString = default);
 
         IDbConnection GetConnection(string connString = default);
@@ -26,9 +28,10 @@ namespace Jlw.Utilities.Data.DbUtility
         TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition);
 
         IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition);
+
     }
 
-    public interface IModularDbClient<TConnection, TCommand, TParameter, TConnectionStringBuilder> : IModularDbClient
+	public interface IModularDbClient<TConnection, TCommand, TParameter, TConnectionStringBuilder> : IModularDbClient
     {
         TConnectionStringBuilder CreateConnectionBuilder(string connString = "");
 

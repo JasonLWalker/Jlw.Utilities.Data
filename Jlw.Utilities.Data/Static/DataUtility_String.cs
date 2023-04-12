@@ -30,7 +30,7 @@ namespace Jlw.Utilities.Data
 
                 if (t.IsPrimitive || obj is string || obj is IEnumerable)
                 {
-                    return GetObjectValue(obj, key)?.ToString();
+                    return (GetObjectValue(obj, key) ?? "").ToString();
                 }
 
                 var s = (GetObjectValue(obj, key) ?? "").ToString();
@@ -47,7 +47,9 @@ namespace Jlw.Utilities.Data
 
         public static string ParseNullableString(object obj, string key = null)
         {
-            if (obj is null || GetObjectValue(obj, key) is null)
+	        var data = GetObjectValue(obj, key);
+
+	        if (data == null || data is DBNull || data == DBNull.Value || data is DateTimeOffset || data is DateTime)
                 return null;
 
             return ParseString(obj, key);

@@ -28,7 +28,7 @@ namespace Jlw.Utilities.Data
         {
             var data = GetObjectValue(obj, key);
 
-            if (data == null || data is DBNull)
+            if (data == null || data is DBNull || data == DBNull.Value)
                 return null;
             try
             {

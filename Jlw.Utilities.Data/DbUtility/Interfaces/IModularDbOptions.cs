@@ -16,6 +16,11 @@
         /// <value>The connection string.</value>
         string ConnectionString { get; set; }
 
+        /// <summary>
+        /// Gets or sets the amount of time an IDbCommand has to execute. (defaults to 30 seconds)
+        /// </summary>
+        /// <value>The command timeout in seconds.</value>
+        public int CommandTimeout { get; set; }
 
-    }
+	}
 }
