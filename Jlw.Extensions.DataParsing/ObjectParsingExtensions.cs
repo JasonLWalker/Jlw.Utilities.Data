@@ -24,28 +24,21 @@ namespace Jlw.Extensions.DataParsing
         /// 
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="alternate"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        public static string? IfNullOrWhiteSpace(this string? value, string? alternate = null)
+        public static string? NullIfWhiteSpace(this object? value, string? key = null)
         {
-            if (!string.IsNullOrWhiteSpace(value))
-                return value;
+            string? s;
+            if (value is string str)
+            {
+                s = str;
+            }
+            else
+            {
+                s = DataUtility.ParseNullableString(value, key);
+            }
 
-            if (!string.IsNullOrWhiteSpace(alternate))
-                return alternate;
-
-            return null;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="alternate"></param>
-        /// <returns></returns>
-        public static string? IfNullOrWhiteSpace(this object? value, object? alternate = null)
-        {
-            return DataUtility.ParseNullableString(value)?.IfNullOrWhiteSpace(DataUtility.ParseNullableString(value));
+            return !string.IsNullOrWhiteSpace(s) ? s : null;
         }
 
         /// <summary>
