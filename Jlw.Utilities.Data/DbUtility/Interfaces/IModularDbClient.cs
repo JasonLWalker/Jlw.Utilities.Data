@@ -23,10 +23,13 @@ namespace Jlw.Utilities.Data.DbUtility
         System.Data.IDbDataParameter AddParameterWithValue(string paramName, object value, System.Data.IDbCommand cmd);
         System.Data.IDbDataParameter GetNewParameter(System.Data.IDbDataParameter param = default, IDbCommand cmd = null);
 
+        TReturn GetRecordScalar<TReturn>(string connString, IRepositoryMethodDefinition definition);
         TReturn GetRecordScalar<TReturn>(object o, string connString, IRepositoryMethodDefinition definition);
 
+        TReturn GetRecordObject<TReturn>(string connString, IRepositoryMethodDefinition definition);
         TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition);
 
+        IEnumerable<TReturn> GetRecordList<TReturn>(string connString, IRepositoryMethodDefinition definition);
         IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition);
 
     }
