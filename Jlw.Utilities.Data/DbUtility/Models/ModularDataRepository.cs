@@ -11,6 +11,10 @@ namespace Jlw.Utilities.Data.DbUtility
     /// <inheritdoc />
     public class ModularDataRepository : ModularDataRepository<object, object>
     {
+	    public ModularDataRepository(IModularDbOptions opts) : this(opts.DbClient, opts.ConnectionString)
+	    {
+	    }
+
         public ModularDataRepository(IModularDbClient dbClient, string connString = "") : base(dbClient, connString)
         {
         }
@@ -30,6 +34,10 @@ namespace Jlw.Utilities.Data.DbUtility
         public DbConnectionStringBuilder ConnectionBuilder => _builder;
         public string ConnectionString => _builder.ConnectionString;
         public IModularDbClient DbClient => _dbClient;
+
+        public ModularDataRepository(IModularDbOptions opts) : this(opts.DbClient, opts.ConnectionString)
+        {
+        }
 
         public ModularDataRepository(IModularDbClient dbClient, string connString = "")
         {

@@ -129,7 +129,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return GetNewParameter(param);
         }
 
-		public virtual int ExecuteNonQuery(IRepositoryMethodDefinition definition) => ExecuteNonQuery(null, default, definition);
+		public virtual int ExecuteNonQuery(string connString, IRepositoryMethodDefinition definition) => ExecuteNonQuery(null, connString, definition);
 
 		public virtual int ExecuteNonQuery(object o, string connString, IRepositoryMethodDefinition definition)
 		{
@@ -169,7 +169,7 @@ namespace Jlw.Utilities.Data.DbUtility
 			return oReturn;
 		}
 
-		public virtual TReturn GetRecordObject<TReturn>(IRepositoryMethodDefinition definition) => GetRecordObject<TReturn>(null, default, definition);
+		public virtual TReturn GetRecordObject<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordObject<TReturn>(null, connString, definition);
 
 		public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
@@ -222,7 +222,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
-		public virtual TReturn GetRecordScalar<TReturn>(IRepositoryMethodDefinition definition) => GetRecordScalar<TReturn>(null, default, definition);
+		public virtual TReturn GetRecordScalar<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordScalar<TReturn>(null, connString, definition);
 
         public virtual TReturn GetRecordScalar<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
@@ -271,7 +271,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
-        public virtual IEnumerable<TReturn> GetRecordList<TReturn>(IRepositoryMethodDefinition definition) => GetRecordList<TReturn>(null, default, definition);
+        public virtual IEnumerable<TReturn> GetRecordList<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordList<TReturn>(null, connString, definition);
 
         public virtual IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {

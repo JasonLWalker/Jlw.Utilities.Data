@@ -9,6 +9,8 @@ namespace Jlw.Utilities.Data.DbUtility
     /// <inheritdoc />
     public class ModularDataRepositoryBase<TModel> : ModularDataRepositoryBase<TModel, TModel>
     {
+	    public ModularDataRepositoryBase(IModularDbOptions opts) : this(opts.DbClient, opts.ConnectionString) { }
+
         public ModularDataRepositoryBase(IModularDbClient dbClient, string connString) : base(dbClient, connString) { }
     }
 
@@ -34,7 +36,10 @@ namespace Jlw.Utilities.Data.DbUtility
         protected string _sDeleteRecord = "";
 
 
-        public ModularDataRepositoryBase(IModularDbClient dbClient, string connString)
+        public ModularDataRepositoryBase(IModularDbOptions opts) : this(opts.DbClient, opts.ConnectionString) {}
+
+
+		public ModularDataRepositoryBase(IModularDbClient dbClient, string connString)
         {
             _dbClient = dbClient ?? new ModularDbClient<NullDbConnection, NullDbCommand, NullDbParameter>();
             _builder = _dbClient.GetConnectionBuilder(connString);
