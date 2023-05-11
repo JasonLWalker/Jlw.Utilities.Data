@@ -46,7 +46,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jlw.Extensions.DataParsing", "Jlw.Extensions.DataParsing\Jlw.Extensions.DataParsing.csproj", "{A1F6BD6B-4DFD-4B41-9CB2-EECD407601BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jlw.Extensions.ModularDbClient", "Jlw.Extensions.ModularDbClient\Jlw.Extensions.ModularDbClient.csproj", "{F3FD6FB0-A5B6-4929-92BC-7833026653D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jlw.Extensions.ModularDbClient", "Jlw.Extensions.ModularDbClient\Jlw.Extensions.ModularDbClient.csproj", "{F3FD6FB0-A5B6-4929-92BC-7833026653D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jlw.Extensions.DataTables", "Jlw.Extensions.DataTables\Jlw.Extensions.DataTables.csproj", "{795EEF0A-4815-4E85-A418-E8B8DC26DE13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{F3FD6FB0-A5B6-4929-92BC-7833026653D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3FD6FB0-A5B6-4929-92BC-7833026653D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3FD6FB0-A5B6-4929-92BC-7833026653D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{795EEF0A-4815-4E85-A418-E8B8DC26DE13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{795EEF0A-4815-4E85-A418-E8B8DC26DE13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{795EEF0A-4815-4E85-A418-E8B8DC26DE13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{795EEF0A-4815-4E85-A418-E8B8DC26DE13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
