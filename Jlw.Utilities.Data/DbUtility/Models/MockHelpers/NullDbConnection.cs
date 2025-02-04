@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using MySql.Data.MySqlClient;
 
 namespace Jlw.Utilities.Data.DbUtility
 {

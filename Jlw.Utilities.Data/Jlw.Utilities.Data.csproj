@@ -50,13 +50,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySql.Data" Version="8.0.31">
-			<PrivateAssets>All</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1"></PackageReference>
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.6">
-			<PrivateAssets>All</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"></PackageReference>
 	</ItemGroup>
 
 </Project>

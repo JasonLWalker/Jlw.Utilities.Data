@@ -11,8 +11,20 @@ namespace Jlw.Utilities.Data
 {
     public partial class DataUtility
     {
+        /// <summary>
+        /// Extracts a sbyte value from the specified object
+        /// </summary>
+        /// <param name="obj">The object from which to extract the sbyte value</param>
+        /// <param name="key">The key or index value to use when extracting the sbyte value from the object</param>
+        /// <returns>The sbyte value contained in the specified object, or default value if unable to parse the value</returns>
         public static sbyte ParseSByte(object obj, string key = null) => ParseNullableSByte(obj, key) ?? default;
 
+        /// <summary>
+        /// Extracts a nullable sbyte value from the specified object
+        /// </summary>
+        /// <param name="obj">The object from which to extract the sbyte value</param>
+        /// <param name="key">The key or index value to use when extracting the sbyte value from the object</param>
+        /// <returns>The sbyte value contained in the specified object, or null if unable to parse the value</returns>
         public static sbyte? ParseNullableSByte(object obj, string key = null)
         {
             var data = GetObjectValue(obj, key);
