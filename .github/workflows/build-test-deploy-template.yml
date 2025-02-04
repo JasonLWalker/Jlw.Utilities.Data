@@ -28,7 +28,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: [ '6.0.x' ]
+        dotnet-version: [ '8.0.x' ]
     env:
       BUILD_WORKSPACE_PATH: ${{ github.workspace }}
       INPUT_BUILD_CONFIG: ${{ inputs.buildConfig }}
@@ -63,7 +63,7 @@ jobs:
         shell: pwsh
         run: dotnet test --no-build --no-restore --configuration '${{ env.INPUT_BUILD_CONFIG }}' --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
       - name: Upload dotnet test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dotnet-results-${{ matrix.dotnet-version }}
           path: TestResults-${{ matrix.dotnet-version }}
