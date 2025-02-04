@@ -7,9 +7,20 @@ namespace Jlw.Utilities.Data
 {
     public partial class DataUtility
     {
+        /// <summary>
+        /// Converts generic data to byte
+        /// </summary>
+        /// <param name="data">The object to convert</param>
+        /// <param name="key">The key or index value to use when extracting the byte value from the object</param>
+        /// <returns>The byte value contained in the specified object, or default value if unable to parse the value</returns>
         public static byte ParseByte(object data, string key = null) => ParseNullableByte(data, key) ?? default;
 
-
+        /// <summary>
+        /// Converts generic data to byte? (nullable byte)
+        /// </summary>
+        /// <param name="obj">The object to convert</param>
+        /// <param name="key">The key or index value to use when extracting the byte value from the object</param>
+        /// <returns>The byte value contained in the specified object, or null if unable to parse the value</returns>
         public static byte? ParseNullableByte(object obj, string key=null)
         {
             var data = GetObjectValue(obj, key);
