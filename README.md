@@ -11,7 +11,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JasonLWalker_Jlw.Utilities.Data&metric=alert_status)](https://sonarcloud.io/dashboard?id=JasonLWalker_)
 
 
-# Data Utility
+# [Data Utility](./docs/Jlw.Utilities.Data/README.md)
 <!--  -->
 [![Nuget](https://img.shields.io/nuget/v/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28release%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab) [![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Jlw.Utilities.Data?label=Jlw.Utilities.Data%20%28preview%29)](https://www.nuget.org/packages/Jlw.Utilities.Data/#versions-body-tab)
 
@@ -21,18 +21,17 @@
 |Namespace|Jlw.Utilities.Data|
 |Target Framework|netstandard2.0|
 |Author(s)|Jason L. Walker|
-|Copyright|Copyright ©2012-2022 Jason L. Walker|
+|Copyright|Copyright ©2012-2025 Jason L. Walker|
 
 
 ## Dependencies
 
 |Dependency|Version|License|Purpose|
 |-----|-----|-----|-----|
-|[MySql.Data](https://dev.mysql.com/downloads/)|8.0.30|[...](https://downloads.mysql.com/docs/licenses/connector-net-8.0-gpl-en.pdf)||
-|[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.1|[MIT](https://licenses.nuget.org/MIT)||
-|[System.Data.SqlClient](https://github.com/dotnet/corefx)|4.8.3|[MIT](https://licenses.nuget.org/MIT)||
+|[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.3|[MIT](https://licenses.nuget.org/MIT)||
 
-# ModularDbClient Extension
+
+# [Modular Database Client Extension](./docs/Jlw.Extensions.ModularDbClient/README.md)
 <!--  -->
 
 ## Information / Requirements
@@ -44,8 +43,16 @@
 |Copyright|Copyright ©2022 Jason L. Walker|
 
 
+## Dependencies
 
-# Data Parsing Extension
+|Dependency|Version|License|Purpose|
+|-----|-----|-----|-----|
+|[Microsoft.Extensions.DependencyInjection.Abstractions](https://dot.net/)|9.0.1|[MIT](https://licenses.nuget.org/MIT)||
+|[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.3|[MIT](https://licenses.nuget.org/MIT)||
+
+
+
+# [Data Parsing Extension](./docs/Jlw.Extensions.DataParsing/README.md)
 <!--  -->
 
 ## Information / Requirements
@@ -61,5 +68,6 @@
 
 |Dependency|Version|License|Purpose|
 |-----|-----|-----|-----|
+|[Newtonsoft.Json](https://www.newtonsoft.com/json)|13.0.3|[MIT](https://licenses.nuget.org/MIT)||
 
 

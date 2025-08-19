@@ -209,16 +209,63 @@ namespace Jlw.Utilities.Data
                     maxInt = val;
                     return ParseAs(t, rng.Next(minInt, maxInt));
                 case TypeCode.DateTime:
-                    return DateTime.Now - new TimeSpan(GenerateRandom<int>(minLength, maxLength, validChars, rand) * 3600000);
+                {
+                    Type ut;
+                    minLong = DateTime.MinValue.Ticks;
+                    maxLong = DateTime.MaxValue.Ticks;
+                    if (minLength != null)
+                    {
+                        ut = Nullable.GetUnderlyingType(minLength.GetType()) ?? minLength.GetType();
+                        if (ut == typeof(DateTime))
+                            minLong = ParseDateTime(minLength).Ticks;
+                        else
+                            minLong = IsNumeric(minLength) ? ParseNullableLong(minLength) ?? DateTime.MinValue.Ticks : minLong;
+                    }
+
+                    if (maxLength != null)
+                    {
+                        ut = Nullable.GetUnderlyingType(maxLength.GetType()) ?? maxLength.GetType();
+                        if (ut == typeof(DateTime))
+                            maxLong = ParseDateTime(maxLength).Ticks;
+                        else
+                            maxLong = IsNumeric(maxLength) ? ParseNullableLong(maxLength) ?? DateTime.MaxValue.Ticks : maxLong;
+                    }
+
+                    minLong = Math.Max(minLong, DateTime.MinValue.Ticks);
+                    maxLong = Math.Min(maxLong, DateTime.MaxValue.Ticks);
+                    if (minLong > maxLong)
+                    {
+                        lng = minLong;
+                        minLong = maxLong;
+                        maxLong = lng;
+                    }
+
+                    if (minLong == 0 && maxLong == 0)
+                    {
+                        maxLong = DateTime.MaxValue.Ticks;
+                    }
+
+                    lng = GenerateRandom<long>(minLong, maxLong);
+                    return DateTime.MinValue.AddTicks(lng);
+                    //return DateTime.Now - new TimeSpan(GenerateRandom<int>(minLength, maxLength, validChars, rand) * 3600000);
+                }
                 case TypeCode.Int16:
                     minInt = ParseNullableInt16(minLength) ?? Int16.MinValue;
                     maxInt = ParseNullableInt16(maxLength) ?? Int16.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
                 case TypeCode.Int32:
-                case TypeCode.Int64:
                     minInt = ParseNullableInt(minLength) ?? int.MinValue;
                     maxInt = ParseNullableInt(maxLength) ?? int.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
+                case TypeCode.Int64:
+                {
+                    minDbl = ParseNullableLong(minLength) ?? long.MinValue;
+                    maxDbl = ParseNullableLong(maxLength) ?? long.MaxValue;
+                    dbl = maxDbl - minDbl;
+                    dbl = (dbl * rng.NextDouble());
+                    return ParseAs(t, minDbl + dbl);
+                    //return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
+                }
                 case TypeCode.SByte:
                     minInt = ParseNullableSByte(minLength) ?? sbyte.MinValue;
                     maxInt = ParseNullableSByte(maxLength) ?? sbyte.MaxValue;
