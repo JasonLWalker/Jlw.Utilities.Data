@@ -35,4 +35,11 @@
   <ItemGroup>
     <DotNetCliToolReference Include="JetBrains.dotCover.DotNetCliTool" Version="2020.3.2" />
   </ItemGroup>
+
+	<Target Name="CustomSetVersionNumberForProj" AfterTargets="Build">
+		<Exec Command="powershell $(ProjectDir)..\build-scripts\generate-documentation.ps1 $(OutputPath)\ $(ProjectDir)..\docs" EchoOff="false" ConsoleToMSBuild="true"></Exec>
+		<Exec Command="powershell $(ProjectDir)..\build-scripts\generate-readme.ps1 $(ProjectDir)..\" EchoOff="false" ConsoleToMSBuild="true"></Exec>
+	</Target>
+
+
 </Project>

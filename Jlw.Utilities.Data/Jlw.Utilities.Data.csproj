@@ -15,6 +15,7 @@
 	<PackageReleaseNotes>Provided as is</PackageReleaseNotes>
 	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 	  <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	  <IsPackable>True</IsPackable>
   </PropertyGroup>
 	
