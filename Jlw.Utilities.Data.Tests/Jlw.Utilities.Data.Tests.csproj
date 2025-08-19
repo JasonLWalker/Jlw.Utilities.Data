@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jlw.Utilities.Data\Jlw.Utilities.Data.csproj" />
+    <ProjectReference Include="..\Jlw.Extensions.ModularDbClient\Jlw.Extensions.ModularDbClient.csproj" />
+    <ProjectReference Include="..\Jlw.Extensions.DataParsing\Jlw.Extensions.DataParsing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,7 +13,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JasonLWalker_$($projectName)&metric=alert_status)](https://sonarcloud.io/dashboard?id=JasonLWalker_$($projectData))
 
 
-# Data Utility
+# [Data Utility](./docs/Jlw.Utilities.Data/README.md)
 <!-- $( 
 	$projectName = "Jlw.Utilities.Data"
 	$projectPath = "$($buildPath)**\$($projectName).csproj"
@@ -27,8 +27,21 @@ $(Get-ProjectInfoTable $projectName $projectPath)
 
 $(Get-ProjectDependencyTable $projectPath)
 
+# [Modular Database Client Extension](./docs/Jlw.Extensions.ModularDbClient/README.md)
+<!-- $( 
+	$projectName = "Jlw.Extensions.ModularDbClient"
+	$projectPath = "$($buildPath)**\$($projectName).csproj"
+) -->
 
-# Data Parsing Extension
+## Information / Requirements
+$(Get-ProjectInfoTable $projectName $projectPath)
+
+## Dependencies
+
+$(Get-ProjectDependencyTable $projectPath)
+
+
+# [Data Parsing Extension](./docs/Jlw.Extensions.DataParsing/README.md)
 <!-- $( 
 	$projectName = "Jlw.Extensions.DataParsing"
 	$projectPath = "$($buildPath)**\$($projectName).csproj"
