@@ -34,6 +34,14 @@ namespace Jlw.Utilities.Data.Tests.UnitTests.DataUtilityStatic
                 yield return new object[] {_type, sbyte.MinValue, sbyte.MaxValue };
                 if (_type != typeof(bool))
                     yield return new object[] {_type, byte.MinValue, byte.MaxValue };
+                if (_type == typeof(DateTime))
+                {
+                    yield return new object[] { _type, DateTime.MinValue, DateTime.MaxValue };
+                    yield return new object[] { _type, DateTime.Now, DateTime.Now.AddYears(10) };
+                    yield return new object[] { _type, DateTime.Now.AddYears(-10), DateTime.Now };
+                    yield return new object[] { _type, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(10) };
+                    yield return new object[] { _type, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30) };
+                }
                 yield return new object[] {_type, short.MinValue, short.MaxValue };
                 yield return new object[] {_type, int.MinValue, int.MaxValue};
                 yield return new object[] {_type, long.MinValue, long.MaxValue };
