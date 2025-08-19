@@ -215,10 +215,18 @@ namespace Jlw.Utilities.Data
                     maxInt = ParseNullableInt16(maxLength) ?? Int16.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
                 case TypeCode.Int32:
-                case TypeCode.Int64:
                     minInt = ParseNullableInt(minLength) ?? int.MinValue;
                     maxInt = ParseNullableInt(maxLength) ?? int.MaxValue;
                     return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
+                case TypeCode.Int64:
+                {
+                    minDbl = ParseNullableLong(minLength) ?? long.MinValue;
+                    maxDbl = ParseNullableLong(maxLength) ?? long.MaxValue;
+                    dbl = maxDbl - minDbl;
+                    dbl = (dbl * rng.NextDouble());
+                    return ParseAs(t, minDbl + dbl);
+                    //return ParseAs(t, rng.Next(Math.Min(minInt, maxInt), Math.Max(minInt, maxInt)));
+                }
                 case TypeCode.SByte:
                     minInt = ParseNullableSByte(minLength) ?? sbyte.MinValue;
                     maxInt = ParseNullableSByte(maxLength) ?? sbyte.MaxValue;
