@@ -44,7 +44,7 @@ namespace Jlw.Utilities.Data.Tests.IntegrationTests.ModularDbClient.TInstance_TM
             var response = SqlClient.GetRecordScalar<decimal>(new TestDataModel(){Id = expected.Id}, ConnectionString, definition);
 
             // Assert
-            Assert.AreEqual((decimal)(expected.Id + (float)0.2), response);
+            Assert.AreEqual((decimal)(expected.Id + (decimal)0.2), response);
         }
 
         [TestMethod]
