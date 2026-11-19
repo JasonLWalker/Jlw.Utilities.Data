@@ -35,6 +35,9 @@ namespace Jlw.Utilities.Data.DbUtility
         protected string _sUpdateRecord = "";
         protected string _sDeleteRecord = "";
 
+        protected string _dbSchema = "";
+
+        public string DbSchema => _dbSchema;
 
         public ModularDataRepositoryBase(IModularDbOptions opts) : this(opts.DbClient, opts.ConnectionString) {}
 
@@ -81,6 +84,11 @@ namespace Jlw.Utilities.Data.DbUtility
             return dbCmd;
         }
 
+        protected virtual string SetDbSchema(string s)
+        {
+            return _dbSchema = s;
+        }
+        
         protected virtual IDbDataParameter AddParameterWithValue(string paramName, object value, IDbCommand dbCmd)
         {
             return _dbClient.AddParameterWithValue(paramName, value, dbCmd);
