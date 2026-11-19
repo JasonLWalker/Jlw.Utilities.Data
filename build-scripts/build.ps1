@@ -8,10 +8,6 @@ if (-Not ($packageName)){
 	$packageName=(Get-Item -Path ".\").Name
 }
 
-if (-Not ($versionPrefix)){
-	$versionPrefix="5.2.$([System.TimeSpan]::FromTicks($([System.DateTime]::UtcNow.Ticks)).Subtract($([System.TimeSpan]::FromTicks(630822816000000000))).TotalDays.ToString().SubString(0,9))"
-}
-
 # Install dependencies
 #dotnet restore
 

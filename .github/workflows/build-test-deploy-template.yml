@@ -19,7 +19,7 @@ on:
             default: '-alpha'
             type: string
     secrets:
-        NUGET_KEY: 
+        NUGET_USER: 
             required: true
 
 
@@ -28,12 +28,18 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: [ '8.0.x' ]
+        dotnet-version: [ '10.0.x' ]
     env:
       BUILD_WORKSPACE_PATH: ${{ github.workspace }}
       INPUT_BUILD_CONFIG: ${{ inputs.buildConfig }}
       INPUT_VERSION_PREFIX: ${{ inputs.versionPrefix }}
       INPUT_VERSION_SUFFIX: ${{ inputs.versionSuffix }}
+    permissions:
+      contents: write        # Needed to push commits, create tags, or upload release assets
+      #pull-requests: write   # Needed to comment on or label PRs
+      #issues: write          # Needed to create/edit issues or comments
+      packages: write        # Needed to publish to GitHub Packages
+      id-token: write        # Needed for OIDC cloud authentication (AWS, GCP, Azure)
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -93,8 +99,14 @@ jobs:
       - name: Publish the source packages to GPR
         run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.snupkg -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json -k ${{secrets.GITHUB_TOKEN }} --skip-duplicate
 
+      # Get a short-lived NuGet API key
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }} # Recommended: use a secret like ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
       - name: Publish the packages to NuGet
-        run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.nupkg  -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_KEY }} --skip-duplicate
+        run: dotnet nuget push ${{ env.BUILD_WORKSPACE_PATH }}/**/*.nupkg  -s https://api.nuget.org/v3/index.json  --api-key ${{steps.login.outputs.NUGET_API_KEY}} --skip-duplicate
       #- name: Generate README.md
       #  shell: pwsh
       #  run: |

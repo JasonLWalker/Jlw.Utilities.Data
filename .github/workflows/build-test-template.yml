@@ -19,7 +19,7 @@ on:
             default: '-alpha'
             type: string
     secrets:
-        NUGET_KEY: 
+        NUGET_USER: 
             required: true
 
 
@@ -28,7 +28,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: [ '8.0.x' ]
+        dotnet-version: [ '10.0.x' ]
     env:
       BUILD_WORKSPACE_PATH: ${{ github.workspace }}
       INPUT_BUILD_CONFIG: ${{ inputs.buildConfig }}

@@ -11,6 +11,6 @@ jobs:
         versionPrefix: ""
         versionSuffix: "-alpha"
     secrets:
-        NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        NUGET_USER: ${{ secrets.NUGET_USER }}
 
 
