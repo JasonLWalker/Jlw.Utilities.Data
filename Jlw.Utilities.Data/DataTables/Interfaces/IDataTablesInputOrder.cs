@@ -16,10 +16,22 @@ namespace Jlw.Utilities.Data.DataTables
     /// <summary>
     /// Interface IDataTablesInputOrder
     /// </summary>
-    /// TODO Edit XML Comment Template for IDataTablesInputOrder
     public interface IDataTablesInputOrder
     {
+        /// <summary>
+        /// Gets or sets the column index to which the ordering should be applied.
+        /// </summary>
+        /// <remarks>
+        /// This property corresponds to the zero-based index of the column in the data source.
+        /// </remarks>
         int column { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the sort direction for the column.
+        /// </summary>
+        /// <remarks>
+        /// The value is typically "ASC" for ascending or "DESC" for descending.
+        /// </remarks>
         string dir { get; set; }
     }
 }

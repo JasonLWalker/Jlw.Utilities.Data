@@ -12,12 +12,17 @@ namespace Jlw.Utilities.Data.DbUtility
     /// <inheritdoc />
     public class ModularDbClient<TConnection> : IModularDbClient where TConnection : IDbConnection, new()
     {
-	    public int CommandTimeout { get; set; } = 30;
-    
+        /// <inheritdoc />
+
+        public int CommandTimeout { get; set; } = 30;
+
+        /// <inheritdoc />
         public virtual DbConnectionStringBuilder GetConnectionBuilder(string connString = default) => new DbConnectionStringBuilder(){ConnectionString = connString ?? ""};
 
+        /// <inheritdoc />
         public virtual IDbConnection GetConnection(string connString = default) => new TConnection() { ConnectionString = connString ?? ""};
 
+        /// <inheritdoc />
         public IDbCommand GetCommand(string cmd, IDbConnection conn = default)
         {
             var oCmd = conn?.CreateCommand() ?? new TConnection().CreateCommand();
@@ -26,6 +31,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return oCmd;
         }
 
+        /// <inheritdoc />
         public virtual IDbDataParameter AddParameter(IDbDataParameter param, System.Data.IDbCommand cmd)
         {
             var p = cmd.CreateParameter();
@@ -47,6 +53,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return p;
         }
 
+        /// <inheritdoc />
         public virtual IDbDataParameter AddParameterWithValue(string paramName, object value, System.Data.IDbCommand cmd)
         {
             var param = cmd.CreateParameter();
@@ -56,6 +63,7 @@ namespace Jlw.Utilities.Data.DbUtility
             return param;
         }
 
+        /// <inheritdoc />
         public virtual IDbDataParameter GetNewParameter(IDbDataParameter param = null, IDbCommand cmd = null)
         {
             IDbDataParameter p;
@@ -129,8 +137,10 @@ namespace Jlw.Utilities.Data.DbUtility
             return GetNewParameter(param);
         }
 
+        /// <inheritdoc />
 		public virtual int ExecuteNonQuery(string connString, IRepositoryMethodDefinition definition) => ExecuteNonQuery(null, connString, definition);
 
+        /// <inheritdoc />
 		public virtual int ExecuteNonQuery(object o, string connString, IRepositoryMethodDefinition definition)
 		{
 			// Does definition exist?
@@ -169,8 +179,10 @@ namespace Jlw.Utilities.Data.DbUtility
 			return oReturn;
 		}
 
+        /// <inheritdoc />
 		public virtual TReturn GetRecordObject<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordObject<TReturn>(null, connString, definition);
 
+        /// <inheritdoc />
 		public virtual TReturn GetRecordObject<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
@@ -222,8 +234,10 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
+        /// <inheritdoc />
 		public virtual TReturn GetRecordScalar<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordScalar<TReturn>(null, connString, definition);
 
+        /// <inheritdoc />
         public virtual TReturn GetRecordScalar<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
@@ -271,8 +285,10 @@ namespace Jlw.Utilities.Data.DbUtility
             return oReturn;
         }
 
+        /// <inheritdoc />
         public virtual IEnumerable<TReturn> GetRecordList<TReturn>(string connString, IRepositoryMethodDefinition definition) => GetRecordList<TReturn>(null, connString, definition);
 
+        /// <inheritdoc />
         public virtual IEnumerable<TReturn> GetRecordList<TReturn>(object o, string connString, IRepositoryMethodDefinition definition)
         {
             // Does definition exist?
@@ -340,24 +356,33 @@ namespace Jlw.Utilities.Data.DbUtility
         where TParam : IDbDataParameter, new()
         where TConnBuilder : DbConnectionStringBuilder, new()
     {
+        /// <inheritdoc />
         // Retrieve weakly typed connection builder
         public override DbConnectionStringBuilder GetConnectionBuilder(string connString = default) => CreateConnectionBuilder(connString);
 
+        /// <inheritdoc />
         // Retrieve strongly typed connection builder
         public virtual TConnBuilder CreateConnectionBuilder(string connString = "") => new TConnBuilder() { ConnectionString = connString };
 
+        /// <inheritdoc />
         public virtual TConnection CreateConnection() => CreateConnection("");
 
+        /// <inheritdoc />
         public virtual TConnection CreateConnection(string connString) => new TConnection() {ConnectionString = connString};
 
+        /// <inheritdoc />
         public virtual TCommand CreateCommand(string cmd) => new TCommand { CommandText = cmd, Connection = new TConnection() };
 
+        /// <inheritdoc />
         public virtual TCommand CreateCommand(string cmd, TConnection conn) => new TCommand {CommandText = cmd, Connection = conn};
 
+        /// <inheritdoc />
         public virtual TParam AddParameter(TParam param, TCommand cmd) => (TParam)base.AddParameter(param, cmd);
 
+        /// <inheritdoc />
         public virtual TParam CreateNewParameter(TParam param = default, TCommand cmd=default) => AddParameter(param, cmd ?? new TCommand());
 
+        /// <inheritdoc />
         public virtual IDbDataParameter CreateNewParameter(IDbDataParameter param, IDbCommand cmd = null) => GetNewParameter(param, cmd ?? new TCommand());
     }
 }

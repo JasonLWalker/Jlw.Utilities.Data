@@ -30,6 +30,8 @@ namespace Jlw.Utilities.Data.DataTables
         /// <summary>A reference to the instance of the IModularDbClient singleton object</summary>
         protected IModularDbClient _dbClient;
 
+
+        /// <inheritdoc />
         public int CommandTimeout { get; set; } = 30;
 
         /// <inheritdoc />
@@ -38,8 +40,16 @@ namespace Jlw.Utilities.Data.DataTables
         /// <inheritdoc />
         public bool UseOrderedPaging { get; set; } = false;
 
-        protected Dictionary<string, string> SortColumns { get; set; } // Internal list to hold list of columns that can be sorted on.
-        protected Dictionary<string, string> SearchColumns { get; set; } // Internal list to hold list of columns that can be sorted on.        
+        /// <summary>
+        /// Internal list to hold list of columns that can be sorted on.
+        /// </summary>
+        protected Dictionary<string, string> SortColumns { get; set; }
+
+        /// <summary>
+        /// Internal list to hold list of columns that can be sorted on.
+        /// </summary>
+        protected Dictionary<string, string> SearchColumns { get; set; }
+        
         /// <summary>
         /// Internal list to hold list of columns that are valid. 
         /// Will also be used to validate column names passed in and will not allow operations to occur on columns not added to this list.
@@ -47,7 +57,6 @@ namespace Jlw.Utilities.Data.DataTables
         /// <value>
         /// Represents what columns will appear in the output. 
         /// </value>
-        /// TODO Edit XML Comment Template for ValidColumns
         protected Dictionary<string, string> ValidColumns { get; set; } // 
         internal Dictionary<string, string> ExtraParams { get; set; } // Internal list to hold list of extra SQL paramaters to initialize.
 //        protected string SqlConnectionString { get; set; }  // Internal string to hold the SQL Connection string
@@ -59,6 +68,18 @@ namespace Jlw.Utilities.Data.DataTables
         internal string SqlQueryDebug;
 
         internal bool bDebug = false;
+        
+        /// <summary>
+        /// Initializes the <see cref="DataTablesBase"/> instance with the specified input and database client.
+        /// </summary>
+        /// <param name="input">
+        /// An optional <see cref="IDataTablesInput"/> instance that provides input parameters for the DataTables.
+        /// If not provided, a new instance of <see cref="DataTablesInput"/> will be created.
+        /// </param>
+        /// <param name="dbClient">
+        /// An optional <see cref="IModularDbClient"/> instance that provides database client functionality.
+        /// If not provided, the database client will remain uninitialized.
+        /// </param>
         protected void Initialize(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
             _dbClient = dbClient;
@@ -74,7 +95,15 @@ namespace Jlw.Utilities.Data.DataTables
             //Output
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataTablesBase"/> class.
+        /// </summary>
+        /// <param name="input">
+        /// An optional <see cref="IDataTablesInput"/> instance containing input parameters for the DataTables operation.
+        /// </param>
+        /// <param name="dbClient">
+        /// An optional <see cref="IModularDbClient"/> instance for database interaction.
+        /// </param>
         public DataTablesBase(IDataTablesInput input = null, IModularDbClient dbClient = null)
         {
             Initialize(input, dbClient);
